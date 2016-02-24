@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{13B38D94-8E07-44EE-B501-CBEAEF85AD01}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>BodyReportMobile.Core</RootNamespace>
+    <AssemblyName>BodyReportMobile.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Calculation.cs" />
+    <Compile Include="Services\ICalculation.cs" />
+    <Compile Include="ViewModels\TipViewModel.cs" />
+    <Compile Include="ViewModels\SecondViewModel.cs" />
+    <Compile Include="ViewModels\ThirdViewModel.cs" />
+    <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="MvxMessages\MvxMessageFormClosed.cs" />
+    <Compile Include="Framework\ViewModelDataCollection.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\TrainingJournalViewModel.cs" />
+    <Compile Include="Framework\Binding\GenericGroupModelCollection.cs" />
+    <Compile Include="..\..\BodyReport\src\Message\TrainingWeek.cs">
+      <Link>Message\TrainingWeek.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\BodyExercise.cs">
+      <Link>Message\BodyExercise.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\City.cs">
+      <Link>Message\City.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\Country.cs">
+      <Link>Message\Country.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\Criteria.cs">
+      <Link>Message\Criteria.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\Enums.cs">
+      <Link>Message\Enums.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\Muscle.cs">
+      <Link>Message\Muscle.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\MuscularGroup.cs">
+      <Link>Message\MuscularGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\Role.cs">
+      <Link>Message\Role.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\TrainingDay.cs">
+      <Link>Message\TrainingDay.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\TrainingExercise.cs">
+      <Link>Message\TrainingExercise.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\TrainingExerciseSet.cs">
+      <Link>Message\TrainingExerciseSet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\TranslationAttribute.cs">
+      <Link>Message\TranslationAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\TranslationKeyVal.cs">
+      <Link>Message\TranslationKeyVal.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\TranslationVal.cs">
+      <Link>Message\TranslationVal.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\User.cs">
+      <Link>Message\User.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\UserInfo.cs">
+      <Link>Message\UserInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\UserRole.cs">
+      <Link>Message\UserRole.cs</Link>
+    </Compile>
+    <Compile Include="ViewModels\EditTrainingWeekViewModel.cs" />
+    <Compile Include="Framework\Binding\GenericEntryCellBinding.cs" />
+    <Compile Include="Framework\Utils.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <ItemGroup>
+    <Reference Include="MvvmCross.Platform">
+      <HintPath>..\packages\MvvmCross.Platform.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Core">
+      <HintPath>..\packages\MvvmCross.Core.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Binding">
+      <HintPath>..\packages\MvvmCross.Binding.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Binding.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Localization">
+      <HintPath>..\packages\MvvmCross.Binding.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Localization.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.Accelerometer">
+      <HintPath>..\packages\MvvmCross.Plugin.Accelerometer.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.Accelerometer.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.Bookmarks">
+      <HintPath>..\packages\MvvmCross.Plugin.Bookmarks.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.Bookmarks.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.Color">
+      <HintPath>..\packages\MvvmCross.Plugin.Color.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.Color.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.DownloadCache">
+      <HintPath>..\packages\MvvmCross.Plugin.DownloadCache.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.DownloadCache.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.Email">
+      <HintPath>..\packages\MvvmCross.Plugin.Email.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.Email.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.File">
+      <HintPath>..\packages\MvvmCross.Plugin.File.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.File.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\portable-net45+wp80+win8+wpa81+dnxcore50\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.Json">
+      <HintPath>..\packages\MvvmCross.Plugin.Json.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.ResourceLoader">
+      <HintPath>..\packages\MvvmCross.Plugin.ResourceLoader.4.0.0\lib\portable-win+net45+wp8+win8+wpa81\MvvmCross.Plugins.ResourceLoader.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.JsonLocalization">
+      <HintPath>..\packages\MvvmCross.Plugin.JsonLocalization.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.JsonLocalization.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.Location">
+      <HintPath>..\packages\MvvmCross.Plugin.Location.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.Location.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.Messenger">
+      <HintPath>..\packages\MvvmCross.Plugin.Messenger.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.Messenger.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.MethodBinding">
+      <HintPath>..\packages\MvvmCross.Plugin.MethodBinding.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.MethodBinding.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.Network">
+      <HintPath>..\packages\MvvmCross.Plugin.Network.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.Network.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.PhoneCall">
+      <HintPath>..\packages\MvvmCross.Plugin.PhoneCall.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.PhoneCall.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.PictureChooser">
+      <HintPath>..\packages\MvvmCross.Plugin.PictureChooser.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.PictureChooser.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.ReflectionEx">
+      <HintPath>..\packages\MvvmCross.Plugin.ReflectionEx.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.ReflectionEx.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.Share">
+      <HintPath>..\packages\MvvmCross.Plugin.Share.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.Share.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.SoundEffects">
+      <HintPath>..\packages\MvvmCross.Plugin.SoundEffects.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.SoundEffects.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLite.Net.Async">
+      <HintPath>..\packages\SQLite.Net.Async-PCL.3.1.1\lib\portable-win8+net45+wp8+wpa81+MonoAndroid1+MonoTouch1\SQLite.Net.Async.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLite.Net">
+      <HintPath>..\packages\SQLite.Net-PCL.3.1.1\lib\portable-win8+net45+wp8+wpa81+MonoAndroid1+MonoTouch1\SQLite.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.Sqlite">
+      <HintPath>..\packages\MvvmCross.Plugin.SQLitePCL.4.0.0\lib\portable-win+net45+wp8+win8+wpa81+win81+dotnet\MvvmCross.Plugins.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.ThreadUtils">
+      <HintPath>..\packages\MvvmCross.Plugin.ThreadUtils.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.ThreadUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.Visibility">
+      <HintPath>..\packages\MvvmCross.Plugin.Visibility.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.Visibility.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.WebBrowser">
+      <HintPath>..\packages\MvvmCross.Plugin.WebBrowser.4.0.0\lib\portable-net45+win+wpa81+wp80\MvvmCross.Plugins.WebBrowser.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Plugins.All">
+      <HintPath>..\packages\MvvmCross.Plugin.All.4.0.0\lib\portable-win+net45+wp8+win8+wpa81\MvvmCross.Plugins.All.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="..\..\BodyReport\src\Message\Message.xproj">
+      <Link>Message\Message.xproj</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
+    <Folder Include="ViewModels\" />
+    <Folder Include="MvxMessages\" />
+    <Folder Include="Framework\" />
+    <Folder Include="Framework\Binding\" />
+    <Folder Include="Message\" />
+  </ItemGroup>
+</Project>

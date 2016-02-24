@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			xmlns:local="clr-namespace:BodyReport" x:Class="BodyReport.TrainingJournalPage" x:Name="myPage"
+			Title="Training journal">
+	<ContentPage.Content>
+		<ListView x:Name="listView" ItemsSource="{Binding GroupedTrainingWeeks}"
+					GroupDisplayBinding="{Binding LongName}"
+			        IsGroupingEnabled="true">
+			<ListView.Header >
+			    <StackLayout Orientation="Horizontal" >
+			        <Button Text="Create New" BindingContext="{Binding Source={x:Reference myPage}, Path=BindingContext}" Command="{Binding CreateNewCommand}"/>	
+			    </StackLayout>
+			</ListView.Header>
+			<ListView.ItemTemplate>
+	        <DataTemplate>
+	        	<TextCell Text="{Binding Week}" Detail="{Binding Date}" >
+	        	<TextCell.ContextActions>
+		            <MenuItem Text="Copy" BindingContext="{Binding Source={x:Reference myPage}, Path=BindingContext}"  
+		            		  Command="{Binding CopyCommand}" />
+		            <MenuItem Text="Delete" IsDestructive="True" BindingContext="{Binding Source={x:Reference myPage}, Path=BindingContext}" 
+		            		  Command="{Binding DeleteCommand}"/>
+		         </TextCell.ContextActions>
+	        	</TextCell>
+	        </DataTemplate>
+	      </ListView.ItemTemplate>
+		</ListView>
+	</ContentPage.Content>
+</local:BaseContentPage>
