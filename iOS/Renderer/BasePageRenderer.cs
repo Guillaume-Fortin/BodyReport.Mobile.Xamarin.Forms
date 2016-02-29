@@ -42,19 +42,20 @@ namespace BodyReport.iOS
 					var basePage = Element as BaseContentPage;
 					if (basePage != null) {
 						string backBtnTitle = basePage.BackButtonTitle;
-						if (!string.IsNullOrEmpty (backBtnTitle)) {
+						if (!basePage.DisableBackButton && !string.IsNullOrEmpty (backBtnTitle)) {
 							root.NavigationItem.SetLeftBarButtonItem (new UIBarButtonItem (backBtnTitle, UIBarButtonItemStyle.Plain, btnReturnClick), true);
+							if (basePage.DisableBackButton) {
+								root.NavigationItem.LeftBarButtonItem.Style = UIBarButtonItemStyle.Plain;
+								root.NavigationItem.LeftBarButtonItem.Enabled = false;
+								root.NavigationItem.LeftBarButtonItem.Title = "";
+							}
 						}
-						if (basePage.DisableBackButton) {
-							root.NavigationItem.LeftBarButtonItem.Style = UIBarButtonItemStyle.Plain;
-							root.NavigationItem.LeftBarButtonItem.Enabled = false;
-							root.NavigationItem.LeftBarButtonItem.Title = "";
-						}
+
 						this.NavigationController.Toolbar.Translucent = false;
 						this.NavigationController.NavigationBar.BarStyle = UIBarStyle.Default;
 						this.NavigationController.NavigationBar.Translucent = false; // pour ne pas que la bar prenne la couleur de fond de la fenêtre
-						this.NavigationController.NavigationBar.BarTintColor = UIColor.FromRGB(0.012f, 0.663f, 0.957f); //#03A9F4
-						this.NavigationController.NavigationBar.TintColor = UIColor.White;
+						//this.NavigationController.NavigationBar.BarTintColor = UIColor.FromRGB(0.012f, 0.663f, 0.957f); //#03A9F4
+						//this.NavigationController.NavigationBar.TintColor = UIColor.White;
 					}
 				}
 			}

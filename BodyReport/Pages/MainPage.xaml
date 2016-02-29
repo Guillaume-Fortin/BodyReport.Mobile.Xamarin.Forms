@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-					   xmlns:local="clr-namespace:BodyReport" x:Class="BodyReport.MainPage">
+					   xmlns:local="clr-namespace:BodyReport" x:Class="BodyReport.MainPage" BackgroundColor="#6DBEE3">
 	<ContentPage.Content>
 		<ScrollView>
 			<Grid>
@@ -14,13 +14,15 @@
 					<ColumnDefinition Width="*" />
 					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
-				<StackLayout VerticalOptions="Fill" HorizontalOptions="Fill" >
+				<StackLayout VerticalOptions="Fill" HorizontalOptions="Fill" BackgroundColor="#8CD4F5">
 					<Image HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Source="http://icdn.pro/images/fr/a/j/ajouter-crayon-icone-4828-32.png"/>
 					<Button Command="{Binding GoToTrainingJournalCommand}" HorizontalOptions="Center" Text="Carnet d'entrainement"/>
 				</StackLayout>
-				<BoxView Color="Blue" Grid.Row="0" Grid.Column="1"  />
-				<BoxView Color="Yellow" Grid.Row="2" Grid.Column="0"  />
-				<BoxView Color="Purple" Grid.Row="2" Grid.Column="1"  />
+				<BoxView Color="#8CD4F5" Grid.Row="0" Grid.Column="1"  />
+				<BoxView Color="#8CD4F5" Grid.Row="1" Grid.Column="0"  />
+				<BoxView Color="#8CD4F5" Grid.Row="1" Grid.Column="1"  />
+				<BoxView Color="#8CD4F5" Grid.Row="2" Grid.Column="0"  />
+				<BoxView Color="#8CD4F5" Grid.Row="2" Grid.Column="1"  />
 			</Grid>
 		</ScrollView>
 	</ContentPage.Content>

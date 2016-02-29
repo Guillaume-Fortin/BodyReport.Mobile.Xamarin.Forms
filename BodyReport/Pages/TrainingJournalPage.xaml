@@ -2,15 +2,20 @@
 <local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			xmlns:local="clr-namespace:BodyReport" x:Class="BodyReport.TrainingJournalPage" x:Name="myPage"
 			Title="Training journal">
+
+	<ContentPage.ToolbarItems>
+	  <ToolbarItem Text = "Create New" Command="{Binding CreateNewCommand}" Order="Primary" Priority="0" />
+	</ContentPage.ToolbarItems>
+
 	<ContentPage.Content>
 		<ListView x:Name="listView" ItemsSource="{Binding GroupedTrainingWeeks}"
 					GroupDisplayBinding="{Binding LongName}"
 			        IsGroupingEnabled="true">
-			<ListView.Header >
+			<!--ListView.Header >
 			    <StackLayout Orientation="Horizontal" >
 			        <Button Text="Create New" BindingContext="{Binding Source={x:Reference myPage}, Path=BindingContext}" Command="{Binding CreateNewCommand}"/>	
 			    </StackLayout>
-			</ListView.Header>
+			</ListView.Header-->
 			<ListView.ItemTemplate>
 	        <DataTemplate>
 	        	<TextCell Text="{Binding Week}" Detail="{Binding Date}" >

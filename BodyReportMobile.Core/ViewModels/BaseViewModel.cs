@@ -29,6 +29,11 @@ namespace BodyReportMobile.Core.ViewModels
 		public virtual void Init(string viewModelGuid)
 		{
 			_viewModelGuid = viewModelGuid;
+			InitTranslation ();
+		}
+
+		protected virtual void InitTranslation()
+		{
 		}
 
 		private void OnFormClosedMvxMessage(MvxMessageFormClosed mvxMessageFormClosed)
@@ -38,7 +43,7 @@ namespace BodyReportMobile.Core.ViewModels
 				//It's for this view Model
 				var tcsShowingViewModel = ViewModelDataCollection.Get<TaskCompletionSource<bool>> (_viewModelGuid, TCS_VALUE);
 				if (tcsShowingViewModel != null)
-					tcsShowingViewModel.SetResult (mvxMessageFormClosed.CanceledView);
+					tcsShowingViewModel.SetResult (!mvxMessageFormClosed.CanceledView);
 
 				ViewModelDataCollection.Clear (_viewModelGuid);
 			}
