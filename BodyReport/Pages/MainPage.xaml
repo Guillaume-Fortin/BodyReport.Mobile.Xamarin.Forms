@@ -22,7 +22,10 @@
 				<BoxView Color="#8CD4F5" Grid.Row="1" Grid.Column="0"  />
 				<BoxView Color="#8CD4F5" Grid.Row="1" Grid.Column="1"  />
 				<BoxView Color="#8CD4F5" Grid.Row="2" Grid.Column="0"  />
-				<BoxView Color="#8CD4F5" Grid.Row="2" Grid.Column="1"  />
+				<StackLayout VerticalOptions="Fill" HorizontalOptions="Fill" BackgroundColor="#8CD4F5" Grid.Row="2" Grid.Column="1">
+					<Image HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Source="{Binding LanguageFlagImageSource}"/>
+					<Button Command="{Binding GoToChangeLanguageCommand}" HorizontalOptions="Center" Text="{Binding ChangeLanguageLabel}"/>
+				</StackLayout>
 			</Grid>
 		</ScrollView>
 	</ContentPage.Content>

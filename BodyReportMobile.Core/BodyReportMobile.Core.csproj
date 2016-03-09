@@ -99,6 +99,11 @@
     <Compile Include="ViewModels\EditTrainingWeekViewModel.cs" />
     <Compile Include="Framework\Binding\GenericEntryCellBinding.cs" />
     <Compile Include="Framework\Utils.cs" />
+    <Compile Include="Framework\IFileManager.cs" />
+    <Compile Include="Message\TRS.cs" />
+    <Compile Include="ViewModels\Generics\ListViewModel.cs" />
+    <Compile Include="Message\GenericData.cs" />
+    <Compile Include="Framework\Translation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -206,5 +211,6 @@
     <Folder Include="Framework\" />
     <Folder Include="Framework\Binding\" />
     <Folder Include="Message\" />
+    <Folder Include="ViewModels\Generics\" />
   </ItemGroup>
 </Project>

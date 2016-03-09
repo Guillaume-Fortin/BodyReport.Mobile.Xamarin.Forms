@@ -38,9 +38,20 @@ namespace BodyReport.iOS
 		{
 			Forms.Init();
 
+			AddIocDependencies ();
+			Translation.LoadTranslation ();
+
 			var xamarinFormsApp = new MvxFormsApp();
 
 			return new MvxFormsIosPagePresenter(Window, xamarinFormsApp);
+		}
+
+		/// <summary>
+		/// Adds the ioc dependencies.
+		/// </summary>
+		private void AddIocDependencies()
+		{
+			Mvx.RegisterType<IFileManager, FileManager> ();
 		}
 
 		/*

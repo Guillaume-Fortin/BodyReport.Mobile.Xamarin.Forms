@@ -54,8 +54,10 @@ namespace BodyReport.iOS
 						this.NavigationController.Toolbar.Translucent = false;
 						this.NavigationController.NavigationBar.BarStyle = UIBarStyle.Default;
 						this.NavigationController.NavigationBar.Translucent = false; // pour ne pas que la bar prenne la couleur de fond de la fenêtre
-						//this.NavigationController.NavigationBar.BarTintColor = UIColor.FromRGB(0.012f, 0.663f, 0.957f); //#03A9F4
-						//this.NavigationController.NavigationBar.TintColor = UIColor.White;
+
+
+						this.NavigationController.NavigationBar.BarTintColor = UIColor.FromRGB(0.012f, 0.663f, 0.957f); //#03A9F4
+						this.NavigationController.NavigationBar.TintColor = UIColor.White;
 					}
 				}
 			}

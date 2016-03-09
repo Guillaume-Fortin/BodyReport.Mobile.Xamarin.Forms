@@ -27,9 +27,9 @@ namespace BodyReportMobile.Core
 		{
 		}
 
-		public override void Init(string viewModelGuid)
+		public override void Init(string viewModelGuid, bool autoClearViewModelDataCollection)
 		{
-			base.Init (viewModelGuid);
+			base.Init (viewModelGuid, autoClearViewModelDataCollection);
 
 			//Fake get Web Data
 			for (int i = 2016; i >= 2010; i--) {

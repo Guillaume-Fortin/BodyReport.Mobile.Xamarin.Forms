@@ -237,16 +237,16 @@
       <HintPath>..\packages\MvvmCross.Plugin.All.4.0.0\lib\Xamarin.iOS10\MvvmCross.Plugins.All.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Forms.Platform.iOS">
-      <HintPath>..\packages\Xamarin.Forms.2.1.0.6517-pre5\lib\Xamarin.iOS10\Xamarin.Forms.Platform.iOS.dll</HintPath>
+      <HintPath>..\packages\Xamarin.Forms.2.1.0.6526\lib\Xamarin.iOS10\Xamarin.Forms.Platform.iOS.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Forms.Core">
-      <HintPath>..\packages\Xamarin.Forms.2.1.0.6517-pre5\lib\Xamarin.iOS10\Xamarin.Forms.Core.dll</HintPath>
+      <HintPath>..\packages\Xamarin.Forms.2.1.0.6526\lib\Xamarin.iOS10\Xamarin.Forms.Core.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Forms.Xaml">
-      <HintPath>..\packages\Xamarin.Forms.2.1.0.6517-pre5\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
+      <HintPath>..\packages\Xamarin.Forms.2.1.0.6526\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Forms.Platform">
-      <HintPath>..\packages\Xamarin.Forms.2.1.0.6517-pre5\lib\Xamarin.iOS10\Xamarin.Forms.Platform.dll</HintPath>
+      <HintPath>..\packages\Xamarin.Forms.2.1.0.6526\lib\Xamarin.iOS10\Xamarin.Forms.Platform.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -298,15 +298,29 @@
     <Compile Include="Bootstrap\VisibilityPluginBootstrap.cs" />
     <Compile Include="Bootstrap\WebBrowserPluginBootstrap.cs" />
     <Compile Include="Renderer\BasePageRenderer.cs" />
+    <Compile Include="Framework\FileManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
-  <Import Project="..\packages\Xamarin.Forms.2.1.0.6517-pre5\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.1.0.6517-pre5\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
+  <Import Project="..\packages\Xamarin.Forms.2.1.0.6526\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.1.0.6526\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
   <ItemGroup>
     <Folder Include="Renderer\" />
+    <Folder Include="Framework\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="..\images\disclosure_indicator.png">
       <Link>Resources\disclosure_indicator.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\BodyReport\src\BodyReport\Resources\Translation-en-US.json">
+      <Link>Resources\Translation-en-US.json</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\BodyReport\src\BodyReport\Resources\Translation-fr-FR.json">
+      <Link>Resources\Translation-fr-FR.json</Link>
+    </BundleResource>
+    <BundleResource Include="..\images\flag-en-US.png">
+      <Link>Resources\flag-en-US.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\images\flag-fr-FR.png">
+      <Link>Resources\flag-fr-FR.png</Link>
     </BundleResource>
   </ItemGroup>
 </Project>

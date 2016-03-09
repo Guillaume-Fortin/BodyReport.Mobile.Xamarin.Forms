@@ -19,13 +19,15 @@ namespace BodyReport
 
 		public async void OnCellTapped(object sender, EventArgs e)
 		{
-			//var viewModel = BindingContext as EditTrainingWeekViewModel;
+			var viewModel = BindingContext as EditTrainingWeekViewModel;
 			//viewModel.DisplayYearCommand.Execute ();
 			if (sender == YearCell)
 			{
-				var answer = await DisplayAlert ("Question?", "Would you like to play a game", "Yes", "No");
+				viewModel.ChangeYearCommand.Execute (null);
+				/*var answer = await DisplayAlert ("Question?", "Would you like to play a game", "Yes", "No");
 				Debug.WriteLine ("Answer: " + answer);
 				YearText.Text = "2014";
+				*/
 			}
 		}
 	}

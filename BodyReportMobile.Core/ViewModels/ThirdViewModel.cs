@@ -12,11 +12,9 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 		}
 
-
-
-		public override void Init(string viewModelGuid)
+		public override void Init(string viewModelGuid, bool autoClearViewModelDataCollection)
 		{
-			base.Init (viewModelGuid);
+			base.Init (viewModelGuid, autoClearViewModelDataCollection);
 		}
 	}
 }

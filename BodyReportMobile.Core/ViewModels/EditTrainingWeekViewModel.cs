@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using MvvmCross.Platform;
+using System.Collections.Generic;
 
 namespace BodyReportMobile.Core
 {
@@ -50,12 +51,12 @@ namespace BodyReportMobile.Core
 			};
 		}
 
-		public override void Init(string viewModelGuid)
+		public override void Init(string viewModelGuid, bool autoClearViewModelDataCollection)
 		{
 			TrainingWeek = ViewModelDataCollection.Get<TrainingWeek>(viewModelGuid, TRAINING_WEEK_VALUE);
 			EditMode = ViewModelDataCollection.Get<TEditMode> (viewModelGuid, EDIT_MODE);
 
-			base.Init (viewModelGuid);
+			base.Init (viewModelGuid, autoClearViewModelDataCollection);
 		}
 
 		public static async Task<bool> Show(TrainingWeek trainingWeek, TEditMode editMode, BaseViewModel parent = null)
@@ -64,7 +65,7 @@ namespace BodyReportMobile.Core
 			ViewModelDataCollection.Push (viewModelGuid, TRAINING_WEEK_VALUE, trainingWeek);
 			ViewModelDataCollection.Push (viewModelGuid, EDIT_MODE, editMode);
 
-			return await ShowModalViewModel<EditTrainingWeekViewModel> (viewModelGuid, parent);
+			return await ShowModalViewModel<EditTrainingWeekViewModel> (viewModelGuid, true, parent);
 		}
 
 		public ICommand ValidateCommand
@@ -74,23 +75,39 @@ namespace BodyReportMobile.Core
 				return new MvxCommand (() => {
 					if(ValidateFields())
 					{
-						if(Close(this))
-						{
-							var messenger = Mvx.Resolve<IMvxMessenger>();
-							messenger.Publish (new MvxMessageFormClosed (this, ViewModelGuid, false));
-						}
+						CloseViewModel();
 					}
 				});
 			}
 		}
 
-		public ICommand DisplayYearCommand
+		public ICommand ChangeYearCommand
 		{
 			get
 			{
-				return new MvxCommand (() => {
-					
-				});
+				return new MvxAsyncCommand (async () => {
+
+					var datas = new List<Message.GenericData> ();
+
+					int currentYear = DateTime.Now.Year;
+					Message.GenericData data, currentData = null;
+					for(int i = currentYear; i >= currentYear-99; i--)
+					{
+						data = new Message.GenericData(){ Tag = i, Name = i.ToString()};
+						datas.Add(data);
+
+						if(i == TrainingWeek.Year)
+							currentData = data;
+					}
+
+					var result = await ListViewModel.ShowGenericList ("Select Year", datas, currentData, this);
+
+					if(result.ViewModelValidated && result.SelectedTag != null)
+					{
+						if(((int)result.SelectedTag) > 0)
+							TrainingWeek.Year = (int)result.SelectedTag;
+					}
+				}, null, true);
 			}
 		}
 

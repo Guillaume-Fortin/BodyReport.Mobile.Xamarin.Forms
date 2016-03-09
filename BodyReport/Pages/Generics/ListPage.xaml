@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+ 				       xmlns:local="clr-namespace:BodyReport" x:Class="BodyReport.ListPage"
+ 				       Title="{Binding Title}" x:Name="myPage">
+	<ContentPage.Content>
+		<ListView x:Name="listView" ItemsSource="{Binding Datas}" SelectedItem="{Binding SelectedItem}" ItemSelected="OnItemSelected" HasUnevenRows="true">
+			<ListView.ItemTemplate>
+	        <DataTemplate>
+	          <!--ImageCell ImageSource="{Binding Image}" Text="{Binding Name}" TextColor="{Binding BackgroundColor}" Detail="{Binding Description}" DetailColor="Gray">
+
+	          </ImageCell-->
+
+	          <local:ListViewCell/>
+
+	          <!--ViewCell>
+
+	          <StackLayout BackgroundColor="Red"
+                        Orientation="Vertical">
+
+		         <StackLayout.Triggers>
+			        <DataTrigger TargetType="StackLayout"
+			                     Binding="{Binding Source={x:Reference listView}, Path=SelectedItem}"
+			                     Value="">
+			            <Setter Property="BackgroundColor" Value="Blue" />
+			        </DataTrigger>
+		    	  </StackLayout.Triggers>
+
+		   	  </StackLayout>
+
+	    	  </ViewCell-->
+
+
+	        </DataTemplate>
+	      </ListView.ItemTemplate>
+
+		</ListView>
+	</ContentPage.Content>
+</local:BaseContentPage>

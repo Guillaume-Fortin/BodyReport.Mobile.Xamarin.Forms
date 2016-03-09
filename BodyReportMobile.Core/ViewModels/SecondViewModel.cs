@@ -24,11 +24,6 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			//await ShowModalViewModel<ThirdViewModel>(this);
 		}
-
-		public override void Init(string viewModelGuid)
-		{
-			base.Init (viewModelGuid);
-		}
 	}
 }
 
