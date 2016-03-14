@@ -23,8 +23,10 @@
     	  </Image.Triggers>
 		</Image>
 		<StackLayout Orientation="Vertical">
-			<Label Text="{Binding Name}" TextColor="Black"/>
-			<Label Text="{Binding Description}" TextColor="##03A9F4"/>
+			<Label Text="{Binding Name}" TextColor="Black" FontSize="14"/>
+			<StackLayout Padding="5,0,0,0">
+				<Label Text="{Binding Description}" TextColor="#03A9F4" FontSize="13"/>
+			</StackLayout>
 		</StackLayout>
 	</StackLayout>
 </ViewCell>

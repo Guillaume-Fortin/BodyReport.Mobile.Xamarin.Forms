@@ -41,20 +41,19 @@ namespace BodyReportMobile.Core
 				foreach (var data in datas)
 					Datas.Add (data);
 			}
-			SelectedItem = ViewModelDataCollection.Get<GenericData> (viewModelGuid, SELECTED_TAG);
-			RefreshColor ();
+			var defaultSelectedData = ViewModelDataCollection.Get<GenericData> (viewModelGuid, SELECTED_TAG);
+			SelectItem (defaultSelectedData);
 			RaiseAllPropertiesChanged ();
 		}
 
-		private void RefreshColor()
+		private void SelectItem(GenericData defaultSelectedData)
 		{
 			if (Datas != null) {
 				foreach (var data in Datas) {
-					if (SelectedItem != null && SelectedItem == data)
+					if (defaultSelectedData != null && defaultSelectedData == data)
 						data.IsSelected = true;
 					else
 						data.IsSelected = false;
-					data.Description = "lalalalal";
 				}
 			}
 		}
@@ -81,8 +80,6 @@ namespace BodyReportMobile.Core
 			get
 			{
 				return new MvxCommand (() => {
-					RefreshColor ();
-					RaiseAllPropertiesChanged ();
 					if(ValidateViewModel())
 					{
 						ViewModelDataCollection.Push<object> (ViewModelGuid, OUT_SELECTED_TAG_ITEM, SelectedItem.Tag);

@@ -98,12 +98,14 @@
     </Compile>
     <Compile Include="ViewModels\EditTrainingWeekViewModel.cs" />
     <Compile Include="Framework\Binding\GenericEntryCellBinding.cs" />
-    <Compile Include="Framework\Utils.cs" />
     <Compile Include="Framework\IFileManager.cs" />
     <Compile Include="Message\TRS.cs" />
     <Compile Include="ViewModels\Generics\ListViewModel.cs" />
     <Compile Include="Message\GenericData.cs" />
     <Compile Include="Framework\Translation.cs" />
+    <Compile Include="..\..\BodyReport\src\Framework\Utils.cs">
+      <Link>Framework\Utils.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>

@@ -21,14 +21,15 @@ namespace BodyReport
 		{
 			var viewModel = BindingContext as EditTrainingWeekViewModel;
 			//viewModel.DisplayYearCommand.Execute ();
-			if (sender == YearCell)
-			{
+			if (sender == YearCell) {
 				viewModel.ChangeYearCommand.Execute (null);
 				/*var answer = await DisplayAlert ("Question?", "Would you like to play a game", "Yes", "No");
 				Debug.WriteLine ("Answer: " + answer);
 				YearText.Text = "2014";
 				*/
-			}
+			} else if (sender == WeekOfYearCell)
+				viewModel.ChangeWeekOfYearCommand.Execute (null);
+				
 		}
 	}
 }

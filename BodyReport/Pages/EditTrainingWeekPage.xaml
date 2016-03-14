@@ -13,21 +13,38 @@
 	  <ToolbarItem Name="ValidateToolbarItem" Text = "{Binding ValidateLabel}" Command="{Binding ValidateCommand}" Order="Primary" Priority="0" />
 	</ContentPage.ToolbarItems>
 	<ContentPage.Content>
-	<ScrollView>
-		<TableView x:Name="tableView" Intent="Settings" >
+		<TableView x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
             <TableRoot>
                 <TableSection Title="{Binding EditTitle}">
 
-                	<ViewCell x:Name="YearCell" Tapped="OnCellTapped">
+                	<!--ViewCell x:Name="YearCell" Tapped="OnCellTapped">
                 		<StackLayout Padding="5,5,10,5" HorizontalOptions="Fill" Orientation="Horizontal">
 					        <Label x:Name="YearLabel" Text="{Binding YearLabel}" LineBreakMode="MiddleTruncation" HorizontalOptions="Start" WidthRequest="120" YAlign="Center"/>
 					        <Label x:Name="YearText" Text="{Binding TrainingWeek.Year, Mode=TwoWay}" HorizontalOptions="FillAndExpand" YAlign="Center"/>
 					        <Image Source="disclosure_indicator.png" HorizontalOptions="End" VerticalOptions="Center" />
 					    </StackLayout>
-                	</ViewCell>
+                	</ViewCell-->
 
-                    <EntryCell x:Name="test" Tapped="OnCellTapped" HorizontalTextAlignment="Start" Label="{Binding YearLabel}" Keyboard="Numeric" Placeholder="Edit Data"
-                    		   Text="{Binding TrainingWeek.Year, Converter={StaticResource intConverter}}"/>
+                	<local:TouchViewCell x:Name="YearCell" Tapped="OnCellTapped" 
+                		Title="{Binding YearLabel}" Value="{Binding TrainingWeek.Year, Mode=TwoWay}"
+                		IsIndicatorVisible="true" />
+
+            		<local:TouchViewCell x:Name="WeekOfYearCell" Tapped="OnCellTapped" 
+                		Title="{Binding WeekNumberLabel}" 
+                		Value="{Binding TrainingWeek.WeekOfYear, Mode=TwoWay}"
+                		Description="{Binding TrainingWeek.WeekOfYearDescription}"
+                		IsIndicatorVisible="true" Height="60"/>
+
+
+                	<EntryCell x:Name="HeightCell" HorizontalTextAlignment="Start" Label="{Binding HeightLabel}"
+                				Keyboard="Numeric" Placeholder="Edit Data"
+                    			Text="{Binding TrainingWeek.UserHeight, Converter={StaticResource intConverter},
+                    			ConverterParameter=120|230}}"/>
+                    <local:NumericEntryCell x:Name="WeightCell" Label="{Binding WeightLabel}"  
+                    			Text="{Binding TrainingWeek.UserWeight}"/>
+
+                    <!--EntryCell x:Name="test" Tapped="OnCellTapped" HorizontalTextAlignment="Start" Label="{Binding YearLabel}" Keyboard="Numeric" Placeholder="Edit Data"
+                    		   Text="{Binding TrainingWeek.Year, Converter={StaticResource intConverter}}"/-->
 
                     		 
                     <!--viewcell>
@@ -37,17 +54,16 @@
 						        </datepicker>
 						    </label>
 					    </stacklayout>
-					</viewcell-->
+					</viewcell>
                    
                     <EntryCell HorizontalTextAlignment="Start" Label="{Binding WeekNumberLabel}"  Keyboard="Numeric" Placeholder="Edit Data"
                     			Text="{Binding TrainingWeek.WeekOfYear, Converter={StaticResource intConverter}}" />
                     <EntryCell HorizontalTextAlignment="Start" Label="{Binding HeightLabel}"  Keyboard="Numeric" Placeholder="Edit Data"
                     			Text="{Binding TrainingWeek.UserHeight, Converter={StaticResource intConverter}}"/>
                     <EntryCell HorizontalTextAlignment="Start" Label="{Binding WeightLabel}"  Keyboard="Numeric" Placeholder="Edit Data" 
-                    			Text="{Binding TrainingWeek.UserWeight, Converter={StaticResource intConverter}}"/>
+                    			Text="{Binding TrainingWeek.UserWeight, Converter={StaticResource intConverter}}"/-->
                 </TableSection>
             </TableRoot>
         </TableView>
-		</ScrollView>
 	</ContentPage.Content>
 </local:BaseContentPage>

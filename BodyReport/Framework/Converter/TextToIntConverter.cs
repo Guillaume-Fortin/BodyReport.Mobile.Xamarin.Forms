@@ -22,10 +22,28 @@ namespace BodyReport
 		{
 			if (value is string)
 			{
+				int tmpValue;
+				int minValue = Int32.MinValue;
+				int maxValue = Int32.MinValue;
+				string parameterString = parameter as string;
+				if (!string.IsNullOrEmpty(parameterString))
+				{
+					string[] parameters = parameterString.Split(new char[]{'|'});
+					if (parameters.Length > 0) {
+						if (int.TryParse (parameters [0], out tmpValue))
+							minValue = tmpValue;
+
+						if (parameters.Length > 1) {
+							if (int.TryParse (parameters [1], out tmpValue))
+								maxValue = tmpValue;
+						}
+					}
+				}
+
 				var str = value as string;
 				int result;
 				if (int.TryParse (str, out result))
-					return result;
+					return MinMaxValue (result, minValue, maxValue);
 
 				StringBuilder sb = new StringBuilder ();
 				foreach (char c in str) {
@@ -38,17 +56,25 @@ namespace BodyReport
 				if (str.Length == 0)
 					return 0;
 
-				if (int.TryParse (str, out result))
-					return result;
+				if (!int.TryParse (str, out result))
+					return MinMaxValue (result, minValue, maxValue);
 
+				bool converted = false;
 				do {
 					str = str.Remove(str.Length -1);
-				} while(str.Length >0 && !int.TryParse (str, out result));
+				} while(str.Length >0 && !(converted=int.TryParse (str, out result)));
 
-				return str;
+				if(converted)
+					return MinMaxValue (result, minValue, maxValue);
 			}
 
 			return 0;
+		}
+
+		private static int MinMaxValue(int value, int minValue, int maxValue)
+		{
+			value = Math.Max (value, minValue);
+			return Math.Min (value, maxValue);
 		}
 	}
 }
