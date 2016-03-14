@@ -35,13 +35,11 @@
                 		Description="{Binding TrainingWeek.WeekOfYearDescription}"
                 		IsIndicatorVisible="true" Height="60"/>
 
+                   	<local:NumericEntryCell x:Name="HeightCell" Label="{Binding HeightLabel}"  
+                    			Text="{Binding TrainingWeek.UserHeight, Converter={StaticResource intConverter}}" MinValue="120" MaxValue="250"/>
 
-                	<EntryCell x:Name="HeightCell" HorizontalTextAlignment="Start" Label="{Binding HeightLabel}"
-                				Keyboard="Numeric" Placeholder="Edit Data"
-                    			Text="{Binding TrainingWeek.UserHeight, Converter={StaticResource intConverter},
-                    			ConverterParameter=120|230}}"/>
                     <local:NumericEntryCell x:Name="WeightCell" Label="{Binding WeightLabel}"  
-                    			Text="{Binding TrainingWeek.UserWeight}"/>
+                    			Text="{Binding TrainingWeek.UserWeight, Converter={StaticResource intConverter}}" MinValue="40" MaxValue="230"/>
 
                     <!--EntryCell x:Name="test" Tapped="OnCellTapped" HorizontalTextAlignment="Start" Label="{Binding YearLabel}" Keyboard="Numeric" Placeholder="Edit Data"
                     		   Text="{Binding TrainingWeek.Year, Converter={StaticResource intConverter}}"/-->

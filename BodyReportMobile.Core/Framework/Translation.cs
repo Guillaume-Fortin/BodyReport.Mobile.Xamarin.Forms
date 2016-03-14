@@ -92,10 +92,10 @@ namespace BodyReportMobile.Core
 		/// <returns>Transaltion value</returns>
 		public static string Get(string key)
 		{
-			if (_currentTranslation != null)
+			if (_currentTranslation != null && _currentTranslation.ContainsKey(key))
 				return _currentTranslation [key];
 			else
-				return key;
+				return '*'+key;
 		}
 	}
 }

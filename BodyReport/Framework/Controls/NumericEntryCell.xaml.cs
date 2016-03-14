@@ -20,6 +20,20 @@ namespace BodyReport
 			set { SetValue (TextProperty, value); }
 		}
 
+		public static readonly BindableProperty MinValueProperty = BindableProperty.Create ("MinValue", typeof(int), typeof(NumericEntry), int.MinValue);
+
+		public int MinValue {
+			get { return (int)GetValue (MinValueProperty); }
+			set { SetValue (MinValueProperty, value); }
+		}
+
+		public static readonly BindableProperty MaxValueProperty = BindableProperty.Create ("MaxValue", typeof(int), typeof(NumericEntry), int.MinValue);
+
+		public int MaxValue {
+			get { return (int)GetValue (MaxValueProperty); }
+			set { SetValue (MaxValueProperty, value); }
+		}
+
 		public NumericEntryCell ()
 		{
 			InitializeComponent ();

@@ -34,14 +34,23 @@ namespace BodyReportMobile.Core
 		{
 			base.InitTranslation ();
 
-			Title = "Training week";
-			if(EditMode == TEditMode.Create)
-				EditTitle = EditMode == TEditMode.Create ? "Create" : "Edit";
-			ValidateLabel = "Validate";
-			YearLabel = "Year";
-			WeekNumberLabel = "Week number";
-			HeightLabel = "Height (cm)";
-			WeightLabel = "Weight (kg)";
+			string weightUnit = "kg", lengthUnit = "cm", unit = Translation.Get(TRS.METRIC);
+
+			var userInfo = UserData.Instance.UserInfo;
+			if (userInfo.Unit == (int)TUnitType.Imperial)
+			{
+				weightUnit = Translation.Get(TRS.POUND);
+				lengthUnit = Translation.Get(TRS.INCH);
+				unit = Translation.Get(TRS.IMPERIAL);
+			}
+
+			Title = Translation.Get (TRS.TRAINING_WEEK);
+			EditTitle = EditMode == TEditMode.Create ? Translation.Get(TRS.CREATE) : Translation.Get(TRS.EDIT);
+			ValidateLabel = EditMode == TEditMode.Create ? Translation.Get(TRS.CREATE) : Translation.Get (TRS.VALIDATE);
+			YearLabel = Translation.Get(TRS.YEAR);
+			WeekNumberLabel = Translation.Get(TRS.WEEK_NUMBER);
+			HeightLabel = Translation.Get(TRS.HEIGHT) + " (" +lengthUnit+")";
+			WeightLabel = Translation.Get(TRS.WEIGHT) + " (" +weightUnit+")";
 		}
 		#endregion
 
@@ -115,7 +124,7 @@ namespace BodyReportMobile.Core
 							currentData = data;
 					}
 
-					var result = await ListViewModel.ShowGenericList ("Select Year", datas, currentData, this);
+					var result = await ListViewModel.ShowGenericList (Translation.Get(TRS.YEAR), datas, currentData, this);
 
 					if(result.ViewModelValidated && result.SelectedTag != null)
 					{
@@ -151,7 +160,7 @@ namespace BodyReportMobile.Core
 							currentData = data;
 					}
 
-					var result = await ListViewModel.ShowGenericList ("Select Week of Year", datas, currentData, this);
+					var result = await ListViewModel.ShowGenericList (Translation.Get(TRS.WEEK_NUMBER), datas, currentData, this);
 
 					if(result.ViewModelValidated && result.SelectedTag != null)
 					{

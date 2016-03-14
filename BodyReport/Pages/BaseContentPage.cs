@@ -4,13 +4,14 @@ using BodyReportMobile.Core;
 using MvvmCross.Plugins.Messenger;
 using MvvmCross.Platform;
 using BodyReportMobile.Core.ViewModels;
+using Message;
 
 namespace BodyReport
 {
 	public class BaseContentPage : ContentPage
 	{
 		public bool DisableBackButton { get; set;} = false;
-		public string BackButtonTitle { get; set;} = "Return";
+		public string BackButtonTitle { get; set;} = Translation.Get(TRS.RETURN);
 
 		public BaseContentPage ()
 		{

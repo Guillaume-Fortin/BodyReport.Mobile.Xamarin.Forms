@@ -106,6 +106,7 @@
     <Compile Include="..\..\BodyReport\src\Framework\Utils.cs">
       <Link>Framework\Utils.cs</Link>
     </Compile>
+    <Compile Include="Data\UserData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -214,5 +215,6 @@
     <Folder Include="Framework\Binding\" />
     <Folder Include="Message\" />
     <Folder Include="ViewModels\Generics\" />
+    <Folder Include="Data\" />
   </ItemGroup>
 </Project>

@@ -622,5 +622,10 @@ namespace Message
 		/// </summary>
 		[Translation("Copy")]
 		public const string COPY = "COPY";
+		// <summary>
+		/// Return
+		/// </summary>
+		[Translation("Return")]
+		public const string RETURN = "RETURN";
 	}
 }
