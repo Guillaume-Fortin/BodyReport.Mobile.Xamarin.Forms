@@ -10,7 +10,10 @@
 	<ContentPage.Content>
 		<ListView x:Name="listView" ItemsSource="{Binding GroupedTrainingWeeks}"
 					GroupDisplayBinding="{Binding LongName}"
-			        IsGroupingEnabled="true">
+			        IsGroupingEnabled="true"
+			        IsPullToRefreshEnabled="True"
+			        RefreshCommand="{Binding RefreshDataCommand}"
+			        IsRefreshing="{Binding IsBusy, Mode=OneWay}">
 			<!--ListView.Header >
 			    <StackLayout Orientation="Horizontal" >
 			        <Button Text="Create New" BindingContext="{Binding Source={x:Reference myPage}, Path=BindingContext}" Command="{Binding CreateNewCommand}"/>	

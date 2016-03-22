@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using BodyReportMobile.Core.Message;
 using System.Collections.Generic;
 using Message;
+using BodyReportMobile.Core.Manager;
+using SQLite.Net;
+using MvvmCross.Platform;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -28,9 +31,11 @@ namespace BodyReportMobile.Core.ViewModels
 			}
 		}
 
+		private SQLiteConnection _dbContext;
 
 		public MainViewModel (IMvxMessenger messenger) : base(messenger)
 		{
+			_dbContext = Mvx.Resolve<ISQLite> ().GetConnection ();
 		}
 
 		public override void Init(string viewModelGuid, bool autoClearViewModelDataCollection)
@@ -51,6 +56,29 @@ namespace BodyReportMobile.Core.ViewModels
 		private string GeLanguageFlagImageSource(LangType langType)
 		{
 			return string.Format ("flag-{0}.png", Translation.GetLangExt (langType));
+		}
+
+		public override async void Start ()
+		{
+			await SynchronizeWebData ();
+		}
+
+		private async Task SynchronizeWebData()
+		{
+			try
+			{
+				//Synchronise Web data to local database
+				var muscleList = await MuscleWebService.FindMuscles();
+				var muscleManager = new MuscleManager(_dbContext);
+				muscleManager.UpdateMuscleList(muscleList);
+
+				var translationList = await TranslationWebService.FindTranslations();
+				var translationManager = new TranslationManager(_dbContext);
+				translationManager.UpdateTranslationList(translationList);
+			}
+			catch (Exception exception)
+			{
+			}
 		}
 
 		public ICommand GoToTrainingJournalCommand

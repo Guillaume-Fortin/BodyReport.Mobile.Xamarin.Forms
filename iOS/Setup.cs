@@ -14,6 +14,7 @@ using Xamarin.Forms;
 using MvvmCross.Forms.Presenter.iOS;
 using MvvmCross.Forms.Presenter.Core;
 using BodyReport.Pages;
+using Acr.UserDialogs;
 
 namespace BodyReport.iOS
 {
@@ -52,6 +53,8 @@ namespace BodyReport.iOS
 		private void AddIocDependencies()
 		{
 			Mvx.RegisterType<IFileManager, FileManager> ();
+			Mvx.RegisterType<ISQLite, SQLite_iOS> ();
+			Mvx.RegisterSingleton<IUserDialogs>(() => UserDialogs.Instance);
 		}
 
 		/*

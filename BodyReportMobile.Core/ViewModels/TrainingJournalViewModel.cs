@@ -9,6 +9,10 @@ using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using System.Linq;
 using System.Threading.Tasks;
+using BodyReportMobile.Core.Manager;
+using MvvmCross.Platform;
+using SQLite.Net;
+using Acr.UserDialogs;
 
 namespace BodyReportMobile.Core
 {
@@ -22,9 +26,27 @@ namespace BodyReportMobile.Core
 	{
 		private List<TrainingWeek> _trainingWeekList = new List<TrainingWeek> ();
 		public ObservableCollection<GenericGroupModelCollection<BindingTrainingWeek>> GroupedTrainingWeeks {get; set;} = new ObservableCollection<GenericGroupModelCollection<BindingTrainingWeek>>();
+		private SQLiteConnection _dbContext;
+		private TrainingWeekManager _trainingWeekManager;
+
+		private bool isBusy;
+		public bool IsBusy
+		{
+			get { return isBusy; }
+			set 
+			{
+				if (isBusy == value)
+					return;
+
+				isBusy = value;
+				RaisePropertyChanged ("IsBusy");
+			}
+		}
 
 		public TrainingJournalViewModel (IMvxMessenger messenger) : base(messenger)
 		{
+			_dbContext = Mvx.Resolve<ISQLite> ().GetConnection ();
+			_trainingWeekManager = new TrainingWeekManager(_dbContext);
 		}
 
 		public override void Init(string viewModelGuid, bool autoClearViewModelDataCollection)
@@ -32,14 +54,48 @@ namespace BodyReportMobile.Core
 			base.Init (viewModelGuid, autoClearViewModelDataCollection);
 
 			//Fake get Web Data
-			for (int i = 2016; i >= 2010; i--) {
+			/*for (int i = 2016; i >= 2010; i--) {
 				_trainingWeekList.Add (new TrainingWeek (){ Year = i, WeekOfYear = 8 });	
 				_trainingWeekList.Add (new TrainingWeek (){ Year = i, WeekOfYear = 7 });	
 				_trainingWeekList.Add (new TrainingWeek (){ Year = i, WeekOfYear = 5 });	
 				_trainingWeekList.Add (new TrainingWeek (){ Year = i, WeekOfYear = 4 });
-			}
+			}*/
 
+			_trainingWeekList = _trainingWeekManager.FindTrainingWeek (null, false);
 			SynchronizeData ();
+
+			RetreiveAndSaveOnlineData ();
+		}
+
+		private async Task RetreiveAndSaveOnlineData()
+		{
+			try
+			{
+				if (IsBusy)
+					return;
+				IsBusy = true;
+
+				var onlineTrainingWeekList = await TrainingWeekService.FindTrainingWeeks ();
+				if(onlineTrainingWeekList != null)
+				{
+					var list = _trainingWeekManager.FindTrainingWeek(null, true);
+					if(list != null)
+					{
+						foreach(var trainingWeek in list)
+							_trainingWeekManager.DeleteTrainingWeek(trainingWeek);
+					}
+
+					_trainingWeekList = new List<TrainingWeek>();
+					foreach(var trainingWeek in onlineTrainingWeekList)
+						_trainingWeekList.Add(_trainingWeekManager.UpdateTrainingWeek(trainingWeek));
+				}
+			}
+			catch (Exception except){
+				var userDialog = Mvx.Resolve<IUserDialogs> ();
+				userDialog.AlertAsync (except.Message, "Exception", "ok");
+			}
+			SynchronizeData ();
+			IsBusy = false;
 		}
 
 		public void SynchronizeData()
@@ -48,22 +104,33 @@ namespace BodyReportMobile.Core
 			int currentYear = 0;
 			GroupedTrainingWeeks.Clear();
 
-			var localGroupedTrainingWeeks  = new ObservableCollection<GenericGroupModelCollection<BindingTrainingWeek>>();
-			GenericGroupModelCollection<BindingTrainingWeek> collection = null;
-			foreach (var trainingWeek in _trainingWeekList) {
-				if (collection == null || currentYear != trainingWeek.Year) {
-					currentYear = trainingWeek.Year;
-					collection = new GenericGroupModelCollection<BindingTrainingWeek> ();
-					collection.LongName = currentYear.ToString();
-					collection.ShortName = currentYear.ToString();
-					localGroupedTrainingWeeks.Add (collection);
+			if (_trainingWeekList != null) {
+				var localGroupedTrainingWeeks = new ObservableCollection<GenericGroupModelCollection<BindingTrainingWeek>> ();
+				GenericGroupModelCollection<BindingTrainingWeek> collection = null;
+				foreach (var trainingWeek in _trainingWeekList) {
+					if (collection == null || currentYear != trainingWeek.Year) {
+						currentYear = trainingWeek.Year;
+						collection = new GenericGroupModelCollection<BindingTrainingWeek> ();
+						collection.LongName = currentYear.ToString ();
+						collection.ShortName = currentYear.ToString ();
+						localGroupedTrainingWeeks.Add (collection);
+					}
+
+					collection.Add (new BindingTrainingWeek () {
+						Date = "From the 22th to the 28th of February 2016",
+						Week = "Week n°" + trainingWeek.WeekOfYear.ToString ()
+					});
 				}
 
-				collection.Add (new BindingTrainingWeek (){ Date = "From the 22th to the 28th of February 2016", Week = "Week n°" + trainingWeek.WeekOfYear.ToString() });
+				foreach (var trainingWeek in localGroupedTrainingWeeks) {
+					GroupedTrainingWeeks.Add (trainingWeek);
+				}
 			}
+		}
 
-			foreach (var trainingWeek in localGroupedTrainingWeeks) {
-				GroupedTrainingWeeks.Add(trainingWeek);
+		public ICommand RefreshDataCommand {
+			get {
+				return new MvxAsyncCommand (RetreiveAndSaveOnlineData, null, true);
 			}
 		}
 

@@ -19,11 +19,11 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			get
 			{
-				return new MvxAsyncCommand(Test);
+				return new MvxCommand(Test);
 			}
 		}
 
-		async Task Test()
+		/*async Task*/ void Test()
 		{
 			//await ShowModalViewModel<SecondViewModel>(this);
 			//await ShowModalViewModel<ThirdViewModel>(this);
