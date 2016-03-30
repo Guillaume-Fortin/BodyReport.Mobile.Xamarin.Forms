@@ -17,7 +17,7 @@ namespace BodyReport
 			InitializeComponent ();
 		}
 
-		public async void OnCellTapped(object sender, EventArgs e)
+		public void OnCellTapped(object sender, EventArgs e)
 		{
 			var viewModel = BindingContext as EditTrainingWeekViewModel;
 			//viewModel.DisplayYearCommand.Execute ();

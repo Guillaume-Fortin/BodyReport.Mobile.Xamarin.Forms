@@ -22,7 +22,6 @@ namespace BodyReportMobile.Core
 		public TrainingWeek TrainingWeek {get; set;}
 
 		#region translation
-		public string Title {get; set;}
 		public string EditTitle {get; set;}
 		public string ValidateLabel {get; set;}
 		public string YearLabel {get; set;}
@@ -44,7 +43,7 @@ namespace BodyReportMobile.Core
 				unit = Translation.Get(TRS.IMPERIAL);
 			}
 
-			Title = Translation.Get (TRS.TRAINING_WEEK);
+			TitleLabel = Translation.Get (TRS.TRAINING_WEEK);
 			EditTitle = EditMode == TEditMode.Create ? Translation.Get(TRS.CREATE) : Translation.Get(TRS.EDIT);
 			ValidateLabel = EditMode == TEditMode.Create ? Translation.Get(TRS.CREATE) : Translation.Get (TRS.VALIDATE);
 			YearLabel = Translation.Get(TRS.YEAR);

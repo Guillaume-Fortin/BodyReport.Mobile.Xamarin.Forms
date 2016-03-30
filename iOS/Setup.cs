@@ -52,6 +52,7 @@ namespace BodyReport.iOS
 		/// </summary>
 		private void AddIocDependencies()
 		{
+			Mvx.RegisterType<ISecurity, SecurityIOS> ();
 			Mvx.RegisterType<IFileManager, FileManager> ();
 			Mvx.RegisterType<ISQLite, SQLite_iOS> ();
 			Mvx.RegisterSingleton<IUserDialogs>(() => UserDialogs.Instance);

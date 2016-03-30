@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			 xmlns:local="clr-namespace:BodyReport" x:Class="BodyReport.EditTrainingWeekPage" x:Name="myPage"
-			Title="{Binding Title}">
+			Title="{Binding TitleLabel}">
 
 	<ContentPage.Resources>
         <ResourceDictionary>
@@ -10,7 +10,7 @@
 	</ContentPage.Resources>
 
 	<ContentPage.ToolbarItems>
-	  <ToolbarItem Name="ValidateToolbarItem" Text = "{Binding ValidateLabel}" Command="{Binding ValidateCommand}" Order="Primary" Priority="0" />
+	  <ToolbarItem Name="LoginToolbarItem" Text = "{Binding LoginLabel}" Command="{Binding ValidateCommand}" Order="Primary" Priority="0" />
 	</ContentPage.ToolbarItems>
 	<ContentPage.Content>
 		<TableView x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
@@ -41,25 +41,6 @@
                     <local:NumericEntryCell x:Name="WeightCell" Label="{Binding WeightLabel}"  
                     			Text="{Binding TrainingWeek.UserWeight, Converter={StaticResource intConverter}}" MinValue="40" MaxValue="230"/>
 
-                    <!--EntryCell x:Name="test" Tapped="OnCellTapped" HorizontalTextAlignment="Start" Label="{Binding YearLabel}" Keyboard="Numeric" Placeholder="Edit Data"
-                    		   Text="{Binding TrainingWeek.Year, Converter={StaticResource intConverter}}"/-->
-
-                    		 
-                    <!--viewcell>
-					    <stacklayout padding="20,5,5,5" horizontaloptions="Fill" orientation="Horizontal">
-					        <label x:name="pickerText" text="Last service" horizontaloptions="FillAndExpand" yalign="Center">
-						        <datepicker x:name="datePicker" date="{Binding YearLabel mode=TwoWay}" format="d" horizontaloptions="Fill">
-						        </datepicker>
-						    </label>
-					    </stacklayout>
-					</viewcell>
-                   
-                    <EntryCell HorizontalTextAlignment="Start" Label="{Binding WeekNumberLabel}"  Keyboard="Numeric" Placeholder="Edit Data"
-                    			Text="{Binding TrainingWeek.WeekOfYear, Converter={StaticResource intConverter}}" />
-                    <EntryCell HorizontalTextAlignment="Start" Label="{Binding HeightLabel}"  Keyboard="Numeric" Placeholder="Edit Data"
-                    			Text="{Binding TrainingWeek.UserHeight, Converter={StaticResource intConverter}}"/>
-                    <EntryCell HorizontalTextAlignment="Start" Label="{Binding WeightLabel}"  Keyboard="Numeric" Placeholder="Edit Data" 
-                    			Text="{Binding TrainingWeek.UserWeight, Converter={StaticResource intConverter}}"/-->
                 </TableSection>
             </TableRoot>
         </TableView>

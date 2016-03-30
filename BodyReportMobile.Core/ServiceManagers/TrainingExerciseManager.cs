@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using BodyReportMobile.Core.Crud.Module;
 using Framework;
 
-namespace BodyReportMobile.Core.Manager
+namespace BodyReportMobile.Core.ServiceManagers
 {
 	public class TrainingExerciseManager : ServiceManager
 	{

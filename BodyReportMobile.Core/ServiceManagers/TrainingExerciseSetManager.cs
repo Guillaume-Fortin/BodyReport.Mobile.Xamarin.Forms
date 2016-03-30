@@ -4,7 +4,7 @@ using BodyReportMobile.Core.Crud.Module;
 using SQLite.Net;
 using System.Collections.Generic;
 
-namespace BodyReportMobile.Core.Manager
+namespace BodyReportMobile.Core.ServiceManagers
 {
 	public class TrainingExerciseSetManager : ServiceManager
 	{

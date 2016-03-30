@@ -5,7 +5,7 @@ using Message;
 using BodyReportMobile.Core.Crud.Transformer;
 using SQLite.Net;
 
-namespace BodyReportMobile.Core.Manager
+namespace BodyReportMobile.Core.ServiceManagers
 {
 	public class MuscleManager : ServiceManager
 	{

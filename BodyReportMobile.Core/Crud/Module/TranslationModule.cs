@@ -7,7 +7,6 @@ using BodyReportMobile.Core;
 using BodyReportMobile.Core.Crud.Transformer;
 using SQLite.Net;
 
-
 namespace BodyReportMobile.Core.Crud.Module
 {
     /// <summary>

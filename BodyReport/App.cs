@@ -4,6 +4,7 @@ using MvvmCross.Core.ViewModels;
 using MvvmCross.Platform;
 using BodyReportMobile.Core.Services;
 using MvvmCross.Forms.Presenter.Core;
+using BodyReportMobile.Core;
 
 namespace BodyReport
 {

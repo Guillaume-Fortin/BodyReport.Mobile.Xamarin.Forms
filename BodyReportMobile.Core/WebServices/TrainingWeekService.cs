@@ -9,9 +9,7 @@ namespace BodyReportMobile.Core
 	{
 		public static async Task<List<TrainingWeek>> FindTrainingWeeks ()
 		{
-			var httpConnector = new HttpConnector ();
-
-			return await httpConnector.GetAsync<List<TrainingWeek>> ("api/TrainingWeeks/Find");
+			return await HttpConnector.Instance.GetAsync<List<TrainingWeek>> ("api/TrainingWeeks/Find");
 		}
 	}
 }

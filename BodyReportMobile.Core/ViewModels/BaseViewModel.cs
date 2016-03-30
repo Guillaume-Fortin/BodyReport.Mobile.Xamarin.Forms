@@ -18,6 +18,11 @@ namespace BodyReportMobile.Core.ViewModels
 		private string _viewModelGuid;
 
 		/// <summary>
+		/// Title of viewmodel
+		/// </summary>
+		private string _titleLabel = string.Empty;
+
+		/// <summary>
 		/// The mvx messenger token.
 		/// </summary>
 		private readonly MvxSubscriptionToken _mvxMessengerFormClosedToken;
@@ -88,6 +93,16 @@ namespace BodyReportMobile.Core.ViewModels
 		public string ViewModelGuid {
 			get {
 				return _viewModelGuid;
+			}
+		}
+
+		public string TitleLabel {
+			get {
+				return _titleLabel;
+			}
+			set {
+				_titleLabel = value;
+				RaisePropertyChanged (() => TitleLabel);
 			}
 		}
 

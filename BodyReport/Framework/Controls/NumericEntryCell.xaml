@@ -18,7 +18,8 @@
 
 	   <local:NumericEntry x:Name="ValueLabel" Text="{Binding Path=Text, Mode=TwoWay, Source={x:Reference touchViewCell}}" 
 				   MinValue="{Binding Path=MinValue, Mode=TwoWay, Source={x:Reference touchViewCell}}" 
-				   MaxValue="{Binding Path=MaxValue, Mode=TwoWay, Source={x:Reference touchViewCell}}" 
+				   MaxValue="{Binding Path=MaxValue, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+				   IsInteger="{Binding Path=IsInteger, Mode=TwoWay, Source={x:Reference touchViewCell}}"
 	    		   HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" FontSize="14"
 	    		   Grid.Row="0" Grid.Column="1"  Keyboard="Numeric" />
     	

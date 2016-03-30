@@ -1,7 +1,7 @@
 ﻿using System;
 using SQLite.Net;
 
-namespace BodyReportMobile.Core.Manager
+namespace BodyReportMobile.Core.ServiceManagers
 {
 	public class ServiceManager
 	{

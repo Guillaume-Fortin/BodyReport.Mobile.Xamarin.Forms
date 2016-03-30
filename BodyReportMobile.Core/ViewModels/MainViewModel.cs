@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 using BodyReportMobile.Core.Message;
 using System.Collections.Generic;
 using Message;
-using BodyReportMobile.Core.Manager;
+using BodyReportMobile.Core.ServiceManagers;
 using SQLite.Net;
 using MvvmCross.Platform;
+using Acr.UserDialogs;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -67,6 +68,8 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			try
 			{
+				await Task.Delay(200);
+				await LoginManager.Instance.Init ();
 				//Synchronise Web data to local database
 				var muscleList = await MuscleWebService.FindMuscles();
 				var muscleManager = new MuscleManager(_dbContext);

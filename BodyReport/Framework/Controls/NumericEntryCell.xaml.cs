@@ -20,18 +20,25 @@ namespace BodyReport
 			set { SetValue (TextProperty, value); }
 		}
 
-		public static readonly BindableProperty MinValueProperty = BindableProperty.Create ("MinValue", typeof(int), typeof(NumericEntry), int.MinValue);
+		public static readonly BindableProperty MinValueProperty = BindableProperty.Create ("MinValue", typeof(double), typeof(NumericEntry), double.MinValue);
 
-		public int MinValue {
-			get { return (int)GetValue (MinValueProperty); }
+		public double MinValue {
+			get { return (double)GetValue (MinValueProperty); }
 			set { SetValue (MinValueProperty, value); }
 		}
 
-		public static readonly BindableProperty MaxValueProperty = BindableProperty.Create ("MaxValue", typeof(int), typeof(NumericEntry), int.MinValue);
+		public static readonly BindableProperty MaxValueProperty = BindableProperty.Create ("MaxValue", typeof(double), typeof(NumericEntry), double.MaxValue);
 
-		public int MaxValue {
-			get { return (int)GetValue (MaxValueProperty); }
+		public double MaxValue {
+			get { return (double)GetValue (MaxValueProperty); }
 			set { SetValue (MaxValueProperty, value); }
+		}
+
+		public static readonly BindableProperty IsIntegerProperty = BindableProperty.Create ("IsInteger", typeof(bool), typeof(NumericEntry), false);
+
+		public bool IsInteger {
+			get { return (bool)GetValue (IsIntegerProperty); }
+			set { SetValue (IsIntegerProperty, value); }
 		}
 
 		public NumericEntryCell ()

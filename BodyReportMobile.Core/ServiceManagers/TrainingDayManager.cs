@@ -4,7 +4,7 @@ using Message;
 using System.Collections.Generic;
 using BodyReportMobile.Core.Crud.Module;
 
-namespace BodyReportMobile.Core.Manager
+namespace BodyReportMobile.Core.ServiceManagers
 {
 	public class TrainingDayManager : ServiceManager
 	{

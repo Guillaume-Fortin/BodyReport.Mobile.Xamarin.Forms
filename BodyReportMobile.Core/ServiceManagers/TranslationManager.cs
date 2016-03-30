@@ -4,7 +4,7 @@ using Message;
 using System.Collections.Generic;
 using SQLite.Net;
 
-namespace BodyReportMobile.Core.Manager
+namespace BodyReportMobile.Core.ServiceManagers
 {
 	public class TranslationManager : ServiceManager
 	{

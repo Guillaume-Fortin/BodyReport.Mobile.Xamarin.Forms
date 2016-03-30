@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net;
+using MvvmCross.Platform;
+using MvvmCross.Plugins.Messenger;
 
 namespace BodyReportMobile.Core
 {
@@ -14,7 +16,20 @@ namespace BodyReportMobile.Core
 		private HttpClient _httpClient = null;
 		private bool _connected = false;
 
-		public HttpConnector ()
+		private string _userName = string.Empty;
+		private string _password = string.Empty;
+
+		private static HttpConnector _instance = null;
+
+		public static HttpConnector Instance {
+			get {
+				if(_instance == null)
+					_instance = new HttpConnector ();
+				return _instance;
+			}
+		}
+
+		private HttpConnector ()
 		{
 			//Now we make the same request with the token received by the auth service.
 			CookieContainer cookies = new CookieContainer();
@@ -24,29 +39,47 @@ namespace BodyReportMobile.Core
 			_httpClient = new System.Net.Http.HttpClient (handler);
 		}
 
+		public async Task<bool> ConnectUser(string userName, string password)
+		{
+			_userName = userName;
+			_password = password;
+			bool result = await ConnectUser ();
+			_connected = result;
+			return result;
+		}
+
 		/// <summary>
 		/// Connect user to WebSite with user identifier (Login/Password)
 		/// </summary>
-		private async Task ConnectUser()
+		private async Task<bool> ConnectUser()
 		{
+			bool result = false;
 			try
 			{
-				_connected = false;
 				//Use credential http cookie
 				var postData = new List<KeyValuePair<string, string>>();
-				postData.Add(new KeyValuePair<string, string>("userName", "thetyne"));
-				postData.Add(new KeyValuePair<string, string>("password", "azerty"));
+				postData.Add(new KeyValuePair<string, string>("userName", _userName));
+				postData.Add(new KeyValuePair<string, string>("password", _password));
 
 				HttpContent content = new FormUrlEncodedContent(postData);
 				var response = await _httpClient.PostAsync(_baseUrl + _relativeLoginUrl, content);
 
 				if(response != null)
-					_connected = response != null && response.StatusCode == HttpStatusCode.OK;
+				{
+					if(response.StatusCode == HttpStatusCode.Forbidden)
+					{
+						var messenger = Mvx.Resolve<IMvxMessenger> ();
+						messenger.Publish (new MvxMessageLoginEntry (this));
+					}
+					else if(response.StatusCode == HttpStatusCode.OK)
+						result = true;
+				}
 			}
 			catch(Exception exception)
 			{
-				throw exception;
+				//TODO LOG
 			}
+			return result;
 		}
 
 		public async Task<T> GetAsync<T>(string relativeUrl)
@@ -55,7 +88,16 @@ namespace BodyReportMobile.Core
 			try
 			{
 				if(!_connected)
-					await ConnectUser();
+				{
+					if(string.IsNullOrWhiteSpace(_userName) || string.IsNullOrWhiteSpace(_password))
+					{
+						var messenger = Mvx.Resolve<IMvxMessenger> ();
+						messenger.Publish (new MvxMessageLoginEntry (this));
+						throw new Exception("Connexion impossible");
+					}
+					else
+						_connected = await ConnectUser();
+				}
 				
 				if(!_connected)
 					throw new Exception("Connexion impossible");

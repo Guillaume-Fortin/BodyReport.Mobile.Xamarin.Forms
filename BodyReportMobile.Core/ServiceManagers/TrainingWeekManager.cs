@@ -1,11 +1,11 @@
 ﻿using System;
-using BodyReportMobile.Core.Manager;
+using BodyReportMobile.Core.ServiceManagers;
 using SQLite.Net;
 using Message;
 using System.Collections.Generic;
 using BodyReportMobile.Core.Crud.Module;
 
-namespace BodyReportMobile.Core.Manager
+namespace BodyReportMobile.Core.ServiceManagers
 {
 	public class TrainingWeekManager : ServiceManager
 	{
