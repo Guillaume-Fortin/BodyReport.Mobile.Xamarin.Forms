@@ -1,8 +1,26 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-					   xmlns:local="clr-namespace:BodyReport" x:Class="BodyReport.MainPage" BackgroundColor="#6DBEE3">
+					   xmlns:local="clr-namespace:BodyReport" x:Class="BodyReport.MainPage" BackgroundColor="#6DBEE3"
+					   Title="{Binding TitleLabel}">
 	<ContentPage.Content>
-		<ScrollView>
+		<TableView x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+            <TableRoot>
+                <TableSection Title="{Binding MenuLabel}">
+                	<local:TouchViewCell x:Name="TrainingJournalCell" Tapped="OnCellTapped" 
+                		Value="{Binding TrainingJournalLabel}"
+                		IsIndicatorVisible="true" />
+                </TableSection>
+                <TableSection Title="{Binding ConfigurationLabel}">
+                	<local:TouchViewCell x:Name="ChangeLanguageCell" Tapped="OnCellTapped" 
+                		Value="{Binding ChangeLanguageLabel}"
+                		Image="{Binding LanguageFlagImageSource}"
+                		IsImageVisible="true"
+                		IsIndicatorVisible="true" />
+
+                </TableSection>
+            </TableRoot>
+        </TableView>
+		<!--ScrollView>
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="*" />
@@ -27,6 +45,6 @@
 					<Button Command="{Binding GoToChangeLanguageCommand}" HorizontalOptions="Center" Text="{Binding ChangeLanguageLabel}"/>
 				</StackLayout>
 			</Grid>
-		</ScrollView>
+		</ScrollView-->
 	</ContentPage.Content>
 </local:BaseContentPage>

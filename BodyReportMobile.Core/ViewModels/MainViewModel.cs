@@ -13,8 +13,11 @@ using Acr.UserDialogs;
 
 namespace BodyReportMobile.Core.ViewModels
 {
-	public class MainViewModel  : BaseViewModel
+	public class MainViewModel : BaseViewModel
 	{
+		public string MenuLabel { get; set;}
+		public string ConfigurationLabel { get; set;}
+		public string TrainingJournalLabel { get; set;}
 		public string ChangeLanguageLabel { get; set;}
 
 		private string _languageFlagImageSource;
@@ -48,7 +51,11 @@ namespace BodyReportMobile.Core.ViewModels
 
 		private void SynchronizeData()
 		{
-			ChangeLanguageLabel = Translation.Get (TRS.COPY);
+			TitleLabel = "BodyReport";
+			MenuLabel = Translation.Get (TRS.MENU);
+			ConfigurationLabel = Translation.Get (TRS.CONFIGURATION);
+			TrainingJournalLabel = Translation.Get (TRS.TRAINING_JOURNAL);
+			ChangeLanguageLabel = Translation.Get (TRS.LANGUAGE);
 			LanguageFlagImageSource = GeLanguageFlagImageSource (Translation.CurrentLang);
 
 			RaiseAllPropertiesChanged ();
@@ -68,8 +75,9 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			try
 			{
-				await Task.Delay(200);
+				await Task.Delay(200); //TODO replace it by Main form loaded Event
 				await LoginManager.Instance.Init ();
+
 				//Synchronise Web data to local database
 				var muscleList = await MuscleWebService.FindMuscles();
 				var muscleManager = new MuscleManager(_dbContext);
@@ -81,6 +89,7 @@ namespace BodyReportMobile.Core.ViewModels
 			}
 			catch (Exception exception)
 			{
+				// TODO log
 			}
 		}
 
@@ -115,7 +124,7 @@ namespace BodyReportMobile.Core.ViewModels
 							currentData = data;
 					}
 
-					var result = await ListViewModel.ShowGenericList ("Select Language", datas, currentData, this);
+					var result = await ListViewModel.ShowGenericList (Translation.Get(TRS.LANGUAGE), datas, currentData, this);
 
 					if(result.ViewModelValidated && result.SelectedTag != null)
 					{

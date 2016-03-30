@@ -25,7 +25,6 @@ namespace BodyReportMobile.Core
 
 		public ObservableCollection<GenericData> Datas { get; set; } = new ObservableCollection<GenericData>();
 		public GenericData SelectedItem { get; set; }
-		public string Title { get; set; }
 
 		public ListViewModel (IMvxMessenger messenger) : base(messenger)
 		{
@@ -35,7 +34,7 @@ namespace BodyReportMobile.Core
 		{
 			base.Init (viewModelGuid, autoClearViewModelDataCollection);
 
-			Title = ViewModelDataCollection.Get<string> (viewModelGuid, TITLE);
+			TitleLabel = ViewModelDataCollection.Get<string> (viewModelGuid, TITLE);
 			var datas = ViewModelDataCollection.Get<List<GenericData>> (viewModelGuid, DATAS);
 			if (datas != null) {
 				foreach (var data in datas)

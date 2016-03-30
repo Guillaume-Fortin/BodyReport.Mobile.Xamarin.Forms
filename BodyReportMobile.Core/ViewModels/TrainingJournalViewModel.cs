@@ -113,9 +113,8 @@ namespace BodyReportMobile.Core
 
 					dateTime = Utils.YearWeekToPlanningDateTime(trainingWeek.Year, trainingWeek.WeekOfYear);
 					collection.Add (new BindingTrainingWeek () {
-						//date = string.Format(Translation.FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3, dateTime.Day, dateTime.AddDays(6).Day, Translation.Get(((TMonthType)dateTime.Month).ToString().ToUpper()), dateTime.Year);
 						Date = string.Format(Translation.Get(TRS.FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3), dateTime.Day, dateTime.AddDays(6.0d).Day, Translation.Get(((TMonthType)dateTime.Month).ToString().ToUpper()), dateTime.Year),
-						Week = Translation.Get(TRS.WEEK_NUMBER) + trainingWeek.WeekOfYear.ToString (),
+						Week = Translation.Get(TRS.WEEK_NUMBER) + ' ' + trainingWeek.WeekOfYear.ToString (),
 						TrainingWeek = trainingWeek
 					});
 				}
