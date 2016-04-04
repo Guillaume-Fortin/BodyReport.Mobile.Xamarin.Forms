@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Net;
 using MvvmCross.Platform;
 using MvvmCross.Plugins.Messenger;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace BodyReportMobile.Core
 {
@@ -21,9 +23,11 @@ namespace BodyReportMobile.Core
 
 		private static HttpConnector _instance = null;
 
-		public static HttpConnector Instance {
-			get {
-				if(_instance == null)
+		public static HttpConnector Instance
+		{
+			get
+			{
+				if (_instance == null)
 					_instance = new HttpConnector ();
 				return _instance;
 			}
@@ -32,14 +36,15 @@ namespace BodyReportMobile.Core
 		private HttpConnector ()
 		{
 			//Now we make the same request with the token received by the auth service.
-			CookieContainer cookies = new CookieContainer();
-			HttpClientHandler handler = new HttpClientHandler();
+			CookieContainer cookies = new CookieContainer ();
+			HttpClientHandler handler = new HttpClientHandler ();
 			handler.CookieContainer = cookies;
 
 			_httpClient = new System.Net.Http.HttpClient (handler);
+			_httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json")); 
 		}
 
-		public async Task<bool> ConnectUser(string userName, string password)
+		public async Task<bool> ConnectUser (string userName, string password)
 		{
 			_userName = userName;
 			_password = password;
@@ -51,82 +56,128 @@ namespace BodyReportMobile.Core
 		/// <summary>
 		/// Connect user to WebSite with user identifier (Login/Password)
 		/// </summary>
-		private async Task<bool> ConnectUser()
+		private async Task<bool> ConnectUser ()
 		{
 			bool result = false;
 			try
 			{
 				//Use credential http cookie
-				var postData = new List<KeyValuePair<string, string>>();
-				postData.Add(new KeyValuePair<string, string>("userName", _userName));
-				postData.Add(new KeyValuePair<string, string>("password", _password));
+				var postData = new List<KeyValuePair<string, string>> ();
+				postData.Add (new KeyValuePair<string, string> ("userName", _userName));
+				postData.Add (new KeyValuePair<string, string> ("password", _password));
 
-				HttpContent content = new FormUrlEncodedContent(postData);
-				var response = await _httpClient.PostAsync(_baseUrl + _relativeLoginUrl, content);
+				HttpContent content = new FormUrlEncodedContent (postData);
+				var response = await _httpClient.PostAsync (_baseUrl + _relativeLoginUrl, content);
 
-				if(response != null)
+				if (response != null)
 				{
-					if(response.StatusCode == HttpStatusCode.Forbidden)
+					if (response.StatusCode == HttpStatusCode.Forbidden)
 					{
 						var messenger = Mvx.Resolve<IMvxMessenger> ();
 						messenger.Publish (new MvxMessageLoginEntry (this));
 					}
-					else if(response.StatusCode == HttpStatusCode.OK)
+					else if (response.StatusCode == HttpStatusCode.OK)
 						result = true;
 				}
 			}
-			catch(Exception exception)
+			catch (Exception exception)
 			{
 				//TODO LOG
 			}
 			return result;
 		}
 
-		public async Task<T> GetAsync<T>(string relativeUrl)
+		private async Task AutoConnect()
+		{
+			if (!_connected)
+			{
+				if (string.IsNullOrWhiteSpace (_userName) || string.IsNullOrWhiteSpace (_password))
+				{
+					var messenger = Mvx.Resolve<IMvxMessenger> ();
+					messenger.Publish (new MvxMessageLoginEntry (this));
+					throw new Exception ("Connexion impossible");
+				}
+				else
+					_connected = await ConnectUser ();
+			}
+			if (!_connected)
+				throw new Exception ("Connexion impossible");
+		}
+
+		public async Task<T> GetAsync<T> (string relativeUrl)
 		{
 			T result = default(T);
 			try
 			{
-				if(!_connected)
-				{
-					if(string.IsNullOrWhiteSpace(_userName) || string.IsNullOrWhiteSpace(_password))
-					{
-						var messenger = Mvx.Resolve<IMvxMessenger> ();
-						messenger.Publish (new MvxMessageLoginEntry (this));
-						throw new Exception("Connexion impossible");
-					}
-					else
-						_connected = await ConnectUser();
-				}
+				await AutoConnect();
 				
-				if(!_connected)
-					throw new Exception("Connexion impossible");
-				
-				var httpResponse = await _httpClient.GetAsync(_baseUrl + relativeUrl);
+				var httpResponse = await _httpClient.GetAsync (_baseUrl + relativeUrl);
 
-				if(httpResponse != null)
+				if (httpResponse != null)
 				{
-					if(httpResponse.StatusCode == HttpStatusCode.OK)
+					if (httpResponse.StatusCode == HttpStatusCode.OK)
 					{
-						var jsonStringResult = httpResponse.Content.ReadAsStringAsync().Result;
-						result = JsonConvert.DeserializeObject<T>(jsonStringResult);
+						var jsonStringResult = httpResponse.Content.ReadAsStringAsync ().Result;
+						result = JsonConvert.DeserializeObject<T> (jsonStringResult);
 					}
-					else if(httpResponse.StatusCode == HttpStatusCode.NotFound)
+					else if (httpResponse.StatusCode == HttpStatusCode.NotFound)
 					{
-						throw new Exception("Ressource not found");
+						throw new Exception ("Ressource not found");
 					}
-					else if(httpResponse.StatusCode == HttpStatusCode.Forbidden)
+					else if (httpResponse.StatusCode == HttpStatusCode.Forbidden)
 					{
 						_connected = false;
-						throw new Exception("Ressource forbidden");
+						throw new Exception ("Ressource forbidden");
 					}
 					else
 					{
-						throw new Exception("HTTP request error");
+						throw new Exception ("HTTP request error");
 					}
 				}
 			}
-			catch(Exception exception)
+			catch (Exception exception)
+			{
+				throw exception;
+			}
+
+			return result;
+		}
+
+		public async Task<T> PostAsync<T> (string relativeUrl, T postData)
+		{
+			T result = default(T);
+			try
+			{
+				await AutoConnect();
+
+				string postBody = string.Format("={0}", JsonConvert.SerializeObject(postData)); 
+
+				//HttpContent content = new FormUrlEncodedContent (postBody);
+				var httpResponse = await _httpClient.PostAsync(_baseUrl + relativeUrl, new StringContent(postBody, Encoding.UTF8, "application/x-www-form-urlencoded")); 
+
+				if (httpResponse != null)
+				{
+					if (httpResponse.StatusCode == HttpStatusCode.OK)
+					{
+						var jsonStringResult = httpResponse.Content.ReadAsStringAsync ().Result;
+						result = JsonConvert.DeserializeObject<T> (jsonStringResult);
+					}
+					else if (httpResponse.StatusCode == HttpStatusCode.NotFound)
+					{
+						throw new Exception ("Ressource not found");
+					}
+					else if (httpResponse.StatusCode == HttpStatusCode.Forbidden)
+					{
+						_connected = false;
+						throw new Exception ("Ressource forbidden");
+					}
+					else
+					{
+						throw new Exception ("HTTP request error");
+					}
+				}
+			}
+			catch (Exception exception)
 			{
 				throw exception;
 			}
