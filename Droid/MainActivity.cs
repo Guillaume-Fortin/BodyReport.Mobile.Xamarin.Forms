@@ -7,6 +7,11 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using MvvmCross.Platform;
+using MvvmCross.Core.Views;
+using MvvmCross.Core.ViewModels;
+using MvvmCross.Forms.Presenter.Droid;
+using MvvmCross.Forms.Presenter.Core;
 
 namespace BodyReport.Droid
 {
@@ -17,9 +22,22 @@ namespace BodyReport.Droid
 		{
 			base.OnCreate (bundle);
 
-			global::Xamarin.Forms.Forms.Init (this, bundle);
+            global::Xamarin.Forms.Forms.Init(this, bundle);
 
-			LoadApplication (new App ());
+
+            var mvxFormsApp = new MvxFormsApp();
+            LoadApplication(mvxFormsApp);
+
+
+            var setup = new Setup(this);
+            setup.Initialize();
+
+            var presenter = Mvx.Resolve<IMvxViewPresenter>() as MvxFormsDroidPagePresenter;
+            presenter.MvxFormsApp = mvxFormsApp;
+
+
+            Mvx.Resolve<IMvxAppStart>().Start();
+            //LoadApplication (new App ());
 		}
 	}
 }

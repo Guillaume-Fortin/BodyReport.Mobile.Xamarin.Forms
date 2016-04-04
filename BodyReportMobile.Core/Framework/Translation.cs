@@ -79,7 +79,9 @@ namespace BodyReportMobile.Core
 		public static void ChangeLang(LangType langType)
 		{
 			CurrentLang = langType;
-			_currentTranslation = _translationDicoList[GetLangExt(langType)];
+
+            if(_translationDicoList.ContainsKey(GetLangExt(langType)))
+			    _currentTranslation = _translationDicoList[GetLangExt(langType)];
 
 			if (ChangeEvent != null)
 				ChangeEvent ();

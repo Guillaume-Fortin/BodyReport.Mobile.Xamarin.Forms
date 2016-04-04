@@ -1,7 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-					   xmlns:local="clr-namespace:BodyReport" x:Class="BodyReport.MainPage" BackgroundColor="#6DBEE3"
+					   xmlns:local="clr-namespace:BodyReport" x:Class="BodyReport.MainPage"
 					   Title="{Binding TitleLabel}">
+
+  <ContentPage.BackgroundColor>
+    <OnPlatform x:TypeArguments="Color"
+                iOS="#6DBEE3"/>
+  </ContentPage.BackgroundColor>
+  
 	<ContentPage.Content>
 		<TableView x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
             <TableRoot>
@@ -16,7 +22,6 @@
                 		Image="{Binding LanguageFlagImageSource}"
                 		IsImageVisible="true"
                 		IsIndicatorVisible="true" />
-
                 </TableSection>
             </TableRoot>
         </TableView>
