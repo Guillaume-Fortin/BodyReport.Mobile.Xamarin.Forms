@@ -11,6 +11,11 @@ namespace BodyReportMobile.Core
 		{
 			return await HttpConnector.Instance.GetAsync<List<TrainingWeek>> ("api/TrainingWeeks/Find");
 		}
+
+		public static async Task<TrainingWeek> UpdateTrainingWeek (TrainingWeek trainingWeek)
+		{
+			return await HttpConnector.Instance.PostAsync<TrainingWeek> ("api/TrainingWeeks/Update", trainingWeek);
+		}
 	}
 }
 
