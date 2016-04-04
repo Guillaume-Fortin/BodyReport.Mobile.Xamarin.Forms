@@ -10,7 +10,7 @@
 	</ContentPage.Resources>
 
 	<ContentPage.ToolbarItems>
-	  <ToolbarItem Name="LoginToolbarItem" Text = "{Binding LoginLabel}" Command="{Binding ValidateCommand}" Order="Primary" Priority="0" />
+	  <ToolbarItem Name="LoginToolbarItem" Text = "{Binding ValidateLabel}" Command="{Binding ValidateCommand}" Order="Primary" Priority="0" />
 	</ContentPage.ToolbarItems>
 	<ContentPage.Content>
 		<TableView x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
