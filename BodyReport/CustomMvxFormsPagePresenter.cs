@@ -1,5 +1,4 @@
 ﻿using System;
-
 using Xamarin.Forms;
 using MvvmCross.Forms.Presenter.Core;
 using MvvmCross.Core.ViewModels;
@@ -69,7 +68,7 @@ namespace BodyReport
 			return true;
 		}
 
-		/*
+        /*
 		void Page_Disappearing (object sender, EventArgs e)
 		{
 			if (sender == null || !(sender is Page))
@@ -80,11 +79,11 @@ namespace BodyReport
 			if (page.BindingContext != null && page.BindingContext is BaseViewModel) {
 				var baseViewModel = page.BindingContext as BaseViewModel;
 
-				var messenger = Mvx.Resolve<IMvxMessenger>();
+				var messenger = Resolver.Resolve<IMvxMessenger>();
 				messenger.Publish (new MvxMessageFormClosed (page, baseViewModel.ViewModelGuid, true));
 			}
 		}*/
-	}
+    }
 }
 
 

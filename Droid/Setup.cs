@@ -41,24 +41,12 @@ namespace BodyReport.Droid
 
         protected override IMvxAndroidViewPresenter CreateViewPresenter()
         {
-            AddIocDependencies();
             Translation.LoadTranslation();
 
             var presenter = new MvxFormsDroidPagePresenter();
             Mvx.RegisterSingleton<IMvxViewPresenter>(presenter);
 
             return presenter;
-        }
-
-        /// <summary>
-		/// Adds the ioc dependencies.
-		/// </summary>
-		private void AddIocDependencies()
-        {
-            Mvx.RegisterType<ISecurity, SecurityDroid>();
-            Mvx.RegisterType<IFileManager, FileManager>();
-            Mvx.RegisterType<ISQLite, SQLite_Droid>();
-            Mvx.RegisterSingleton<IUserDialogs>(() => UserDialogs.Instance);
         }
     }
 }

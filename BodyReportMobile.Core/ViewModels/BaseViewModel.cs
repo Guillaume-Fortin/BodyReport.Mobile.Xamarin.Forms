@@ -2,7 +2,7 @@
 using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using MvvmCross.Plugins.Messenger;
-using MvvmCross.Platform;
+using XLabs.Ioc;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -81,7 +81,7 @@ namespace BodyReportMobile.Core.ViewModels
 		protected bool CloseViewModel()
 		{
 			if (Close (this)) {
-				var messenger = Mvx.Resolve<IMvxMessenger> ();
+				var messenger = Resolver.Resolve<IMvxMessenger> ();
 				messenger.Publish (new MvxMessageFormClosed (this, ViewModelGuid, false));
 				return true;
 			}

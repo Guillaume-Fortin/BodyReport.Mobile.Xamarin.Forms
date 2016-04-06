@@ -8,8 +8,8 @@ using System.Collections.Generic;
 using Message;
 using BodyReportMobile.Core.ServiceManagers;
 using SQLite.Net;
-using MvvmCross.Platform;
 using Acr.UserDialogs;
+using XLabs.Ioc;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -39,7 +39,7 @@ namespace BodyReportMobile.Core.ViewModels
 
 		public MainViewModel (IMvxMessenger messenger) : base(messenger)
 		{
-			_dbContext = Mvx.Resolve<ISQLite> ().GetConnection ();
+			_dbContext = Resolver.Resolve<ISQLite> ().GetConnection ();
 		}
 
 		public override void Init(string viewModelGuid, bool autoClearViewModelDataCollection)

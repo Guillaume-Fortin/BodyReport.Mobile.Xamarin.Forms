@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net;
-using MvvmCross.Platform;
 using MvvmCross.Plugins.Messenger;
 using System.Net.Http.Headers;
 using System.Text;
+using XLabs.Ioc;
 
 namespace BodyReportMobile.Core
 {
@@ -73,7 +73,7 @@ namespace BodyReportMobile.Core
 				{
 					if (response.StatusCode == HttpStatusCode.Forbidden)
 					{
-						var messenger = Mvx.Resolve<IMvxMessenger> ();
+						var messenger = Resolver.Resolve<IMvxMessenger> ();
 						messenger.Publish (new MvxMessageLoginEntry (this));
 					}
 					else if (response.StatusCode == HttpStatusCode.OK)
@@ -93,7 +93,7 @@ namespace BodyReportMobile.Core
 			{
 				if (string.IsNullOrWhiteSpace (_userName) || string.IsNullOrWhiteSpace (_password))
 				{
-					var messenger = Mvx.Resolve<IMvxMessenger> ();
+					var messenger = Resolver.Resolve<IMvxMessenger> ();
 					messenger.Publish (new MvxMessageLoginEntry (this));
 					throw new Exception ("Connexion impossible");
 				}

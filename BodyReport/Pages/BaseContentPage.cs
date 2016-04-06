@@ -2,9 +2,9 @@
 using Xamarin.Forms;
 using BodyReportMobile.Core;
 using MvvmCross.Plugins.Messenger;
-using MvvmCross.Platform;
 using BodyReportMobile.Core.ViewModels;
 using Message;
+using XLabs.Ioc;
 
 namespace BodyReport
 {
@@ -30,7 +30,7 @@ namespace BodyReport
 				if (this.BindingContext != null && this.BindingContext is BaseViewModel) {
 					var baseViewModel = this.BindingContext as BaseViewModel;
 
-					var messenger = Mvx.Resolve<IMvxMessenger>();
+					var messenger = Resolver.Resolve<IMvxMessenger>();
 					messenger.Publish (new MvxMessageFormClosed (this, baseViewModel.ViewModelGuid, true));
 				}
 			}

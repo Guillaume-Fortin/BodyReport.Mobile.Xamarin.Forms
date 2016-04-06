@@ -1,9 +1,9 @@
 ﻿using System;
-using MvvmCross.Platform;
 using MvvmCross.Plugins.Messenger;
 using Acr.UserDialogs;
 using Message;
 using System.Threading.Tasks;
+using XLabs.Ioc;
 
 namespace BodyReportMobile.Core
 {
@@ -22,8 +22,8 @@ namespace BodyReportMobile.Core
 
 		private LoginManager ()
 		{
-			_security = Mvx.Resolve<ISecurity> ();
-			var messenger = Mvx.Resolve<IMvxMessenger>();
+			_security = Resolver.Resolve<ISecurity> ();
+			var messenger = Resolver.Resolve<IMvxMessenger>();
 			_mvxMessengerLoginEntry = messenger.Subscribe<MvxMessageLoginEntry>(OnLoginEntry);
 			if (_mvxMessengerLoginEntry == null) // supress unused Warning
 				_mvxMessengerLoginEntry = null;

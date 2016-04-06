@@ -7,11 +7,13 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
-using MvvmCross.Platform;
 using MvvmCross.Core.Views;
 using MvvmCross.Core.ViewModels;
 using MvvmCross.Forms.Presenter.Droid;
 using MvvmCross.Forms.Presenter.Core;
+using XLabs.Ioc;
+using BodyReportMobile.Core;
+using Acr.UserDialogs;
 
 namespace BodyReport.Droid
 {
@@ -24,6 +26,8 @@ namespace BodyReport.Droid
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
 
+            if(!Resolver.IsSet)
+                AddIocDependencies();
 
             var mvxFormsApp = new MvxFormsApp();
             LoadApplication(mvxFormsApp);
@@ -32,13 +36,28 @@ namespace BodyReport.Droid
             var setup = new Setup(this);
             setup.Initialize();
 
-            var presenter = Mvx.Resolve<IMvxViewPresenter>() as MvxFormsDroidPagePresenter;
+            var presenter = Resolver.Resolve<IMvxViewPresenter>() as MvxFormsDroidPagePresenter;
             presenter.MvxFormsApp = mvxFormsApp;
 
 
-            Mvx.Resolve<IMvxAppStart>().Start();
+            Resolver.Resolve<IMvxAppStart>().Start();
             //LoadApplication (new App ());
 		}
-	}
+
+        /// <summary>
+		/// Adds the ioc dependencies.
+		/// </summary>
+		private void AddIocDependencies()
+        {
+            var resolverContainer = new SimpleContainer();
+
+            resolverContainer.Register<ISecurity, SecurityDroid>();
+            resolverContainer.Register<IFileManager, FileManager>();
+            resolverContainer.Register<ISQLite, SQLite_Droid>();
+            resolverContainer.Register(UserDialogs.Instance);
+
+            Resolver.SetResolver(resolverContainer.GetResolver());
+        }
+    }
 }
 

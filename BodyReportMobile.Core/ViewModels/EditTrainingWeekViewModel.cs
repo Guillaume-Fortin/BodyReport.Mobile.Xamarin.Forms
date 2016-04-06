@@ -7,10 +7,10 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
-using MvvmCross.Platform;
 using System.Collections.Generic;
 using Framework;
 using Acr.UserDialogs;
+using XLabs.Ioc;
 
 namespace BodyReportMobile.Core
 {
@@ -116,7 +116,7 @@ namespace BodyReportMobile.Core
 					}
 					catch (Exception except)
 					{
-						var userDialog = Mvx.Resolve<IUserDialogs> ();
+						var userDialog = Resolver.Resolve<IUserDialogs> ();
 						await userDialog.AlertAsync (except.Message, Translation.Get (TRS.ERROR), Translation.Get (TRS.OK));
 					}
 				}, null, true);

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -273,6 +273,10 @@
     <Reference Include="MvvmCross.Plugins.All">
       <HintPath>..\packages\MvvmCross.Plugin.All.4.1.0\lib\portable-win+net45+wp8+win8+wpa81\MvvmCross.Plugins.All.dll</HintPath>
     </Reference>
+    <Reference Include="XLabs.Ioc, Version=2.0.5782.12218, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\XLabs.IoC.2.0.5782\lib\portable-net45+netcore45+wp8+MonoAndroid1+MonoTouch1\XLabs.Ioc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -280,22 +284,5 @@
       <Link>Message\Message.xproj</Link>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\" />
-    <Folder Include="ViewModels\" />
-    <Folder Include="MvxMessages\" />
-    <Folder Include="Framework\" />
-    <Folder Include="Framework\Binding\" />
-    <Folder Include="Message\" />
-    <Folder Include="ViewModels\Generics\" />
-    <Folder Include="Data\" />
-    <Folder Include="Models\" />
-    <Folder Include="Crud\" />
-    <Folder Include="Crud\Module\" />
-    <Folder Include="Crud\Transformer\" />
-    <Folder Include="WebServices\" />
-    <Folder Include="Message\Binding\" />
-    <Folder Include="ServiceManagers\" />
-    <Folder Include="Manager\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

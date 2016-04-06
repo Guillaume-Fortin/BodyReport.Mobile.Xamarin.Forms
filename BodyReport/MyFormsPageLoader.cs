@@ -5,8 +5,8 @@ using MvvmCross.Platform.IoC;
 using System.Linq;
 using MvvmCross.Core.ViewModels;
 using MvvmCross.Core.Views;
-using MvvmCross.Platform;
 using System.Collections.Generic;
+using XLabs.Ioc;
 
 namespace BodyReport
 {
@@ -27,7 +27,7 @@ namespace BodyReport
 		protected override Type GetPageType(MvxViewModelRequest request)
 		{
 			if (_viewFinder == null)
-				_viewFinder = Mvx.Resolve<IMvxViewsContainer> ();
+				_viewFinder = Resolver.Resolve<IMvxViewsContainer> ();
 
 			try
 			{

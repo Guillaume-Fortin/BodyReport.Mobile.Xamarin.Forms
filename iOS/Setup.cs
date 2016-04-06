@@ -52,13 +52,9 @@ namespace BodyReport.iOS
 		/// </summary>
 		private void AddIocDependencies()
 		{
-			Mvx.RegisterType<ISecurity, SecurityIOS> ();
-			Mvx.RegisterType<IFileManager, FileManager> ();
-			Mvx.RegisterType<ISQLite, SQLite_iOS> ();
-			Mvx.RegisterSingleton<IUserDialogs>(() => UserDialogs.Instance);
 		}
 
-		/*
+        /*
 		protected override IEnumerable<Assembly> GetViewModelAssemblies()
 		{
 			var result = base.GetViewModelAssemblies();
@@ -83,11 +79,11 @@ namespace BodyReport.iOS
 				{typeof (TipViewModel), typeof (TipPage)}
 			};
 
-			var container = Mvx.Resolve<IMvxViewsContainer>();
+			var container = Resolver.Resolve<IMvxViewsContainer>();
 			container.AddAll(vmLookup);
 		}
 		*/
-	}
+    }
 
 }
 

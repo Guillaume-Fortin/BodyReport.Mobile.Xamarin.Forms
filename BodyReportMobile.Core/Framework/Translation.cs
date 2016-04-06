@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Message;
 using System.IO;
 using Newtonsoft.Json;
-using MvvmCross.Platform;
+using XLabs.Ioc;
 
 namespace BodyReportMobile.Core
 {
@@ -45,7 +45,7 @@ namespace BodyReportMobile.Core
 
 			try
 			{
-				var fileManager = Mvx.Resolve<IFileManager>();
+				var fileManager = Resolver.Resolve<IFileManager>();
 				foreach(string extension in extensionList)
 				{
 					//if(!_translationDicoList.ContainsKey(extension))

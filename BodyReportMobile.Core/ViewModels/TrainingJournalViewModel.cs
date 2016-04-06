@@ -10,11 +10,11 @@ using MvvmCross.Core.ViewModels;
 using System.Linq;
 using System.Threading.Tasks;
 using BodyReportMobile.Core.ServiceManagers;
-using MvvmCross.Platform;
 using SQLite.Net;
 using Acr.UserDialogs;
 using BodyReportMobile.Core.Message.Binding;
 using Framework;
+using XLabs.Ioc;
 
 namespace BodyReportMobile.Core
 {
@@ -31,7 +31,7 @@ namespace BodyReportMobile.Core
 
 		public TrainingJournalViewModel (IMvxMessenger messenger) : base (messenger)
 		{
-			_dbContext = Mvx.Resolve<ISQLite> ().GetConnection ();
+			_dbContext = Resolver.Resolve<ISQLite> ().GetConnection ();
 			_trainingWeekManager = new TrainingWeekManager (_dbContext);
 		}
 
@@ -79,12 +79,12 @@ namespace BodyReportMobile.Core
 			}
 			catch (Exception except)
 			{
-				// TODO Exception
-				//var userDialog = Mvx.Resolve<IUserDialogs> ();
-				//userDialog.AlertAsync (except.Message, "Exception", "ok");
-			}
+                // TODO Exception
+                //var userDialog = Resolver.Resolve<IUserDialogs> ();
+                //userDialog.AlertAsync (except.Message, "Exception", "ok");
+            }
 
-			IsBusy = false;
+            IsBusy = false;
 		}
 
 		public void SynchronizeData ()
