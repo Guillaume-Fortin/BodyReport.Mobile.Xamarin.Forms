@@ -2,8 +2,9 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Message;
+using BodyReportMobile.Core.Framework;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.WebServices
 {
 	public static class TranslationWebService
 	{

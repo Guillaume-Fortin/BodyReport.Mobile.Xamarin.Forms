@@ -1,18 +1,16 @@
 ﻿using System;
 using MvvmCross.Core.ViewModels;
-using BodyReportMobile.Core.Services;
 using System.Windows.Input;
 using BodyReportMobile.Core;
 using System.Threading.Tasks;
-using MvvmCross.Plugins.Messenger;
 using System.Threading;
 
 namespace BodyReportMobile.Core.ViewModels
 {
 	public class TipViewModel : BaseViewModel
 	{
-		public TipViewModel (IMvxMessenger messenger) : base(messenger)
-		{
+		public TipViewModel () : base()
+        {
 		}
 
 		public ICommand DisplaySecondPageCommand

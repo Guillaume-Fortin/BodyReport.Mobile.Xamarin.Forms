@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+					   xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages"
+             xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
+             x:Class="BodyReportMobile.Presenter.Pages.MainPage"
+					   Title="{Binding TitleLabel}">
+
+  <ContentPage.BackgroundColor>
+    <OnPlatform x:TypeArguments="Color"
+                iOS="#6DBEE3"/>
+  </ContentPage.BackgroundColor>
+
+  <ContentPage.Content>
+    <TableView x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+      <TableRoot>
+        <TableSection Title="{Binding MenuLabel}">
+          <localcontrol:TouchViewCell x:Name="TrainingJournalCell" Tapped="OnCellTapped"
+            Value="{Binding TrainingJournalLabel}"
+            IsIndicatorVisible="true" />
+        </TableSection>
+        <TableSection Title="{Binding ConfigurationLabel}">
+          <localcontrol:TouchViewCell x:Name="ChangeLanguageCell" Tapped="OnCellTapped"
+            Value="{Binding ChangeLanguageLabel}"
+            Image="{Binding LanguageFlagImageSource}"
+            IsImageVisible="true"
+            IsIndicatorVisible="true" />
+        </TableSection>
+      </TableRoot>
+    </TableView>
+    <!--ScrollView>
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*" />
+					<RowDefinition Height="*" />
+					<RowDefinition Height="*" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<StackLayout VerticalOptions="Fill" HorizontalOptions="Fill" BackgroundColor="#8CD4F5">
+					<Image HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Source="http://icdn.pro/images/fr/a/j/ajouter-crayon-icone-4828-32.png"/>
+					<Button Command="{Binding GoToTrainingJournalCommand}" HorizontalOptions="Center" Text="Carnet d'entrainement"/>
+				</StackLayout>
+				<BoxView Color="#8CD4F5" Grid.Row="0" Grid.Column="1"  />
+				<BoxView Color="#8CD4F5" Grid.Row="1" Grid.Column="0"  />
+				<BoxView Color="#8CD4F5" Grid.Row="1" Grid.Column="1"  />
+				<BoxView Color="#8CD4F5" Grid.Row="2" Grid.Column="0"  />
+				<StackLayout VerticalOptions="Fill" HorizontalOptions="Fill" BackgroundColor="#8CD4F5" Grid.Row="2" Grid.Column="1">
+					<Image HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Source="{Binding LanguageFlagImageSource}"/>
+					<Button Command="{Binding GoToChangeLanguageCommand}" HorizontalOptions="Center" Text="{Binding ChangeLanguageLabel}"/>
+				</StackLayout>
+			</Grid>
+		</ScrollView-->
+  </ContentPage.Content>
+</local:BaseContentPage>

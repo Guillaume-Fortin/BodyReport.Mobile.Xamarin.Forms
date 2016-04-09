@@ -1,7 +1,7 @@
 ﻿using System;
 using Message;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.Data
 {
 	public class UserData
 	{

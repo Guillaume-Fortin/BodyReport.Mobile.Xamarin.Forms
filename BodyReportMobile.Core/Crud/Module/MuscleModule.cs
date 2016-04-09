@@ -3,6 +3,7 @@ using SQLite.Net;
 using Message;
 using BodyReportMobile.Core.Crud.Transformer;
 using System.Collections.Generic;
+using BodyReportMobile.Core.Models;
 
 namespace BodyReportMobile.Core.Crud.Module
 {

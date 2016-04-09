@@ -1,4 +1,4 @@
-﻿using BodyReport.Models;
+﻿using BodyReportMobile.Core.Models;
 using Message;
 using System;
 using System.Collections.Generic;

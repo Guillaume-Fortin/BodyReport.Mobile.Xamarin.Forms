@@ -1,9 +1,5 @@
 ﻿using System;
-using BodyReportMobile.Core.ViewModels;
-using MvvmCross.Plugins.Messenger;
-using System.Collections.ObjectModel;
 using Message;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
@@ -11,8 +7,12 @@ using System.Collections.Generic;
 using Framework;
 using Acr.UserDialogs;
 using XLabs.Ioc;
+using BodyReportMobile.Core.ViewModels.Generic;
+using BodyReportMobile.Core.WebServices;
+using BodyReportMobile.Core.Framework;
+using BodyReportMobile.Core.Data;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.ViewModels
 {
 	public class EditTrainingWeekViewModel : BaseViewModel
 	{
@@ -62,7 +62,7 @@ namespace BodyReportMobile.Core
 
 		#endregion
 
-		public EditTrainingWeekViewModel (IMvxMessenger messenger) : base (messenger)
+		public EditTrainingWeekViewModel () : base ()
 		{
 			TrainingWeek = new TrainingWeek () {
 				Year = 2015

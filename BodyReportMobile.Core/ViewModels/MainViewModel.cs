@@ -1,5 +1,4 @@
 ﻿using System;
-using MvvmCross.Plugins.Messenger;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
@@ -8,8 +7,11 @@ using System.Collections.Generic;
 using Message;
 using BodyReportMobile.Core.ServiceManagers;
 using SQLite.Net;
-using Acr.UserDialogs;
 using XLabs.Ioc;
+using BodyReportMobile.Core.ViewModels.Generic;
+using BodyReportMobile.Core.Manager;
+using BodyReportMobile.Core.WebServices;
+using BodyReportMobile.Core.Framework;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -37,8 +39,8 @@ namespace BodyReportMobile.Core.ViewModels
 
 		private SQLiteConnection _dbContext;
 
-		public MainViewModel (IMvxMessenger messenger) : base(messenger)
-		{
+		public MainViewModel() : base()
+        {
 			_dbContext = Resolver.Resolve<ISQLite> ().GetConnection ();
 		}
 

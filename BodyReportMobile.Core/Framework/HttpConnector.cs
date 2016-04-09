@@ -4,16 +4,16 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net;
-using MvvmCross.Plugins.Messenger;
 using System.Net.Http.Headers;
 using System.Text;
 using XLabs.Ioc;
+using BodyReportMobile.Core.MvxMessages;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.Framework
 {
 	public class HttpConnector
 	{
-		private string _baseUrl = "http://localhost:5000/";
+		private string _baseUrl = "http://192.168.0.15:5000/";
 		private const string _relativeLoginUrl = "Api/Account/Login";
 		private HttpClient _httpClient = null;
 		private bool _connected = false;
@@ -73,8 +73,7 @@ namespace BodyReportMobile.Core
 				{
 					if (response.StatusCode == HttpStatusCode.Forbidden)
 					{
-						var messenger = Resolver.Resolve<IMvxMessenger> ();
-						messenger.Publish (new MvxMessageLoginEntry (this));
+                        AppMessenger.AppInstance.Send(new MvxMessageLoginEntry());
 					}
 					else if (response.StatusCode == HttpStatusCode.OK)
 						result = true;
@@ -93,8 +92,7 @@ namespace BodyReportMobile.Core
 			{
 				if (string.IsNullOrWhiteSpace (_userName) || string.IsNullOrWhiteSpace (_password))
 				{
-					var messenger = Resolver.Resolve<IMvxMessenger> ();
-					messenger.Publish (new MvxMessageLoginEntry (this));
+                    AppMessenger.AppInstance.Send(new MvxMessageLoginEntry());
 					throw new Exception ("Connexion impossible");
 				}
 				else

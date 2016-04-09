@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SQLite.Net.Attributes;
 
-namespace BodyReport.Models
+namespace BodyReportMobile.Core.Models
 {
 	[Table("UserInfo")]
     public class UserInfoRow

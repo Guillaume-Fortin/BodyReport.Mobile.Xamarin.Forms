@@ -1,21 +1,18 @@
 ﻿using System;
-using MvvmCross.Plugins.Messenger;
 using Acr.UserDialogs;
 using Message;
 using System.Threading.Tasks;
 using XLabs.Ioc;
+using BodyReportMobile.Core.Framework;
+using BodyReportMobile.Core.MvxMessages;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.Manager
 {
 	public class LoginManager
 	{
 		private ISecurity _security;
 		private bool _busy = false;
 		private static LoginManager _instance = null;
-		/// <summary>
-		/// The mvx messenger token.
-		/// </summary>
-		private readonly MvxSubscriptionToken _mvxMessengerLoginEntry;
 
 		private string _userName = string.Empty;
 		private string _password = string.Empty;
@@ -23,10 +20,8 @@ namespace BodyReportMobile.Core
 		private LoginManager ()
 		{
 			_security = Resolver.Resolve<ISecurity> ();
-			var messenger = Resolver.Resolve<IMvxMessenger>();
-			_mvxMessengerLoginEntry = messenger.Subscribe<MvxMessageLoginEntry>(OnLoginEntry);
-			if (_mvxMessengerLoginEntry == null) // supress unused Warning
-				_mvxMessengerLoginEntry = null;
+            AppMessenger.AppInstance.Register<MvxMessageLoginEntry>(this, OnLoginEntry);
+            //TODO unscribe
 		}
 
 		public static LoginManager Instance {

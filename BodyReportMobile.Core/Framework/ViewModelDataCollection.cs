@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.Framework
 {
 	public static class ViewModelDataCollection
 	{

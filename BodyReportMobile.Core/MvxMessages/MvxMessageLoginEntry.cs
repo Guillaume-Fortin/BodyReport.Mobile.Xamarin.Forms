@@ -1,14 +1,9 @@
 ﻿using System;
-using MvvmCross.Plugins.Messenger;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.MvxMessages
 {
-	public class MvxMessageLoginEntry: MvxMessage
+	public class MvxMessageLoginEntry
 	{
-		public MvxMessageLoginEntry(object sender) 
-			: base(sender)
-		{
-		}
 	}
 }
 

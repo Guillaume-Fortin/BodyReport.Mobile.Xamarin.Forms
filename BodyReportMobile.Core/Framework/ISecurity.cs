@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.Framework
 {
 	public interface ISecurity
 	{

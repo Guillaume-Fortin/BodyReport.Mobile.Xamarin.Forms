@@ -1,5 +1,5 @@
 ﻿using System;
-using BodyReportMobile.Core;
+using BodyReportMobile.Core.Framework;
 
 namespace BodyReport.Droid
 {

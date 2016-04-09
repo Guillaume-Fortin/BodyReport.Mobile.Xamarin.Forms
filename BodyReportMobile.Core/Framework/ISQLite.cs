@@ -1,7 +1,7 @@
 ﻿using System;
 using SQLite.Net;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.Framework
 {
 	public interface ISQLite
 	{

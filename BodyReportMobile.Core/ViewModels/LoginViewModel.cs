@@ -1,18 +1,18 @@
 ﻿using System;
 using BodyReportMobile.Core.ViewModels;
-using MvvmCross.Plugins.Messenger;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using Message;
+using BodyReportMobile.Core.Framework;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.ViewModels
 {
 	public class LoginViewModel : BaseViewModel
 	{
 		public string LoginLabel {get; set;}
 
-		public LoginViewModel (IMvxMessenger messenger) : base(messenger)
-		{
+		public LoginViewModel () : base()
+        {
 		}
 
 		protected override void InitTranslation()
@@ -32,7 +32,7 @@ namespace BodyReportMobile.Core
 		{
 			get
 			{
-				return new MvxAsyncCommand (async () => {
+				return new MvxCommand (() => {
 					if(ValidateFields())
 					{
 						CloseViewModel();

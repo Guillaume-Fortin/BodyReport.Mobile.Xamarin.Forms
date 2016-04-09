@@ -152,9 +152,6 @@
     <Reference Include="MvvmCross.Plugins.Location.iOS">
       <HintPath>..\packages\MvvmCross.Plugin.Location.4.1.0\lib\Xamarin.iOS10\MvvmCross.Plugins.Location.iOS.dll</HintPath>
     </Reference>
-    <Reference Include="MvvmCross.Plugins.Messenger">
-      <HintPath>..\packages\MvvmCross.Plugin.Messenger.4.1.0\lib\Xamarin.iOS10\MvvmCross.Plugins.Messenger.dll</HintPath>
-    </Reference>
     <Reference Include="MvvmCross.Plugins.MethodBinding">
       <HintPath>..\packages\MvvmCross.Plugin.MethodBinding.4.1.0\lib\Xamarin.iOS10\MvvmCross.Plugins.MethodBinding.dll</HintPath>
     </Reference>
@@ -272,7 +269,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BodyReport\BodyReport.csproj">
+    <ProjectReference Include="..\BodyReportMobile.Presenter\BodyReportMobile.Presenter.csproj">
       <Project>{0D1D48E8-7539-4653-B07A-3C737855BC4D}</Project>
       <Name>BodyReport</Name>
     </ProjectReference>
@@ -302,26 +299,6 @@
     <Compile Include="DebugTrace.cs" />
     <Compile Include="LinkerPleaseInclude.cs" />
     <Compile Include="MvxFormsIosPagePresenter.cs" />
-    <Compile Include="Bootstrap\AccelerometerPluginBootstrap.cs" />
-    <Compile Include="Bootstrap\ColorPluginBootstrap.cs" />
-    <Compile Include="Bootstrap\DownloadCachePluginBootstrap.cs" />
-    <Compile Include="Bootstrap\EmailPluginBootstrap.cs" />
-    <Compile Include="Bootstrap\FilePluginBootstrap.cs" />
-    <Compile Include="Bootstrap\JsonPluginBootstrap.cs" />
-    <Compile Include="Bootstrap\ResourceLoaderPluginBootstrap.cs" />
-    <Compile Include="Bootstrap\JsonLocalizationPluginBootstrap.cs" />
-    <Compile Include="Bootstrap\LocationPluginBootstrap.cs" />
-    <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
-    <Compile Include="Bootstrap\MethodBindingPluginBootstrap.cs" />
-    <Compile Include="Bootstrap\NetworkPluginBootstrap.cs" />
-    <Compile Include="Bootstrap\PhoneCallPluginBootstrap.cs" />
-    <Compile Include="Bootstrap\PictureChooserPluginBootstrap.cs" />
-    <Compile Include="Bootstrap\ReflectionExPluginBootstrap.cs" />
-    <Compile Include="Bootstrap\SharePluginBootstrap.cs" />
-    <Compile Include="Bootstrap\SqlitePluginBootstrap.cs" />
-    <Compile Include="Bootstrap\ThreadUtilsPluginBootstrap.cs" />
-    <Compile Include="Bootstrap\VisibilityPluginBootstrap.cs" />
-    <Compile Include="Bootstrap\WebBrowserPluginBootstrap.cs" />
     <Compile Include="Renderer\BasePageRenderer.cs" />
     <Compile Include="Framework\FileManager.cs" />
     <Compile Include="Renderer\NumericEntryRenderer.cs" />

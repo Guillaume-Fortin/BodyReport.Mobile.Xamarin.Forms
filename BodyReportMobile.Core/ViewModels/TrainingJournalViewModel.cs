@@ -1,7 +1,5 @@
 ﻿using System;
-using MvvmCross.Plugins.Messenger;
 using BodyReportMobile.Core.ViewModels;
-using BodyReportMobile.Core.FrameWork.Binding;
 using Message;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,12 +9,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using BodyReportMobile.Core.ServiceManagers;
 using SQLite.Net;
-using Acr.UserDialogs;
 using BodyReportMobile.Core.Message.Binding;
 using Framework;
 using XLabs.Ioc;
+using BodyReportMobile.Core.Framework;
+using BodyReportMobile.Core.Framework.Binding;
+using BodyReportMobile.Core.WebServices;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.ViewModels
 {
 	public class TrainingJournalViewModel : BaseViewModel
 	{
@@ -29,8 +29,8 @@ namespace BodyReportMobile.Core
 
 		private string _createLabel = string.Empty;
 
-		public TrainingJournalViewModel (IMvxMessenger messenger) : base (messenger)
-		{
+		public TrainingJournalViewModel () : base()
+        {
 			_dbContext = Resolver.Resolve<ISQLite> ().GetConnection ();
 			_trainingWeekManager = new TrainingWeekManager (_dbContext);
 		}
@@ -42,7 +42,7 @@ namespace BodyReportMobile.Core
 			_trainingWeekList = _trainingWeekManager.FindTrainingWeek (null, false);
 			SynchronizeData ();
 
-			RetreiveAndSaveOnlineData ();
+			RetreiveAndSaveOnlineData ().Wait();
 		}
 
 		protected override void InitTranslation()

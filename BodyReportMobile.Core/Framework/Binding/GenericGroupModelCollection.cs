@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 
-namespace BodyReportMobile.Core.FrameWork.Binding
+namespace BodyReportMobile.Core.Framework.Binding
 {
 	public class GenericGroupModelCollection<T> : ObservableCollection<T>
 	{

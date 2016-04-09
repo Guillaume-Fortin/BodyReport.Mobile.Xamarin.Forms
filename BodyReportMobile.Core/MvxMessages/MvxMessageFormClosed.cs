@@ -1,12 +1,10 @@
 ﻿using System;
-using MvvmCross.Plugins.Messenger;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.MvxMessages
 {
-	public class MvxMessageFormClosed : MvxMessage
+	public class MvxMessageFormClosed
 	{
-		public MvxMessageFormClosed(object sender, string viewModelGuid, bool canceledView) 
-			: base(sender)
+		public MvxMessageFormClosed(string viewModelGuid, bool canceledView) 
 		{
 			ViewModelGuid = viewModelGuid;
 			CanceledView = canceledView;

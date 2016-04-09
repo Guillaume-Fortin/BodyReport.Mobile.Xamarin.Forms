@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.Framework.Binding
 {
 	public class GenericEntryCellBinding//<T1, T2>
 	{

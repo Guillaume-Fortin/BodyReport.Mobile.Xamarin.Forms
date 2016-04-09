@@ -1,11 +1,11 @@
-﻿using BodyReport.Models;
-using Message;
+﻿using Message;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SQLite.Net;
 using BodyReportMobile.Core.Crud.Transformer;
+using BodyReportMobile.Core.Models;
 
 namespace BodyReportMobile.Core.Crud.Module
 {

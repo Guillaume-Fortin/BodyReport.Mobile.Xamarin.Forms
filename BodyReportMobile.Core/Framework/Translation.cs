@@ -5,7 +5,7 @@ using System.IO;
 using Newtonsoft.Json;
 using XLabs.Ioc;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.Framework
 {
 	public static class Translation
 	{

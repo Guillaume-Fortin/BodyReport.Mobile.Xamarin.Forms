@@ -14,6 +14,8 @@ using MvvmCross.Forms.Presenter.Core;
 using XLabs.Ioc;
 using BodyReportMobile.Core;
 using Acr.UserDialogs;
+using BodyReportMobile.Core.ViewModels;
+using BodyReportMobile.Core.Framework;
 
 namespace BodyReport.Droid
 {
@@ -27,7 +29,13 @@ namespace BodyReport.Droid
             global::Xamarin.Forms.Forms.Init(this, bundle);
 
             if(!Resolver.IsSet)
+            {
+                var resolverContainer = new SimpleContainer();
+                resolverContainer.Register<IDependencyContainer>(resolverContainer);
+                Resolver.SetResolver(resolverContainer.GetResolver());
+
                 AddIocDependencies();
+            }
 
             var mvxFormsApp = new MvxFormsApp();
             LoadApplication(mvxFormsApp);
@@ -38,9 +46,8 @@ namespace BodyReport.Droid
 
             var presenter = Resolver.Resolve<IMvxViewPresenter>() as MvxFormsDroidPagePresenter;
             presenter.MvxFormsApp = mvxFormsApp;
-
-
-            Resolver.Resolve<IMvxAppStart>().Start();
+            
+            Resolver.Resolve<BaseViewModel>().Start();
             //LoadApplication (new App ());
 		}
 
@@ -49,14 +56,21 @@ namespace BodyReport.Droid
 		/// </summary>
 		private void AddIocDependencies()
         {
-            var resolverContainer = new SimpleContainer();
-
+            var resolverContainer = Resolver.Resolve<IDependencyContainer>();
+            resolverContainer = Resolver.Resolve<IDependencyContainer>();
             resolverContainer.Register<ISecurity, SecurityDroid>();
             resolverContainer.Register<IFileManager, FileManager>();
             resolverContainer.Register<ISQLite, SQLite_Droid>();
             resolverContainer.Register(UserDialogs.Instance);
 
-            Resolver.SetResolver(resolverContainer.GetResolver());
+            /*var resolverContainer = new SimpleContainer();
+
+        resolverContainer.Register<ISecurity, SecurityDroid>();
+        resolverContainer.Register<IFileManager, FileManager>();
+        resolverContainer.Register<ISQLite, SQLite_Droid>();
+        resolverContainer.Register(UserDialogs.Instance);
+
+        Resolver.SetResolver(resolverContainer.GetResolver());*/
         }
     }
 }

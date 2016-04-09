@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using Android.App;
+using BodyReportMobile.Core.Framework;
 
 namespace BodyReport.Droid
 {

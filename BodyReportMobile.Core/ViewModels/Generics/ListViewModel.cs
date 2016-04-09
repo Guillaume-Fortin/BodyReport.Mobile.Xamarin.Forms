@@ -1,14 +1,13 @@
 ﻿using System;
-using BodyReportMobile.Core.ViewModels;
-using MvvmCross.Plugins.Messenger;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using System.Collections.ObjectModel;
 using BodyReportMobile.Core.Message;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BodyReportMobile.Core.Framework;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.ViewModels.Generic
 {
 	public class ListViewModel: BaseViewModel
 	{
@@ -26,8 +25,8 @@ namespace BodyReportMobile.Core
 		public ObservableCollection<GenericData> Datas { get; set; } = new ObservableCollection<GenericData>();
 		public GenericData SelectedItem { get; set; }
 
-		public ListViewModel (IMvxMessenger messenger) : base(messenger)
-		{
+		public ListViewModel() : base()
+        {
 		}
 
 		public override void Init(string viewModelGuid, bool autoClearViewModelDataCollection)

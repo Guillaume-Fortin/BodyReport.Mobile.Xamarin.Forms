@@ -2,23 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Android.App;
 using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using MvvmCross.Droid.Platform;
 using MvvmCross.Core.ViewModels;
 using MvvmCross.Platform.Platform;
 using MvvmCross.Droid.Views;
 using MvvmCross.Forms.Presenter.Droid;
 using MvvmCross.Core.Views;
-using MvvmCross.Platform;
-using Xamarin.Forms;
-using BodyReportMobile.Core;
-using Acr.UserDialogs;
+using XLabs.Ioc;
+using BodyReportMobile.Core.Framework;
+using BodyReportMobile.Presenter;
 
 namespace BodyReport.Droid
 {
@@ -27,6 +20,7 @@ namespace BodyReport.Droid
         public Setup(Context applicationContext)
             : base(applicationContext)
         {
+            
         }
 
         protected override IMvxApplication CreateApp()
@@ -44,7 +38,10 @@ namespace BodyReport.Droid
             Translation.LoadTranslation();
 
             var presenter = new MvxFormsDroidPagePresenter();
-            Mvx.RegisterSingleton<IMvxViewPresenter>(presenter);
+            //Mvx.RegisterSingleton<IMvxViewPresenter>(presenter);
+
+            var resolverContainer = Resolver.Resolve<IDependencyContainer>();
+            resolverContainer.Register<IMvxViewPresenter>(presenter);
 
             return presenter;
         }

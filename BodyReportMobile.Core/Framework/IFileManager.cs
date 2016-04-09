@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.Framework
 {
 	public interface IFileManager
 	{

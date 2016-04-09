@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Message;
+using BodyReportMobile.Core.Framework;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.WebServices
 {
 	public class UserInfoWebService
 	{

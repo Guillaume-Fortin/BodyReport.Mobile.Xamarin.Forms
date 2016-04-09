@@ -1,8 +1,8 @@
 ﻿using System;
 using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
-using MvvmCross.Plugins.Messenger;
-using XLabs.Ioc;
+using BodyReportMobile.Core.Framework;
+using BodyReportMobile.Core.MvxMessages;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -21,17 +21,11 @@ namespace BodyReportMobile.Core.ViewModels
 		/// Title of viewmodel
 		/// </summary>
 		private string _titleLabel = string.Empty;
-
-		/// <summary>
-		/// The mvx messenger token.
-		/// </summary>
-		private readonly MvxSubscriptionToken _mvxMessengerFormClosedToken;
-
-		public BaseViewModel (IMvxMessenger messenger)
+        
+		public BaseViewModel ()
 		{
-			_mvxMessengerFormClosedToken = messenger.Subscribe<MvxMessageFormClosed>(OnFormClosedMvxMessage);
-			if (_mvxMessengerFormClosedToken == null) // supress unused Warning
-				_mvxMessengerFormClosedToken = null;
+            AppMessenger.AppInstance.Register<MvxMessageFormClosed>(this, OnFormClosedMvxMessage);
+            //TODO unscribe
 		}
 
 		public virtual void Init(string viewModelGuid, bool autoClearViewModelDataCollection)
@@ -81,8 +75,7 @@ namespace BodyReportMobile.Core.ViewModels
 		protected bool CloseViewModel()
 		{
 			if (Close (this)) {
-				var messenger = Resolver.Resolve<IMvxMessenger> ();
-				messenger.Publish (new MvxMessageFormClosed (this, ViewModelGuid, false));
+                AppMessenger.AppInstance.Send(new MvxMessageFormClosed(ViewModelGuid, false));
 				return true;
 			}
 			return false;

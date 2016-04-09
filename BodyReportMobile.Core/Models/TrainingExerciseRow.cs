@@ -1,7 +1,7 @@
 ﻿using System;
 using SQLite.Net.Attributes;
 
-namespace BodyReportMobile.Core
+namespace BodyReportMobile.Core.Models
 {
 	[Table("TrainingExercise")]
 	public class TrainingExerciseRow

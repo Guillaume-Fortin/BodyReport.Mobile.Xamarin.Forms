@@ -1,4 +1,5 @@
-﻿using Framework;
+﻿using BodyReportMobile.Core.Models;
+using Framework;
 using Message;
 using System;
 using System.Collections.Generic;
