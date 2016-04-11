@@ -1,12 +1,12 @@
 ﻿using System;
-using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.MvxMessages;
+using XLabs.Ioc;
 
 namespace BodyReportMobile.Core.ViewModels
 {
-	public class BaseViewModel : MvxViewModel
+	public class BaseViewModel
 	{
 		private static readonly string TCS_VALUE = "TCS_VALUE";
 
@@ -53,31 +53,38 @@ namespace BodyReportMobile.Core.ViewModels
 			}
 		}
 
-		protected static async Task<bool> ShowModalViewModel<TViewModel>(BaseViewModel baseMvxViewModel) where TViewModel : MvxViewModel
+		public static async Task<bool> ShowModalViewModel<TViewModel>(BaseViewModel parentViewModel) where TViewModel : BaseViewModel
 		{
 			string viewModelGuid = Guid.NewGuid ().ToString ();
-			return await ShowModalViewModel<TViewModel>(viewModelGuid, true, baseMvxViewModel);
+			return await ShowModalViewModel<TViewModel>(viewModelGuid, true, parentViewModel);
 		}
 
-		protected static async Task<bool> ShowModalViewModel<TViewModel>(string viewModelGuid, bool autoClearViewModelDataCollection, BaseViewModel baseMvxViewModel) where TViewModel : MvxViewModel
-		{
+		protected static async Task<bool> ShowModalViewModel<TViewModel>(string viewModelGuid, bool autoClearViewModelDataCollection, BaseViewModel parentViewModel) where TViewModel : BaseViewModel
+        {
 			var tcs = new TaskCompletionSource<bool>();
 			ViewModelDataCollection.Push (viewModelGuid, TCS_VALUE, tcs);
-			
-			bool result = baseMvxViewModel.ShowViewModel<TViewModel> (new { viewModelGuid = viewModelGuid, autoClearViewModelDataCollection = autoClearViewModelDataCollection});
 
-			if (!result) //Not awaiting because view is not display
+            bool result = false;// baseMvxViewModel.ShowViewModel<TViewModel> (new { viewModelGuid = viewModelGuid, autoClearViewModelDataCollection = autoClearViewModelDataCollection});
+
+            var presenter = Resolver.Resolve<IPresenterManager>();
+            if(presenter != null)
+            {
+               result = await presenter.TryDisplayViewAsync<TViewModel>(parentViewModel);
+            }
+
+            if (!result) //Not awaiting because view is not display
 				tcs.SetResult (false);
-			
-			return await tcs.Task;
-		}
+            else tcs.SetResult(true);
 
+            return await tcs.Task;
+		}
+        
 		protected bool CloseViewModel()
 		{
-			if (Close (this)) {
+			/*if (Close (this)) {
                 AppMessenger.AppInstance.Send(new MvxMessageFormClosed(ViewModelGuid, false));
 				return true;
-			}
+			}*/
 			return false;
 		}
 
@@ -95,7 +102,7 @@ namespace BodyReportMobile.Core.ViewModels
 			}
 			set {
 				_titleLabel = value;
-				RaisePropertyChanged (() => TitleLabel);
+				//RaisePropertyChanged (() => TitleLabel);
 			}
 		}
 

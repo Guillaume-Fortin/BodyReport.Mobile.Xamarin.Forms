@@ -1,14 +1,15 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages"
+      xmlns:converter="clr-namespace:BodyReportMobile.Presenter.Framework.Converter"
       xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
       x:Class="BodyReportMobile.Presenter.Pages.EditTrainingWeekPage"
       x:Name="myPage"
 			Title="{Binding TitleLabel}">
 
 	<ContentPage.Resources>
-        <ResourceDictionary>
-			<local:TextToIntConverter x:Key="intConverter" />
+      <ResourceDictionary>
+          <converter:TextToIntConverter x:Key="intConverter" />
 		 </ResourceDictionary>
 	</ContentPage.Resources>
 

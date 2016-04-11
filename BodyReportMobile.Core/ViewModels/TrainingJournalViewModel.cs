@@ -188,7 +188,7 @@ namespace BodyReportMobile.Core.ViewModels
 			}
 			set {
 				_createLabel = value;
-				RaisePropertyChanged (() => CreateLabel);
+				//RaisePropertyChanged (() => CreateLabel);
 			}
 		}
 
@@ -201,7 +201,7 @@ namespace BodyReportMobile.Core.ViewModels
 					return;
 
 				isBusy = value;
-				RaisePropertyChanged (() => IsBusy);
+				//RaisePropertyChanged (() => IsBusy);
 			}
 		}
 

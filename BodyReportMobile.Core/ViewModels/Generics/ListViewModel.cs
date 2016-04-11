@@ -41,7 +41,7 @@ namespace BodyReportMobile.Core.ViewModels.Generic
 			}
 			var defaultSelectedData = ViewModelDataCollection.Get<GenericData> (viewModelGuid, SELECTED_TAG);
 			SelectItem (defaultSelectedData);
-			RaiseAllPropertiesChanged ();
+			//RaiseAllPropertiesChanged ();
 		}
 
 		private void SelectItem(GenericData defaultSelectedData)

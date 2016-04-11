@@ -7,7 +7,7 @@ namespace BodyReportMobile.Presenter.Pages
 {
 	public partial class MainPage : BaseContentPage
 	{
-		public MainPage () : base ()
+		public MainPage (MainViewModel viewModel) : base (viewModel)
 		{
 			DisableBackButton = true;
 			InitializeComponent ();
@@ -15,8 +15,7 @@ namespace BodyReportMobile.Presenter.Pages
 
 		public void OnCellTapped (object sender, EventArgs e)
 		{
-			var viewModel = BindingContext as MainViewModel;
-			//viewModel.DisplayYearCommand.Execute ();
+            var viewModel = BindingContext as MainViewModel;
 			if (sender == TrainingJournalCell)
 				viewModel.GoToTrainingJournalCommand.Execute (null);
 			else if (sender == ChangeLanguageCell)

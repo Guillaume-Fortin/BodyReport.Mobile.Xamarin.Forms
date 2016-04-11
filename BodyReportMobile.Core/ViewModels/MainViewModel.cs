@@ -32,7 +32,7 @@ namespace BodyReportMobile.Core.ViewModels
 				if (value != _languageFlagImageSource) {
 					_languageFlagImageSource = value;
 
-					RaisePropertyChanged (() => LanguageFlagImageSource);
+					//RaisePropertyChanged (() => LanguageFlagImageSource);
 				}
 			}
 		}
@@ -42,7 +42,8 @@ namespace BodyReportMobile.Core.ViewModels
 		public MainViewModel() : base()
         {
 			_dbContext = Resolver.Resolve<ISQLite> ().GetConnection ();
-		}
+            SynchronizeData();
+        }
 
 		public override void Init(string viewModelGuid, bool autoClearViewModelDataCollection)
 		{
@@ -60,15 +61,15 @@ namespace BodyReportMobile.Core.ViewModels
 			ChangeLanguageLabel = Translation.Get (TRS.LANGUAGE);
 			LanguageFlagImageSource = GeLanguageFlagImageSource (Translation.CurrentLang);
 
-			RaiseAllPropertiesChanged ();
+			//RaiseAllPropertiesChanged ();
 		}
 
 		private string GeLanguageFlagImageSource(LangType langType)
 		{
-			return string.Format ("flag-{0}.png", Translation.GetLangExt (langType));
+			return string.Format ("flag_{0}.png", Translation.GetLangExt (langType)).Replace('-', '_');
 		}
 
-		public override async void Start ()
+		public async void Start ()
 		{
 			await SynchronizeWebData ();
 		}

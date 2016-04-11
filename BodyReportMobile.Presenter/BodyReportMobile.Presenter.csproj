@@ -45,6 +45,8 @@
     <Compile Include="Framework\Controls\TouchViewCell.xaml.cs">
       <DependentUpon>TouchViewCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Framework\Converter\StringToImageConverter.cs" />
+    <Compile Include="Framework\PresenterManager.cs" />
     <Compile Include="Pages\BaseContentPage.cs" />
     <Compile Include="Pages\EditTrainingWeekPage.xaml.cs">
       <DependentUpon>EditTrainingWeekPage.xaml</DependentUpon>

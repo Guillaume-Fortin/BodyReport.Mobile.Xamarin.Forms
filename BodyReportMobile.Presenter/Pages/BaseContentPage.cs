@@ -14,7 +14,12 @@ namespace BodyReportMobile.Presenter.Pages
 
 		public BaseContentPage ()
 		{
-		}
+        }
+        
+        public BaseContentPage(MainViewModel viewModel)
+        {
+            BindingContext = viewModel;
+        }
 
 		public virtual bool CanBackButtonPressing()
 		{

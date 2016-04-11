@@ -16,6 +16,7 @@ using BodyReportMobile.Core;
 using Acr.UserDialogs;
 using BodyReportMobile.Core.ViewModels;
 using BodyReportMobile.Core.Framework;
+using BodyReportMobile.Presenter;
 
 namespace BodyReport.Droid
 {
@@ -25,9 +26,7 @@ namespace BodyReport.Droid
 		protected override void OnCreate (Bundle bundle)
 		{
 			base.OnCreate (bundle);
-
-            global::Xamarin.Forms.Forms.Init(this, bundle);
-
+            
             if(!Resolver.IsSet)
             {
                 var resolverContainer = new SimpleContainer();
@@ -36,20 +35,10 @@ namespace BodyReport.Droid
 
                 AddIocDependencies();
             }
-
-            var mvxFormsApp = new MvxFormsApp();
-            LoadApplication(mvxFormsApp);
-
-
-            var setup = new Setup(this);
-            setup.Initialize();
-
-            var presenter = Resolver.Resolve<IMvxViewPresenter>() as MvxFormsDroidPagePresenter;
-            presenter.MvxFormsApp = mvxFormsApp;
             
-            Resolver.Resolve<BaseViewModel>().Start();
-            //LoadApplication (new App ());
-		}
+            global::Xamarin.Forms.Forms.Init(this, bundle);
+            LoadApplication(new App ());
+        }
 
         /// <summary>
 		/// Adds the ioc dependencies.
@@ -62,15 +51,6 @@ namespace BodyReport.Droid
             resolverContainer.Register<IFileManager, FileManager>();
             resolverContainer.Register<ISQLite, SQLite_Droid>();
             resolverContainer.Register(UserDialogs.Instance);
-
-            /*var resolverContainer = new SimpleContainer();
-
-        resolverContainer.Register<ISecurity, SecurityDroid>();
-        resolverContainer.Register<IFileManager, FileManager>();
-        resolverContainer.Register<ISQLite, SQLite_Droid>();
-        resolverContainer.Register(UserDialogs.Instance);
-
-        Resolver.SetResolver(resolverContainer.GetResolver());*/
         }
     }
 }
