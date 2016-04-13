@@ -5,12 +5,13 @@ using System.Linq;
 using Xamarin.Forms;
 using BodyReportMobile.Core;
 using BodyReportMobile.Core.ViewModels.Generic;
+using BodyReportMobile.Core.ViewModels;
 
 namespace BodyReportMobile.Presenter.Pages.Generics
 {
-	public partial class ListPage : BaseContentPage
+    public partial class ListPage : BaseContentPage
 	{
-		public ListPage ()
+		public ListPage (ListViewModel baseViewModel) : base(baseViewModel)
 		{
 			InitializeComponent ();
 		}

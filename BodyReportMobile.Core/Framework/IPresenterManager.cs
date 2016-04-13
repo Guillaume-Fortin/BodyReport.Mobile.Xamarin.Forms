@@ -10,6 +10,6 @@ namespace BodyReportMobile.Core.Framework
     public interface IPresenterManager
     {
         void AddViewDependency<TViewModel, TView>() where TViewModel : class where TView : class;
-        Task<bool> TryDisplayViewAsync<TViewModel>(BaseViewModel viewModel);
+        Task<bool> TryDisplayViewAsync(BaseViewModel viewModel, BaseViewModel parentViewModel);
     }
 }

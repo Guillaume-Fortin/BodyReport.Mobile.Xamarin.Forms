@@ -81,11 +81,13 @@ namespace BodyReportMobile.Core.ViewModels
 
 		public static async Task<bool> Show (TrainingWeek trainingWeek, TEditMode editMode, BaseViewModel parent = null)
 		{
-			string viewModelGuid = Guid.NewGuid ().ToString ();
+			/*string viewModelGuid = Guid.NewGuid ().ToString ();
 			ViewModelDataCollection.Push (viewModelGuid, TRAINING_WEEK_VALUE, trainingWeek);
 			ViewModelDataCollection.Push (viewModelGuid, EDIT_MODE, editMode);
-
-			return await ShowModalViewModel<EditTrainingWeekViewModel> (viewModelGuid, true, parent);
+            */
+            var viewModel = new EditTrainingWeekViewModel();
+            viewModel.ViewModelGuid = Guid.NewGuid().ToString();
+            return await ShowModalViewModel (viewModel, true, parent);
 		}
 
 		private void SynchronizeData ()

@@ -12,6 +12,7 @@ using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Core.Manager;
 using BodyReportMobile.Core.WebServices;
 using BodyReportMobile.Core.Framework;
+using Xamarin.Forms;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -42,15 +43,13 @@ namespace BodyReportMobile.Core.ViewModels
 		public MainViewModel() : base()
         {
 			_dbContext = Resolver.Resolve<ISQLite> ().GetConnection ();
-            SynchronizeData();
         }
 
-		public override void Init(string viewModelGuid, bool autoClearViewModelDataCollection)
-		{
-			base.Init (viewModelGuid, autoClearViewModelDataCollection);
-
-			SynchronizeData ();
-		}
+        protected override void Show()
+        {
+            base.Show();
+            SynchronizeData();
+        }
 
 		private void SynchronizeData()
 		{
@@ -61,8 +60,8 @@ namespace BodyReportMobile.Core.ViewModels
 			ChangeLanguageLabel = Translation.Get (TRS.LANGUAGE);
 			LanguageFlagImageSource = GeLanguageFlagImageSource (Translation.CurrentLang);
 
-			//RaiseAllPropertiesChanged ();
-		}
+            OnPropertyChanged(null);
+        }
 
 		private string GeLanguageFlagImageSource(LangType langType)
 		{
@@ -100,9 +99,10 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			get
 			{
-				return new MvxAsyncCommand (async () => {
-					await ShowModalViewModel<TrainingJournalViewModel>(this);
-				}, null, true);
+				return new Command (async () => {
+                    var viewModel = new TrainingJournalViewModel();
+                    await ShowModalViewModel(viewModel, this);
+				});
 			}
 		}
 
@@ -110,7 +110,7 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			get
 			{
-				return new MvxAsyncCommand (async () => {
+				return new Command(async () => {
 
 					var datas = new List<GenericData> ();
 
@@ -135,7 +135,7 @@ namespace BodyReportMobile.Core.ViewModels
 						SynchronizeData();
 					}
 
-				}, null, true);
+				});
 			}
 		}
 	}

@@ -9,15 +9,19 @@ namespace BodyReportMobile.Presenter.Pages
 {
 	public class BaseContentPage : ContentPage
 	{
-		public bool DisableBackButton { get; set;} = false;
+        private bool _firstViewAppear = true;
+        private BaseViewModel _viewModel = null;
+
+        public bool DisableBackButton { get; set;} = false;
 		public string BackButtonTitle { get; set;} = Translation.Get(TRS.RETURN);
 
 		public BaseContentPage ()
 		{
         }
         
-        public BaseContentPage(MainViewModel viewModel)
+        public BaseContentPage(BaseViewModel viewModel)
         {
+            _viewModel = viewModel;
             BindingContext = viewModel;
         }
 
@@ -26,19 +30,50 @@ namespace BodyReportMobile.Presenter.Pages
 			return true;
 		}
 
-		protected override bool OnBackButtonPressed()
+        /// <summary>
+        /// Intercept Back button press by user (only physical and logical hardware button)
+        /// Not for back button inside view on iOS and Android
+        /// </summary>
+        /// <returns></returns>
+        protected override bool OnBackButtonPressed()
 		{
-			if (CanBackButtonPressing ()) {
+            base.OnBackButtonPressed();
+            if (CanBackButtonPressing ()) {
 				this.Navigation.PopAsync ();
 
-				if (this.BindingContext != null && this.BindingContext is BaseViewModel) {
-					var baseViewModel = this.BindingContext as BaseViewModel;
+				if (_viewModel != null)
+                    AppMessenger.AppInstance.Send(new MvxMessageFormClosed(_viewModel.ViewModelGuid, true));
+            }
 
-                    AppMessenger.AppInstance.Send(new MvxMessageFormClosed(baseViewModel.ViewModelGuid, true));
-				}
-			}
-			return true;
-		}
-	}
+            // If you want to stop the back button
+            return true;
+        }
+        
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            if(_firstViewAppear)
+            {
+                _firstViewAppear = false;
+                if(_viewModel != null)
+                    AppMessenger.AppInstance.Send(new MvxMessageViewEvent(_viewModel.ViewModelGuid) { Show = true });
+            }
+            else
+            {
+                if (_viewModel != null)
+                    AppMessenger.AppInstance.Send(new MvxMessageViewEvent(_viewModel.ViewModelGuid) { Appear = true });
+            }
+
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            if (_viewModel != null)
+                AppMessenger.AppInstance.Send(new MvxMessageViewEvent(_viewModel.ViewModelGuid) { Disappear = true });
+        }
+    }
 }
 

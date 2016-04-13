@@ -5,6 +5,8 @@ using BodyReportMobile.Core.ViewModels;
 using BodyReportMobile.Presenter.Pages;
 using BodyReportMobile.Core.Framework;
 using Xamarin.Forms;
+using BodyReportMobile.Core.ViewModels.Generic;
+using BodyReportMobile.Presenter.Pages.Generics;
 
 namespace BodyReportMobile.Presenter
 {
@@ -23,7 +25,7 @@ namespace BodyReportMobile.Presenter
             RegisterViewModelViewDependencies(resolverContainer);
 
             var mainViewModel = new MainViewModel();
-            bool result = await BaseViewModel.ShowModalViewModel<MainViewModel>(mainViewModel);
+            bool result = await BaseViewModel.ShowModalViewModel(mainViewModel, null, true);
 
             if(result)
             {
@@ -44,6 +46,7 @@ namespace BodyReportMobile.Presenter
             presenterManager.AddViewDependency<TrainingJournalViewModel, TrainingJournalPage>();
             presenterManager.AddViewDependency<EditTrainingWeekViewModel, EditTrainingWeekPage>();
             presenterManager.AddViewDependency<LoginViewModel, LoginPage>();
+            presenterManager.AddViewDependency<ListViewModel, ListPage>();
 
             resolverContainer.Register<IPresenterManager> (presenterManager);
         }

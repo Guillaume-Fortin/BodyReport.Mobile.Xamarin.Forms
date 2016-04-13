@@ -6,6 +6,7 @@ using BodyReportMobile.Core.Message;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BodyReportMobile.Core.Framework;
+using Xamarin.Forms;
 
 namespace BodyReportMobile.Core.ViewModels.Generic
 {
@@ -17,18 +18,19 @@ namespace BodyReportMobile.Core.ViewModels.Generic
 			public object SelectedTag { get; set; }
 		}
 
-		private static readonly string TITLE = "TITLE";
+        /*private static readonly string TITLE = "TITLE";
 		private static readonly string DATAS = "DATAS";
 		private static readonly string SELECTED_TAG = "SELECTED_TAG";
 		private static readonly string OUT_SELECTED_TAG_ITEM = "OUT_SELECTED_TAG_ITEM";
-
-		public ObservableCollection<GenericData> Datas { get; set; } = new ObservableCollection<GenericData>();
+        */
+        private GenericData _defaultSelectedData = null;
+        public ObservableCollection<GenericData> Datas { get; set; } = new ObservableCollection<GenericData>();
 		public GenericData SelectedItem { get; set; }
 
 		public ListViewModel() : base()
         {
 		}
-
+        /*
 		public override void Init(string viewModelGuid, bool autoClearViewModelDataCollection)
 		{
 			base.Init (viewModelGuid, autoClearViewModelDataCollection);
@@ -42,7 +44,7 @@ namespace BodyReportMobile.Core.ViewModels.Generic
 			var defaultSelectedData = ViewModelDataCollection.Get<GenericData> (viewModelGuid, SELECTED_TAG);
 			SelectItem (defaultSelectedData);
 			//RaiseAllPropertiesChanged ();
-		}
+		}*/
 
 		private void SelectItem(GenericData defaultSelectedData)
 		{
@@ -58,17 +60,27 @@ namespace BodyReportMobile.Core.ViewModels.Generic
 
 		public static async Task<ListViewModelResult> ShowGenericList(string title, List<GenericData> datas, GenericData currentTag, BaseViewModel parent = null)
 		{
-			string viewModelGuid = Guid.NewGuid ().ToString();
-			ViewModelDataCollection.Push (viewModelGuid, ListViewModel.TITLE, title);
+			//string viewModelGuid = Guid.NewGuid ().ToString();
+            /*ViewModelDataCollection.Push (viewModelGuid, ListViewModel.TITLE, title);
 			ViewModelDataCollection.Push (viewModelGuid, ListViewModel.SELECTED_TAG, currentTag);
-			ViewModelDataCollection.Push (viewModelGuid, ListViewModel.DATAS, datas);
+			ViewModelDataCollection.Push (viewModelGuid, ListViewModel.DATAS, datas);*/
 
-			var result = new ListViewModelResult ();
-			result.ViewModelValidated = await ShowModalViewModel<ListViewModel> (viewModelGuid, false, parent);
-			result.SelectedTag = ViewModelDataCollection.Get<object> (viewModelGuid, OUT_SELECTED_TAG_ITEM);
+            ListViewModel listViewModel = new ListViewModel();
+            listViewModel.ViewModelGuid = Guid.NewGuid().ToString();
+            listViewModel._defaultSelectedData = currentTag;
+            listViewModel.TitleLabel = title;
+            if (datas != null)
+            {
+                foreach (var data in datas)
+                    listViewModel.Datas.Add(data);
+            }
 
-			//Very important clear datas
-			ViewModelDataCollection.Clear (viewModelGuid);
+            var result = new ListViewModelResult ();
+			result.ViewModelValidated = await ShowModalViewModel(listViewModel, false, parent);
+            result.SelectedTag = listViewModel.SelectedItem;
+
+            //Very important clear datas
+            //ViewModelDataCollection.Clear (viewModelGuid);
 
 			return result;
 		}
@@ -77,10 +89,10 @@ namespace BodyReportMobile.Core.ViewModels.Generic
 		{
 			get
 			{
-				return new MvxCommand (() => {
+				return new Command (() => {
 					if(ValidateViewModel())
 					{
-						ViewModelDataCollection.Push<object> (ViewModelGuid, OUT_SELECTED_TAG_ITEM, SelectedItem.Tag);
+						//ViewModelDataCollection.Push<object> (ViewModelGuid, OUT_SELECTED_TAG_ITEM, SelectedItem.Tag);
 						CloseViewModel();
 					}
 				});

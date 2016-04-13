@@ -36,10 +36,12 @@ namespace BodyReportMobile.Core.Framework
             _viewDependencies.Add(viewModelType, viewType);
         }
 
-        private object GetView<TViewModel>(BaseViewModel viewModel)
+        private object GetView(BaseViewModel viewModel)
         {
+            if (viewModel == null)
+                return null;
             object view = null;
-            Type viewModelType = typeof(TViewModel);
+            Type viewModelType = viewModel.GetType();
             if (_viewDependencies.ContainsKey(viewModelType))
             {
                 Type viewType = _viewDependencies[viewModelType];
@@ -49,18 +51,19 @@ namespace BodyReportMobile.Core.Framework
             return view;
         }
 
-        public async Task<bool> TryDisplayViewAsync<TViewModel>(BaseViewModel viewModel)
+        public async Task<bool> TryDisplayViewAsync(BaseViewModel viewModel, BaseViewModel parentViewModel)
         {
             bool result = false;
-            
-            var view = GetView<TViewModel>(viewModel);
+
+            var parentView = GetView(parentViewModel);
+            var view = GetView(viewModel);
             if (view != null && view is Page)
             {
                 var page = view as Page;
-                if(viewModel != null)
+                if(viewModel != null && page.BindingContext == null)
                     page.BindingContext = viewModel;
 
-                if (_mainNavigationPage == null)
+                if (parentView == null && _mainNavigationPage == null)
                 {
                     _mainNavigationPage = new NavigationPage(page);
                     result = true;
@@ -70,7 +73,12 @@ namespace BodyReportMobile.Core.Framework
                     try
                     {
                         // calling this sync blocks UI and never navigates hence code continues regardless here
-                        MainNavigationPage.PushAsync(page);
+                        /*if(parentView != null && parentView is Page)
+                        {
+                            (parentView as Page).Navigation.PushAsync(page);
+                        }
+                        else*/
+                            MainNavigationPage.PushAsync(page);
                         result = true;
                     }
                     catch (Exception e)

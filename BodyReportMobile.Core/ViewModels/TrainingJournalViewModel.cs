@@ -4,7 +4,6 @@ using Message;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
 using System.Linq;
 using System.Threading.Tasks;
 using BodyReportMobile.Core.ServiceManagers;
@@ -15,6 +14,7 @@ using XLabs.Ioc;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Framework.Binding;
 using BodyReportMobile.Core.WebServices;
+using Xamarin.Forms;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -130,7 +130,7 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			get
 			{
-				return new MvxAsyncCommand (RetreiveAndSaveOnlineData, null, true);
+				return new Command(async () => { await RetreiveAndSaveOnlineData(); });
 			}
 		}
 
@@ -138,7 +138,7 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			get
 			{
-				return new MvxAsyncCommand (CreateNewTrainingWeek, null, true);
+				return new Command (async () => { await CreateNewTrainingWeek(); });
 			}
 		}
 
@@ -162,10 +162,12 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			get
 			{
-				return new MvxAsyncCommand (async () =>
+				return new Command (async () =>
 				{
-					await ShowModalViewModel<SecondViewModel> (this);
-				}, null, true);
+                    var viewModel = new SecondViewModel();
+                    viewModel.ViewModelGuid = Guid.NewGuid().ToString();
+                    await ShowModalViewModel(viewModel, this);
+				});
 			}
 		}
 
@@ -173,10 +175,12 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			get
 			{
-				return new MvxAsyncCommand (async () =>
+				return new Command (async () =>
 				{
-					await ShowModalViewModel<ThirdViewModel> (this);
-				}, null, true);
+                    var viewModel = new ThirdViewModel();
+                    viewModel.ViewModelGuid = Guid.NewGuid().ToString();
+                    await ShowModalViewModel(viewModel, this);
+				});
 			}
 		}
 

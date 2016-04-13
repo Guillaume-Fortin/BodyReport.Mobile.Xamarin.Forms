@@ -201,6 +201,7 @@
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
     <Compile Include="DebugTrace.cs" />
     <Compile Include="Framework\FileManager.cs" />
+    <Compile Include="Framework\Renderers\BasePageRenderer.cs" />
     <Compile Include="Framework\SecurityDroid.cs" />
     <Compile Include="Framework\SQLite_Droid.cs" />
     <Compile Include="MainActivity.cs" />
@@ -221,9 +222,9 @@
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />
+    <AndroidResource Include="Resources\layout\custom_actionbar.axml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\layout\" />
     <Folder Include="Resources\values\" />
   </ItemGroup>
   <ItemGroup>
