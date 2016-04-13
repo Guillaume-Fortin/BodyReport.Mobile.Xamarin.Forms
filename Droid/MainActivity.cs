@@ -17,10 +17,11 @@ using Acr.UserDialogs;
 using BodyReportMobile.Core.ViewModels;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Presenter;
+using Android.Graphics.Drawables;
 
 namespace BodyReport.Droid
 {
-	[Activity (Label = "BodyReport.Droid", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+	[Activity (MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
 	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
 	{
 		protected override void OnCreate (Bundle bundle)
@@ -38,6 +39,7 @@ namespace BodyReport.Droid
             
             global::Xamarin.Forms.Forms.Init(this, bundle);
             LoadApplication(new App ());
+            ActionBar.SetIcon(new ColorDrawable(Android.Graphics.Color.Transparent));
         }
 
         /// <summary>
@@ -51,6 +53,25 @@ namespace BodyReport.Droid
             resolverContainer.Register<IFileManager, FileManager>();
             resolverContainer.Register<ISQLite, SQLite_Droid>();
             resolverContainer.Register(UserDialogs.Instance);
+        }
+        
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Resource.Id.home:
+                    OnBackPressed();
+                    break;
+                case Resource.Id.homeAsUp:
+                    OnBackPressed();
+                    break;
+                case Android.Resource.Id.Home:
+                    OnBackPressed();
+                    break;
+                default:
+                    return base.OnOptionsItemSelected(item);
+            }
+            return false;
         }
     }
 }
