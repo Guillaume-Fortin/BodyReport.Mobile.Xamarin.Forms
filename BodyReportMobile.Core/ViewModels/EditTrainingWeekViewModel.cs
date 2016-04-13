@@ -2,7 +2,6 @@
 using Message;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
 using System.Collections.Generic;
 using Framework;
 using Acr.UserDialogs;
@@ -11,6 +10,7 @@ using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Core.WebServices;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Data;
+using Xamarin.Forms;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -107,7 +107,7 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			get
 			{
-				return new MvxAsyncCommand (async () =>
+				return new Command (async () =>
 				{
 					try
 					{
@@ -121,7 +121,7 @@ namespace BodyReportMobile.Core.ViewModels
 						var userDialog = Resolver.Resolve<IUserDialogs> ();
 						await userDialog.AlertAsync (except.Message, Translation.Get (TRS.ERROR), Translation.Get (TRS.OK));
 					}
-				}, null, true);
+				});
 			}
 		}
 
@@ -129,7 +129,7 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			get
 			{
-				return new MvxAsyncCommand (async () =>
+				return new Command(async () =>
 				{
 
 					var datas = new List<Message.GenericData> ();
@@ -153,7 +153,7 @@ namespace BodyReportMobile.Core.ViewModels
 							TrainingWeek.Year = (int)result.SelectedTag;
 						SynchronizeData ();
 					}
-				}, null, true);
+				});
 			}
 		}
 
@@ -161,7 +161,7 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			get
 			{
-				return new MvxAsyncCommand (async () =>
+				return new Command(async () =>
 				{
 
 					var datas = new List<Message.GenericData> ();
@@ -190,7 +190,7 @@ namespace BodyReportMobile.Core.ViewModels
 							TrainingWeek.WeekOfYear = (int)result.SelectedTag;
 						SynchronizeData ();
 					}
-				}, null, true);
+				});
 			}
 		}
 

@@ -1,7 +1,7 @@
 ﻿using System;
-using BodyReportMobile.Core;
 using Security;
 using Foundation;
+using BodyReportMobile.Core.Framework;
 
 namespace BodyReport.iOS
 {

@@ -1,12 +1,7 @@
 ﻿using System;
-using BodyReportMobile.Core;
-using BodyReport.iOS;
-//using Xamarin.Forms;
-
-//[assembly: Dependency (typeof (SQLite_iOS))]
 using SQLite.Net;
 using System.IO;
-
+using BodyReportMobile.Core.Framework;
 
 namespace BodyReport.iOS
 {

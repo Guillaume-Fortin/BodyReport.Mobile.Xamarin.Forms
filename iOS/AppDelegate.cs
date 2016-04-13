@@ -4,19 +4,15 @@ using System.Linq;
 
 using Foundation;
 using UIKit;
-using MvvmCross.iOS.Platform;
-using MvvmCross.iOS.Views.Presenters;
-using MvvmCross.Platform;
-using MvvmCross.Core.ViewModels;
 using XLabs.Ioc;
-using BodyReportMobile.Core;
 using Acr.UserDialogs;
+using BodyReportMobile.Core.Framework;
 
 namespace BodyReport.iOS
 {
 	[Register ("AppDelegate")]
-	public partial class AppDelegate : MvxApplicationDelegate
-	{
+	public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
+    {
 		UIWindow _window;
 
 		public override bool FinishedLaunching (UIApplication app, NSDictionary options)
@@ -24,33 +20,18 @@ namespace BodyReport.iOS
             global::Xamarin.Forms.Forms.Init();
 
             if (!Resolver.IsSet)
+            {
+                var resolverContainer = new SimpleContainer();
+                resolverContainer.Register<IDependencyContainer>(resolverContainer);
+                Resolver.SetResolver(resolverContainer.GetResolver());
+
                 AddIocDependencies();
+            }
+                
 
             _window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-            var setup = new Setup(this, _window);
-			setup.Initialize();
-
-			var startup = Resolver.Resolve<IMvxAppStart>();
-			startup.Start();
-
-			_window.MakeKeyAndVisible();
-
-			return true;
-
-            /*
-			_window = new UIWindow(UIScreen.MainScreen.Bounds);
-			_window.BackgroundColor = UIColor.White;
-
-			var setup = new Setup(this, _window);
-			setup.Initialize();
-
-			var startup = Resolver.Resolve<IMvxAppStart>();
-			startup.Start();
-
-			_window.MakeKeyAndVisible();
-
-			return true;*/
+            return base.FinishedLaunching(app, options);
         }
 
         /// <summary>
@@ -58,14 +39,11 @@ namespace BodyReport.iOS
 		/// </summary>
 		private void AddIocDependencies()
         {
-            var resolverContainer = new SimpleContainer();
-
+            var resolverContainer = Resolver.Resolve<IDependencyContainer>();
             resolverContainer.Register<ISecurity, SecurityIOS>();
             resolverContainer.Register<IFileManager, FileManager>();
             resolverContainer.Register<ISQLite, SQLite_iOS>();
             resolverContainer.Register(UserDialogs.Instance);
-
-            Resolver.SetResolver(resolverContainer.GetResolver());
         }
     }
 }

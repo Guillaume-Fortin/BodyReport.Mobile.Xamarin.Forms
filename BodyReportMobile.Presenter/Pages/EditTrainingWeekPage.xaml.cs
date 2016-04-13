@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 using Xamarin.Forms;
-using MvvmCross.Platform.Converters;
 using System.Globalization;
 using System.Text;
 using System.Diagnostics;

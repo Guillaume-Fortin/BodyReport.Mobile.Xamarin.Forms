@@ -162,11 +162,9 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			get
 			{
-				return new Command (async () =>
+				return new Command (() =>
 				{
-                    var viewModel = new SecondViewModel();
-                    viewModel.ViewModelGuid = Guid.NewGuid().ToString();
-                    await ShowModalViewModel(viewModel, this);
+                    
 				});
 			}
 		}
@@ -175,11 +173,8 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			get
 			{
-				return new Command (async () =>
+				return new Command (() =>
 				{
-                    var viewModel = new ThirdViewModel();
-                    viewModel.ViewModelGuid = Guid.NewGuid().ToString();
-                    await ShowModalViewModel(viewModel, this);
 				});
 			}
 		}

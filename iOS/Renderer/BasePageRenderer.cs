@@ -4,6 +4,7 @@ using Xamarin.Forms;
 using UIKit;
 using BodyReport;
 using BodyReport.iOS;
+using BodyReportMobile.Presenter.Pages;
 
 [assembly:ExportRenderer (typeof(BaseContentPage), typeof(BasePageRenderer))]
 namespace BodyReport.iOS

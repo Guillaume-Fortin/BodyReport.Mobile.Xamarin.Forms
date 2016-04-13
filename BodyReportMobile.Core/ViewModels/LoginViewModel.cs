@@ -1,9 +1,9 @@
 ﻿using System;
 using BodyReportMobile.Core.ViewModels;
 using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
 using Message;
 using BodyReportMobile.Core.Framework;
+using Xamarin.Forms;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -32,7 +32,7 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			get
 			{
-				return new MvxCommand (() => {
+				return new Command (() => {
 					if(ValidateFields())
 					{
 						CloseViewModel();

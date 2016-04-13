@@ -1,10 +1,7 @@
 ﻿using System;
-using BodyReportMobile.Core;
-
-//[assembly: Dependency (typeof (FileManager))] Not Use It because it's PCL dependant with Xamarin.Forms
 using System.IO;
 using System.Text;
-
+using BodyReportMobile.Core.Framework;
 
 namespace BodyReport.iOS
 {

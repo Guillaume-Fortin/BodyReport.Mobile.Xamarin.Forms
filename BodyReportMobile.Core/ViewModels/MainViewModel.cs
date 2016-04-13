@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using BodyReportMobile.Core.Message;
 using System.Collections.Generic;
