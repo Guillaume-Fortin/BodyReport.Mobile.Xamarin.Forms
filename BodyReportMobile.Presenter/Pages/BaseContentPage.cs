@@ -23,12 +23,33 @@ namespace BodyReportMobile.Presenter.Pages
         {
             _viewModel = viewModel;
             BindingContext = viewModel;
+            RegisterEvent();
         }
 
 		public virtual bool CanBackButtonPressing()
 		{
 			return true;
 		}
+
+        private void RegisterEvent()
+        {
+            AppMessenger.AppInstance.Register<MvxMessagePageEvent>(this, OnPageEvent);
+        }
+
+        private void UnRegisterEvent()
+        {
+            AppMessenger.AppInstance.Unregister<MvxMessagePageEvent>(this);
+        }
+
+        private void OnPageEvent(MvxMessagePageEvent message)
+        {
+            if (_viewModel != null && message != null && !string.IsNullOrWhiteSpace(message.ViewModelGuid) &&
+                message.ViewModelGuid == _viewModel.ViewModelGuid)
+            {
+                if (message.ClosingRequest)
+                    CloseView(message.ClosingRequest_ViewCanceled);
+            }
+        }
 
         /// <summary>
         /// Intercept Back button press by user (only physical and logical hardware button)
@@ -39,14 +60,26 @@ namespace BodyReportMobile.Presenter.Pages
 		{
             base.OnBackButtonPressed();
             if (CanBackButtonPressing ()) {
-				this.Navigation.PopAsync ();
-
-				if (_viewModel != null)
-                    AppMessenger.AppInstance.Send(new MvxMessageFormClosed(_viewModel.ViewModelGuid, true));
+                CloseView(true);
             }
 
             // If you want to stop the back button
             return true;
+        }
+
+        private void CloseView(bool cancelView)
+        {
+            try
+            {
+                UnRegisterEvent();
+                this.Navigation.PopAsync();
+                if (_viewModel != null)
+                    AppMessenger.AppInstance.Send(new MvxMessageFormClosed(_viewModel.ViewModelGuid, cancelView));
+            }
+            catch
+            {
+                //TODO LOG
+            }
         }
         
         protected override void OnAppearing()
@@ -57,12 +90,12 @@ namespace BodyReportMobile.Presenter.Pages
             {
                 _firstViewAppear = false;
                 if(_viewModel != null)
-                    AppMessenger.AppInstance.Send(new MvxMessageViewEvent(_viewModel.ViewModelGuid) { Show = true });
+                    AppMessenger.AppInstance.Send(new MvxMessageViewModelEvent(_viewModel.ViewModelGuid) { Show = true });
             }
             else
             {
                 if (_viewModel != null)
-                    AppMessenger.AppInstance.Send(new MvxMessageViewEvent(_viewModel.ViewModelGuid) { Appear = true });
+                    AppMessenger.AppInstance.Send(new MvxMessageViewModelEvent(_viewModel.ViewModelGuid) { Appear = true });
             }
 
         }
@@ -72,7 +105,7 @@ namespace BodyReportMobile.Presenter.Pages
             base.OnDisappearing();
 
             if (_viewModel != null)
-                AppMessenger.AppInstance.Send(new MvxMessageViewEvent(_viewModel.ViewModelGuid) { Disappear = true });
+                AppMessenger.AppInstance.Send(new MvxMessageViewModelEvent(_viewModel.ViewModelGuid) { Disappear = true });
         }
     }
 }

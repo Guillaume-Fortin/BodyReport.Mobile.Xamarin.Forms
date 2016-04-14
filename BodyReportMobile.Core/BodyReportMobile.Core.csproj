@@ -37,7 +37,8 @@
   <ItemGroup>
     <Compile Include="Framework\AppMessenger.cs" />
     <Compile Include="Framework\IPresenterManager.cs" />
-    <Compile Include="MvxMessages\MvxMessageViewEvent.cs" />
+    <Compile Include="MvxMessages\MvxMessagePageEvent.cs" />
+    <Compile Include="MvxMessages\MvxMessageViewModelEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="MvxMessages\MvxMessageFormClosed.cs" />

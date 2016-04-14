@@ -41,7 +41,9 @@ namespace BodyReportMobile.Core.Framework
 			handler.CookieContainer = cookies;
 
 			_httpClient = new System.Net.Http.HttpClient (handler);
-			_httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json")); 
+            _httpClient.Timeout = TimeSpan.FromSeconds(30);
+
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json")); 
 		}
 
 		public async Task<bool> ConnectUser (string userName, string password)
@@ -133,7 +135,11 @@ namespace BodyReportMobile.Core.Framework
 					}
 				}
 			}
-			catch (Exception exception)
+            catch (TaskCanceledException timeoutException)
+            {
+                throw new Exception("HTTP timeout error");
+            }
+            catch (Exception exception)
 			{
 				throw exception;
 			}

@@ -16,9 +16,6 @@ namespace BodyReportMobile.Core.ViewModels
 {
 	public class EditTrainingWeekViewModel : BaseViewModel
 	{
-		private static readonly string TRAINING_WEEK_VALUE = "P1";
-		private static readonly string EDIT_MODE = "P2";
-
 		public TEditMode EditMode { get; set; }
 
 		public TrainingWeek TrainingWeek { get; set; }
@@ -58,6 +55,7 @@ namespace BodyReportMobile.Core.ViewModels
 			WeekNumberLabel = Translation.Get (TRS.WEEK_NUMBER);
 			HeightLabel = Translation.Get (TRS.HEIGHT) + " (" + lengthUnit + ")";
 			WeightLabel = Translation.Get (TRS.WEIGHT) + " (" + weightUnit + ")";
+            OnPropertyChanged(null);
 		}
 
 		#endregion
@@ -69,25 +67,20 @@ namespace BodyReportMobile.Core.ViewModels
 			};
 		}
 
-		public override void Init (string viewModelGuid, bool autoClearViewModelDataCollection)
+		protected override void Show ()
 		{
-			TrainingWeek = ViewModelDataCollection.Get<TrainingWeek> (viewModelGuid, TRAINING_WEEK_VALUE);
-			EditMode = ViewModelDataCollection.Get<TEditMode> (viewModelGuid, EDIT_MODE);
+            base.Show();
 
-			base.Init (viewModelGuid, autoClearViewModelDataCollection);
 
 			SynchronizeData ();
 		}
 
 		public static async Task<bool> Show (TrainingWeek trainingWeek, TEditMode editMode, BaseViewModel parent = null)
 		{
-			/*string viewModelGuid = Guid.NewGuid ().ToString ();
-			ViewModelDataCollection.Push (viewModelGuid, TRAINING_WEEK_VALUE, trainingWeek);
-			ViewModelDataCollection.Push (viewModelGuid, EDIT_MODE, editMode);
-            */
             var viewModel = new EditTrainingWeekViewModel();
-            viewModel.ViewModelGuid = Guid.NewGuid().ToString();
-            return await ShowModalViewModel (viewModel, true, parent);
+            viewModel.TrainingWeek = trainingWeek;
+            viewModel.EditMode = editMode;
+            return await ShowModalViewModel (viewModel, parent);
 		}
 
 		private void SynchronizeData ()
@@ -147,10 +140,10 @@ namespace BodyReportMobile.Core.ViewModels
 
 					var result = await ListViewModel.ShowGenericList (Translation.Get (TRS.YEAR), datas, currentData, this);
 
-					if (result.ViewModelValidated && result.SelectedTag != null)
+					if (result.Validated && result.SelectedData != null)
 					{
-						if (((int)result.SelectedTag) > 0)
-							TrainingWeek.Year = (int)result.SelectedTag;
+						if (((int)result.SelectedData.Tag) > 0)
+							TrainingWeek.Year = (int)result.SelectedData.Tag;
 						SynchronizeData ();
 					}
 				});
@@ -184,10 +177,10 @@ namespace BodyReportMobile.Core.ViewModels
 
 					var result = await ListViewModel.ShowGenericList (Translation.Get (TRS.WEEK_NUMBER), datas, currentData, this);
 
-					if (result.ViewModelValidated && result.SelectedTag != null)
+					if (result.Validated && result.SelectedData != null)
 					{
-						if (((int)result.SelectedTag) > 0)
-							TrainingWeek.WeekOfYear = (int)result.SelectedTag;
+						if (((int)result.SelectedData.Tag) > 0)
+							TrainingWeek.WeekOfYear = (int)result.SelectedData.Tag;
 						SynchronizeData ();
 					}
 				});

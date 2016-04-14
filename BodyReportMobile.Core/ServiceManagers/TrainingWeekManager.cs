@@ -79,7 +79,7 @@ namespace BodyReportMobile.Core.ServiceManagers
 		{
 			List<TrainingWeek> trainingWeeks = _trainingWeekModule.Find(criteriaField);
 
-			if (manageTrainingDay)
+			if (manageTrainingDay && trainingWeeks != null)
 			{
 				foreach (TrainingWeek trainingJournal in trainingWeeks)
 				{

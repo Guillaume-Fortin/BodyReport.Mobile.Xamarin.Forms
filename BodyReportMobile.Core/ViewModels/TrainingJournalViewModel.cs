@@ -35,14 +35,14 @@ namespace BodyReportMobile.Core.ViewModels
 			_trainingWeekManager = new TrainingWeekManager (_dbContext);
 		}
 
-		public override void Init (string viewModelGuid, bool autoClearViewModelDataCollection)
+		protected async override void Show()
 		{
-			base.Init (viewModelGuid, autoClearViewModelDataCollection);
+			base.Show();
 
 			_trainingWeekList = _trainingWeekManager.FindTrainingWeek (null, false);
 			SynchronizeData ();
 
-			RetreiveAndSaveOnlineData ().Wait();
+			await RetreiveAndSaveOnlineData ();
 		}
 
 		protected override void InitTranslation()
@@ -71,20 +71,17 @@ namespace BodyReportMobile.Core.ViewModels
 							_trainingWeekManager.DeleteTrainingWeek (trainingWeek);
 					}
 
-					var trainingWeekList = new List<TrainingWeek> ();
+					_trainingWeekList = new List<TrainingWeek> ();
 					foreach (var trainingWeek in onlineTrainingWeekList)
-						trainingWeekList.Add (_trainingWeekManager.UpdateTrainingWeek (trainingWeek));
+                        _trainingWeekList.Add (_trainingWeekManager.UpdateTrainingWeek (trainingWeek));
 					SynchronizeData ();
 				}
-			}
+                IsBusy = false;
+            }
 			catch (Exception except)
 			{
-                // TODO Exception
-                //var userDialog = Resolver.Resolve<IUserDialogs> ();
-                //userDialog.AlertAsync (except.Message, "Exception", "ok");
+                IsBusy = false;
             }
-
-            IsBusy = false;
 		}
 
 		public void SynchronizeData ()
@@ -187,7 +184,7 @@ namespace BodyReportMobile.Core.ViewModels
 			}
 			set {
 				_createLabel = value;
-				//RaisePropertyChanged (() => CreateLabel);
+				OnPropertyChanged ();
 			}
 		}
 
@@ -200,8 +197,8 @@ namespace BodyReportMobile.Core.ViewModels
 					return;
 
 				isBusy = value;
-				//RaisePropertyChanged (() => IsBusy);
-			}
+                OnPropertyChanged();
+            }
 		}
 
 		#endregion

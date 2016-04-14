@@ -23,8 +23,8 @@ namespace BodyReportMobile.Presenter.Pages.Generics
 			var datas = (BindingContext as ListViewModel).Datas;
 			if (datas != null) {
 				var selectedItem = datas.Where (d => d != null && d.IsSelected).FirstOrDefault ();
-                //if(selectedItem != null)
-                //listView.ScrollTo (selectedItem, ScrollToPosition.Center, true);
+                if(selectedItem != null)
+                    listView.ScrollTo (selectedItem, ScrollToPosition.Center, true);
             }
 
             /*var selectItem = (BindingContext as ListViewModel).SelectedItem;

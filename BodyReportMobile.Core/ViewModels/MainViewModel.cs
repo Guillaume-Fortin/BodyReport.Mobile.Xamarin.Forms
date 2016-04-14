@@ -44,10 +44,13 @@ namespace BodyReportMobile.Core.ViewModels
 			_dbContext = Resolver.Resolve<ISQLite> ().GetConnection ();
         }
 
-        protected override void Show()
+        protected override async void Show()
         {
             base.Show();
+
             SynchronizeData();
+
+            await SynchronizeWebData();
         }
 
 		private void SynchronizeData()
@@ -66,12 +69,7 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			return string.Format ("flag_{0}.png", Translation.GetLangExt (langType)).Replace('-', '_');
 		}
-
-		public async void Start ()
-		{
-			await SynchronizeWebData ();
-		}
-
+        
 		private async Task SynchronizeWebData()
 		{
 			try
@@ -105,6 +103,9 @@ namespace BodyReportMobile.Core.ViewModels
 			}
 		}
 
+        /// <summary>
+        /// Change language with user choice list view
+        /// </summary>
 		public ICommand GoToChangeLanguageCommand
 		{
 			get
@@ -128,9 +129,9 @@ namespace BodyReportMobile.Core.ViewModels
 
 					var result = await ListViewModel.ShowGenericList (Translation.Get(TRS.LANGUAGE), datas, currentData, this);
 
-					if(result.ViewModelValidated && result.SelectedTag != null)
+					if(result.Validated && result.SelectedData != null && result.SelectedData.Tag != null)
 					{
-						Translation.ChangeLang((LangType)result.SelectedTag);
+						Translation.ChangeLang((LangType)result.SelectedData.Tag);
 						SynchronizeData();
 					}
 

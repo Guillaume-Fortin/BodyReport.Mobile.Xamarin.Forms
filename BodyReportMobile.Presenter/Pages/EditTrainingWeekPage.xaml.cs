@@ -11,7 +11,7 @@ namespace BodyReportMobile.Presenter.Pages
 {
 	public partial class EditTrainingWeekPage : BaseContentPage
 	{
-		public EditTrainingWeekPage () : base()
+		public EditTrainingWeekPage (BaseViewModel viewModel) : base(viewModel)
 		{
 			InitializeComponent ();
 		}

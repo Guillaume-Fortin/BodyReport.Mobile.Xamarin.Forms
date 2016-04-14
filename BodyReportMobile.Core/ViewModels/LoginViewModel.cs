@@ -23,11 +23,6 @@ namespace BodyReportMobile.Core.ViewModels
 			LoginLabel = Translation.Get (TRS.LOG_IN);
 		}
 
-		public override void Init(string viewModelGuid, bool autoClearViewModelDataCollection)
-		{
-			base.Init (viewModelGuid, autoClearViewModelDataCollection);
-		}
-
 		public ICommand LoginCommand
 		{
 			get

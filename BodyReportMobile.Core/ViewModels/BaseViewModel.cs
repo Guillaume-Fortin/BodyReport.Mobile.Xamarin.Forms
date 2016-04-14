@@ -14,7 +14,7 @@ namespace BodyReportMobile.Core.ViewModels
 
         private static readonly string TCS_VALUE = "TCS_VALUE";
 
-		private bool _autoClearViewModelDataCollection;
+		protected bool _autoClearViewModelDataCollection = true;
 
 		/// <summary>
 		/// The view model GUID.
@@ -29,12 +29,12 @@ namespace BodyReportMobile.Core.ViewModels
 		public BaseViewModel ()
 		{
             AppMessenger.AppInstance.Register<MvxMessageFormClosed>(this, OnFormClosedMvxMessage);
-            AppMessenger.AppInstance.Register<MvxMessageViewEvent>(this, OnViewEvent);
+            AppMessenger.AppInstance.Register<MvxMessageViewModelEvent>(this, OnViewModelEvent);
         }
 
         #region view model life cycle
 
-        private void OnViewEvent(MvxMessageViewEvent message)
+        private void OnViewModelEvent(MvxMessageViewModelEvent message)
         {
             if (message != null && !string.IsNullOrWhiteSpace(message.ViewModelGuid) &&
                 message.ViewModelGuid == _viewModelGuid)
@@ -57,6 +57,7 @@ namespace BodyReportMobile.Core.ViewModels
         /// </summary>
         protected virtual void Show()
         {
+            InitTranslation();
         }
 
         /// <summary>
@@ -86,18 +87,11 @@ namespace BodyReportMobile.Core.ViewModels
         /// </summary>
         protected virtual void Closed()
         {
-            AppMessenger.AppInstance.Unregister<MvxMessageViewEvent>(this);
+            AppMessenger.AppInstance.Unregister<MvxMessageViewModelEvent>(this);
             AppMessenger.AppInstance.Unregister<MvxMessageFormClosed>(this);
         }
 
         #endregion
-
-        public virtual void Init(string viewModelGuid, bool autoClearViewModelDataCollection)
-		{
-			_viewModelGuid = viewModelGuid;
-			_autoClearViewModelDataCollection = autoClearViewModelDataCollection;
-			InitTranslation ();
-		}
 
 		protected virtual void InitTranslation()
 		{
@@ -117,12 +111,7 @@ namespace BodyReportMobile.Core.ViewModels
 			}
 		}
 
-		public static async Task<bool> ShowModalViewModel(BaseViewModel viewModel, BaseViewModel parentViewModel, bool mainViewModel = false)
-		{
-			return await ShowModalViewModel(viewModel, true, parentViewModel, mainViewModel);
-		}
-
-		protected static async Task<bool> ShowModalViewModel(BaseViewModel viewModel, bool autoClearViewModelDataCollection, BaseViewModel parentViewModel, bool mainViewModel=false)
+		public static async Task<bool> ShowModalViewModel(BaseViewModel viewModel, BaseViewModel parentViewModel, bool mainViewModel=false)
         {
             if (string.IsNullOrWhiteSpace(viewModel.ViewModelGuid))
                 viewModel.ViewModelGuid = Guid.NewGuid().ToString();
@@ -131,12 +120,11 @@ namespace BodyReportMobile.Core.ViewModels
             if(!mainViewModel)
 			    ViewModelDataCollection.Push (viewModel.ViewModelGuid, TCS_VALUE, tcs);
 
-            bool result = false;// baseMvxViewModel.ShowViewModel<TViewModel> (new { viewModelGuid = viewModelGuid, autoClearViewModelDataCollection = autoClearViewModelDataCollection});
-
+            bool result = false;
             var presenter = Resolver.Resolve<IPresenterManager>();
             if(presenter != null)
             {
-               result = await presenter.TryDisplayViewAsync(viewModel, parentViewModel);
+                result = await presenter.TryDisplayViewAsync(viewModel, parentViewModel);
             }
 
             if(mainViewModel && result)
@@ -151,13 +139,9 @@ namespace BodyReportMobile.Core.ViewModels
         /// Programm demand close view model
         /// </summary>
         /// <returns></returns>
-		protected bool CloseViewModel()
+		protected void CloseViewModel(bool cancelView = false)
 		{
-			/*if (Close (this)) {
-                AppMessenger.AppInstance.Send(new MvxMessageFormClosed(ViewModelGuid, false));
-				return true;
-			}*/
-			return false;
+            AppMessenger.AppInstance.Send(new MvxMessagePageEvent(_viewModelGuid) { ClosingRequest = true, ClosingRequest_ViewCanceled = cancelView });
 		}
 
 		#region accessor
@@ -178,8 +162,8 @@ namespace BodyReportMobile.Core.ViewModels
 			}
 			set {
 				_titleLabel = value;
-				//RaisePropertyChanged (() => TitleLabel);
-			}
+                OnPropertyChanged();
+            }
 		}
 
         #endregion

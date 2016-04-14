@@ -6,18 +6,15 @@ using System.Threading.Tasks;
 
 namespace BodyReportMobile.Core.MvxMessages
 {
-    public class MvxMessageViewEvent
+    public class MvxMessagePageEvent
     {
-        public MvxMessageViewEvent(string viewModelGuid)
+        public MvxMessagePageEvent(string viewModelGuid)
         {
             ViewModelGuid = viewModelGuid;
         }
 
         public string ViewModelGuid { get; private set; }
-        public bool Show { get; set; }
-        public bool Appear { get; set; }
-        public bool Disappear { get; set; }
-        public bool Closing { get; set; }
-        public bool Closed { get; set; }
+        public bool ClosingRequest { get; set; } = false;
+        public bool ClosingRequest_ViewCanceled { get; set; } = false;
     }
 }
