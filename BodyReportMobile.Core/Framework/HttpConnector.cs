@@ -41,8 +41,8 @@ namespace BodyReportMobile.Core.Framework
 			handler.CookieContainer = cookies;
 
 			_httpClient = new System.Net.Http.HttpClient (handler);
+            _httpClient.BaseAddress = new Uri(_baseUrl);
             _httpClient.Timeout = TimeSpan.FromSeconds(30);
-
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json")); 
 		}
 
@@ -69,7 +69,7 @@ namespace BodyReportMobile.Core.Framework
 				postData.Add (new KeyValuePair<string, string> ("password", _password));
 
 				HttpContent content = new FormUrlEncodedContent (postData);
-				var response = await _httpClient.PostAsync (_baseUrl + _relativeLoginUrl, content);
+				var response = await _httpClient.PostAsync (_relativeLoginUrl, content);
 
 				if (response != null)
 				{
@@ -104,16 +104,26 @@ namespace BodyReportMobile.Core.Framework
 				throw new Exception ("Connexion impossible");
 		}
 
-		public async Task<T> GetAsync<T> (string relativeUrl)
+		public async Task<T> GetAsync<T> (string relativeUrl, Dictionary<string,string> datas = null)
 		{
 			T result = default(T);
 			try
 			{
 				await AutoConnect();
-				
-				var httpResponse = await _httpClient.GetAsync (_baseUrl + relativeUrl);
 
-				if (httpResponse != null)
+                HttpResponseMessage httpResponse;
+                if (datas != null && datas.Count > 0)
+                {
+                    var postData = new List<KeyValuePair<string, string>>();
+                    postData.AddRange(datas);
+                    HttpContent content = new FormUrlEncodedContent(postData);
+                    string urlDatas = await content.ReadAsStringAsync();
+                    httpResponse = await _httpClient.GetAsync(string.Format("{0}?{1}", relativeUrl, urlDatas));
+                }
+                else
+                    httpResponse = await _httpClient.GetAsync(relativeUrl);
+
+                if (httpResponse != null)
 				{
 					if (httpResponse.StatusCode == HttpStatusCode.OK)
 					{
@@ -147,24 +157,22 @@ namespace BodyReportMobile.Core.Framework
 			return result;
 		}
 
-		public async Task<T> PostAsync<T> (string relativeUrl, T postData)
+		public async Task<TResultData> PostAsync<TData, TResultData> (string relativeUrl, TData postData)
 		{
-			T result = default(T);
+            TResultData result = default(TResultData);
 			try
 			{
 				await AutoConnect();
 
-				string postBody = string.Format("={0}", JsonConvert.SerializeObject(postData)); 
-
-				//HttpContent content = new FormUrlEncodedContent (postBody);
-				var httpResponse = await _httpClient.PostAsync(_baseUrl + relativeUrl, new StringContent(postBody, Encoding.UTF8, "application/x-www-form-urlencoded")); 
+				string postBody = JsonConvert.SerializeObject(postData, new JsonSerializerSettings {Formatting = Formatting.None}); 
+                var httpResponse = await _httpClient.PostAsync(relativeUrl, new StringContent(postBody, Encoding.UTF8, "application/json")); 
 
 				if (httpResponse != null)
 				{
 					if (httpResponse.StatusCode == HttpStatusCode.OK)
 					{
 						var jsonStringResult = httpResponse.Content.ReadAsStringAsync ().Result;
-						result = JsonConvert.DeserializeObject<T> (jsonStringResult);
+						result = JsonConvert.DeserializeObject<TResultData> (jsonStringResult);
 					}
 					else if (httpResponse.StatusCode == HttpStatusCode.NotFound)
 					{
@@ -188,6 +196,6 @@ namespace BodyReportMobile.Core.Framework
 
 			return result;
 		}
-	}
+    }
 }
 

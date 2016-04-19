@@ -2,7 +2,7 @@
 <ViewCell xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
 		  xmlns:local="clr-namespace:BodyReportMobile.Presenter"
       xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
-      x:Name="touchViewCell" x:Class="BodyReportMobile.Presenter.Framework.Controls.NumericEntryCell">
+      x:Name="numericEntryCell" x:Class="BodyReportMobile.Presenter.Framework.Controls.NumericEntryCell">
 
 	<Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="2">
 		<Grid.RowDefinitions>
@@ -14,14 +14,15 @@
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
 
-		<Label x:Name="TitleLabel" Text="{Binding Path=Label, Source={x:Reference touchViewCell}}"
+		<Label x:Name="TitleLabel" Text="{Binding Path=Label, Source={x:Reference numericEntryCell}}"
 	    	LineBreakMode="MiddleTruncation" HorizontalOptions="Start" VerticalOptions="Center"
 	    	 Grid.Row="0" Grid.Column="0" />
 
-    <localcontrol:NumericEntry x:Name="ValueLabel" Text="{Binding Path=Text, Mode=TwoWay, Source={x:Reference touchViewCell}}" 
-				   MinValue="{Binding Path=MinValue, Mode=TwoWay, Source={x:Reference touchViewCell}}" 
-				   MaxValue="{Binding Path=MaxValue, Mode=TwoWay, Source={x:Reference touchViewCell}}"
-				   IsInteger="{Binding Path=IsInteger, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+    <localcontrol:NumericEntry x:Name="ValueLabel"
+           Text="{Binding Path=Text, Mode=TwoWay, Source={x:Reference numericEntryCell}}" 
+				   MinValue="{Binding Path=MinValue, Mode=TwoWay, Source={x:Reference numericEntryCell}}" 
+				   MaxValue="{Binding Path=MaxValue, Mode=TwoWay, Source={x:Reference numericEntryCell}}"
+				   IsInteger="{Binding Path=IsInteger, Mode=TwoWay, Source={x:Reference numericEntryCell}}"
 	    		   HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" FontSize="14"
 	    		   Grid.Row="0" Grid.Column="1"  Keyboard="Numeric" />
     	

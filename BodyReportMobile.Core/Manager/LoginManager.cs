@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using XLabs.Ioc;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.MvxMessages;
+using BodyReportMobile.Core.WebServices;
+using BodyReportMobile.Core.ServiceManagers;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Manager
 {
@@ -14,7 +17,8 @@ namespace BodyReportMobile.Core.Manager
 		private bool _busy = false;
 		private static LoginManager _instance = null;
 
-		private string _userName = string.Empty;
+        private string _userId = string.Empty;
+        private string _userName = string.Empty;
 		private string _password = string.Empty;
 
 		private LoginManager ()
@@ -32,14 +36,57 @@ namespace BodyReportMobile.Core.Manager
 			}
 		}
 
-		public async Task Init()
+        private async Task<bool> SaveEncryptedAccountData()
+        {
+            bool result = false;
+            try
+            {
+                var userInfoKey = new UserInfoKey(); // no need userId here
+                var userInfo = await UserInfoWebService.GetUserInfo(userInfoKey);
+                if (userInfo != null)
+                {
+                    var dbContext = Resolver.Resolve<ISQLite>().GetConnection();
+                    var userInfoManager = new UserInfoManager(dbContext);
+                    userInfoManager.UpdateUserInfo(userInfo);
+                    UserData.Instance.UserInfo = userInfo;
+
+                    _userId = userInfo.UserId;
+                    _security.SaveUserInfo(_userId, _userName, _password);
+                    result = true;
+                }
+            }
+            catch
+            {
+
+            }
+            return result;
+        }
+
+		public async Task<bool> Init()
 		{
+            bool result = false;
 			try
 			{
 				_busy = true;
-				bool result;
-				if(_security.GetUserInfo (out _userName, out _password))
-					result = await HttpConnector.Instance.ConnectUser(_userName, _password);
+                if (_security.GetUserInfo(out _userId, out _userName, out _password))
+                {
+                    result = await HttpConnector.Instance.ConnectUser(_userName, _password);
+                    if (result) // web login
+                    {
+                        result = await SaveEncryptedAccountData();
+                    }
+                    else // load local login info
+                    {
+                        var dbContext = Resolver.Resolve<ISQLite>().GetConnection();
+                        var userInfoManager = new UserInfoManager(dbContext);
+                        var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = _userId });
+                        if(userInfo != null)
+                        {
+                            UserData.Instance.UserInfo = userInfo;
+                            result = true;
+                        }
+                    }
+                }
 			}
 			catch
 			{
@@ -48,6 +95,7 @@ namespace BodyReportMobile.Core.Manager
 			{
 				_busy = false;
 			}
+            return result;
 		}
 
 		private async void OnLoginEntry(MvxMessageLoginEntry message)
@@ -75,14 +123,17 @@ namespace BodyReportMobile.Core.Manager
 
 					if(loginResult.Ok)
 					{
-						_userName = loginResult.LoginText;
+                        _userId = string.Empty;
+                        _userName = loginResult.LoginText;
 						_password = loginResult.Password;
 						if(!string.IsNullOrWhiteSpace(loginResult.LoginText) && !string.IsNullOrWhiteSpace(_password))
 						{
-							connectionOK = await HttpConnector.Instance.ConnectUser(_userName, _password);
-							if(connectionOK)
-								_security.SaveUserInfo(_userName, _password);
-						}
+							bool authentificationSuccess = await HttpConnector.Instance.ConnectUser(_userName, _password);
+							if(authentificationSuccess)
+                            {
+                                connectionOK = await SaveEncryptedAccountData();
+                            }
+                        }
 					}
 				}
 				while(loginResult != null && loginResult.Ok && !connectionOK);

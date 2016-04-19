@@ -7,7 +7,7 @@ namespace BodyReport.iOS
 {
 	public class SecurityIOS : ISecurity
 	{
-		public void SaveUserInfo (string userName, string password)
+		public void SaveUserInfo (string userId, string userName, string password)
 		{
 			var rec = new SecRecord (SecKind.GenericPassword){
 				Generic = NSData.FromString ("password")
@@ -28,10 +28,10 @@ namespace BodyReport.iOS
 			res = SecKeyChain.Add (s);
 		}
 
-		public bool GetUserInfo (out string userName, out string password)
+		public bool GetUserInfo (out string userId, out string userName, out string password)
 		{
 			bool result = false;
-			password = userName = string.Empty;
+            userId = password = userName = string.Empty;
 
 			try
 			{

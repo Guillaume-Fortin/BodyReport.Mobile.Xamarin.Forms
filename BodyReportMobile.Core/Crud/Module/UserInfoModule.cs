@@ -19,6 +19,11 @@ namespace BodyReportMobile.Core.Crud.Module
         {
         }
 
+        protected override void CreateTable()
+        {
+            _dbContext.CreateTable<UserInfoRow>();
+        }
+
         /// <summary>
         /// Create data in database
         /// </summary>

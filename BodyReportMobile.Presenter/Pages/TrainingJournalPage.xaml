@@ -21,13 +21,15 @@
 			</ListView.Header-->
 			<ListView.ItemTemplate>
 	        <DataTemplate>
-	        	<TextCell Text="{Binding Week}" Detail="{Binding Date}" >
-	        	<TextCell.ContextActions>
-		            <MenuItem Text="Copy" BindingContext="{Binding Source={x:Reference myPage}, Path=BindingContext}"  
-		            		  Command="{Binding CopyCommand}" />
-		            <MenuItem Text="Delete" IsDestructive="True" BindingContext="{Binding Source={x:Reference myPage}, Path=BindingContext}" 
-		            		  Command="{Binding DeleteCommand}"/>
-		         </TextCell.ContextActions>
+	        	<TextCell x:Name="textCell" Text="{Binding Week}" Detail="{Binding Date}" >
+	        	  <TextCell.ContextActions>
+		              <MenuItem Text="Copy" BindingContext="{Binding Source={x:Reference myPage}, Path=BindingContext}"  
+		            		    Command="{Binding CopyCommand}" CommandParameter="{Binding .}" />
+		              <MenuItem Text="Delete" IsDestructive="True"
+                        BindingContext="{Binding Source={x:Reference listView}, Path=BindingContext}" 
+		            		    Command="{Binding DeleteCommand}"
+                        CommandParameter="{Binding Source={x:Reference textCell}, Path=BindingContext}"/>
+		           </TextCell.ContextActions>
 	        	</TextCell>
 	        </DataTemplate>
 	      </ListView.ItemTemplate>

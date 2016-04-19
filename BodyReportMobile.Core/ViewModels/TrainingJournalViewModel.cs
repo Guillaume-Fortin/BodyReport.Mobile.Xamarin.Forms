@@ -15,6 +15,9 @@ using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Framework.Binding;
 using BodyReportMobile.Core.WebServices;
 using Xamarin.Forms;
+using BodyReportMobile.Core.Data;
+using System.Globalization;
+using Acr.UserDialogs;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -39,11 +42,12 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			base.Show();
 
-			_trainingWeekList = _trainingWeekManager.FindTrainingWeek (null, false);
-			SynchronizeData ();
+            RetreiveLocalData();
+            SynchronizeData();
 
-			await RetreiveAndSaveOnlineData ();
-		}
+            await RetreiveAndSaveOnlineData ();
+            SynchronizeData();
+        }
 
 		protected override void InitTranslation()
 		{
@@ -53,12 +57,18 @@ namespace BodyReportMobile.Core.ViewModels
 			CreateLabel = Translation.Get (TRS.CREATE);
 		}
 
-		private async Task RetreiveAndSaveOnlineData ()
+        private void RetreiveLocalData()
+        {
+            _trainingWeekList = _trainingWeekManager.FindTrainingWeek(null, false);
+        }
+
+        private async Task<bool> RetreiveAndSaveOnlineData ()
 		{
+            bool result = false;
 			try
 			{
 				if (IsBusy)
-					return;
+					return false;
 				IsBusy = true;
 
 				var onlineTrainingWeekList = await TrainingWeekService.FindTrainingWeeks ();
@@ -74,15 +84,17 @@ namespace BodyReportMobile.Core.ViewModels
 					_trainingWeekList = new List<TrainingWeek> ();
 					foreach (var trainingWeek in onlineTrainingWeekList)
                         _trainingWeekList.Add (_trainingWeekManager.UpdateTrainingWeek (trainingWeek));
-					SynchronizeData ();
 				}
                 IsBusy = false;
+                result = true;
             }
 			catch (Exception except)
 			{
                 IsBusy = false;
             }
-		}
+            return result;
+
+        }
 
 		public void SynchronizeData ()
 		{
@@ -127,7 +139,7 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			get
 			{
-				return new Command(async () => { await RetreiveAndSaveOnlineData(); });
+				return new Command(async () => { await RetreiveAndSaveOnlineData(); SynchronizeData(); });
 			}
 		}
 
@@ -141,17 +153,25 @@ namespace BodyReportMobile.Core.ViewModels
 
 		private async Task CreateNewTrainingWeek ()
 		{
-			var trainingWeek = new TrainingWeek () {
-				Year = 2016,
-				WeekOfYear = 9,
-				UserHeight = 193,
-				UserWeight = 90
-			};
+            var userInfo = UserData.Instance.UserInfo;
+            if (userInfo == null)
+                userInfo = new UserInfo();
+
+            DateTime dateTime = DateTime.Now;
+            var trainingWeek = new TrainingWeek () {
+                UserId = userInfo.UserId,
+                Year = dateTime.Year,
+				WeekOfYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(dateTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday),
+                UserHeight = userInfo.Height,
+				UserWeight = userInfo.Weight,
+                Unit = userInfo.Unit
+        };
 
 			if (await EditTrainingWeekViewModel.Show (trainingWeek, TEditMode.Create, this))
 			{
-				_trainingWeekList.Add (trainingWeek);
-				SynchronizeData ();
+                //Refresh data
+                RetreiveLocalData();
+                SynchronizeData();
 			}
 		}
 
@@ -170,8 +190,33 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			get
 			{
-				return new Command (() =>
+				return new Command (async (bindingTrainingWeek) =>
 				{
+                    try
+                    {
+                        if (bindingTrainingWeek == null || !(bindingTrainingWeek is BindingTrainingWeek))
+                            return;
+
+                        var trainingWeek = (bindingTrainingWeek as BindingTrainingWeek).TrainingWeek;
+                        if (trainingWeek != null)
+                        {
+                            await TrainingWeekService.DeleteTrainingWeekByKey(trainingWeek as TrainingWeek);
+                            bool onlineDataRefreshed = await RetreiveAndSaveOnlineData();
+                            if (!onlineDataRefreshed)
+                            {
+                                // delete data in local database
+                                _trainingWeekManager.DeleteTrainingWeek(trainingWeek);
+                            }
+                            //Refresh data
+                            RetreiveLocalData();
+                            SynchronizeData();
+                        }
+                    }
+                    catch(Exception except)
+                    {
+                        var userDialog = Resolver.Resolve<IUserDialogs>();
+                        await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+                    }
 				});
 			}
 		}

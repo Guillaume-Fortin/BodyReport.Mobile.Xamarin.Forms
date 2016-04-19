@@ -21,14 +21,6 @@
             <TableRoot>
                 <TableSection Title="{Binding EditTitle}">
 
-                	<!--ViewCell x:Name="YearCell" Tapped="OnCellTapped">
-                		<StackLayout Padding="5,5,10,5" HorizontalOptions="Fill" Orientation="Horizontal">
-					        <Label x:Name="YearLabel" Text="{Binding YearLabel}" LineBreakMode="MiddleTruncation" HorizontalOptions="Start" WidthRequest="120" YAlign="Center"/>
-					        <Label x:Name="YearText" Text="{Binding TrainingWeek.Year, Mode=TwoWay}" HorizontalOptions="FillAndExpand" YAlign="Center"/>
-					        <Image Source="disclosure_indicator.png" HorizontalOptions="End" VerticalOptions="Center" />
-					    </StackLayout>
-                	</ViewCell-->
-
                 	<localcontrol:TouchViewCell x:Name="YearCell" Tapped="OnCellTapped" 
                 		Title="{Binding YearLabel}" Value="{Binding TrainingWeek.Year, Mode=TwoWay}"
                 		IsIndicatorVisible="true" />
@@ -40,10 +32,10 @@
                 		IsIndicatorVisible="true" Height="60"/>
 
                   <localcontrol:NumericEntryCell x:Name="HeightCell" Label="{Binding HeightLabel}"
-                    			Text="{Binding TrainingWeek.UserHeight, Converter={StaticResource intConverter}}" MinValue="120" MaxValue="250"/>
+                    			Text="{Binding TrainingWeek.UserHeight, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="0" MaxValue="999"/>
 
                   <localcontrol:NumericEntryCell x:Name="WeightCell" Label="{Binding WeightLabel}"  
-                    			Text="{Binding TrainingWeek.UserWeight, Converter={StaticResource intConverter}}" MinValue="40" MaxValue="230"/>
+                    			Text="{Binding TrainingWeek.UserWeight, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="0" MaxValue="999"/>
 
                 </TableSection>
             </TableRoot>

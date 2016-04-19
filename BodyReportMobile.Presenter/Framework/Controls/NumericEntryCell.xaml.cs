@@ -15,7 +15,7 @@ namespace BodyReportMobile.Presenter.Framework.Controls
 
 		public static readonly BindableProperty TextProperty = BindableProperty.Create ("Text", typeof(string), typeof(TouchViewCell), "");
 
-		public string Value {
+		public string Text {
 			get { return (string)GetValue (TextProperty); }
 			set { SetValue (TextProperty, value); }
 		}

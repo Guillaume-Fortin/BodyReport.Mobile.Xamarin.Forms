@@ -7,7 +7,7 @@ namespace BodyReportMobile.Presenter.Framework.Controls
 {
 	public class NumericEntry : Entry
 	{
-		public static readonly BindableProperty MinValueProperty = BindableProperty.Create ("MinValue", typeof(double), typeof(NumericEntry), double.MinValue);
+        public static readonly BindableProperty MinValueProperty = BindableProperty.Create ("MinValue", typeof(double), typeof(NumericEntry), double.MinValue);
 
 		public double MinValue {
 			get { return (double)GetValue (MinValueProperty); }
@@ -30,11 +30,25 @@ namespace BodyReportMobile.Presenter.Framework.Controls
 
 		public NumericEntry ()
 		{
-			Completed += NumericEntry_Completed;
-		}
+            //TODO binding necessary?
+            this.SetBinding(Entry.TextProperty, new Binding(path: "Text", source: this));
 
-		void NumericEntry_Completed (object sender, EventArgs e)
-		{
+            Completed += NumericEntry_Completed;
+            Unfocused += NumericEntry_Unfocused;
+        }
+
+        private void NumericEntry_Unfocused(object sender, FocusEventArgs e)
+        {
+            CheckValue();
+        }
+
+        void NumericEntry_Completed(object sender, EventArgs e)
+        {
+            CheckValue();
+        }
+
+        private void CheckValue()
+        {
 			if(IsInteger)
 				this.Text = ParseIntegerValue ().ToString();
 			else

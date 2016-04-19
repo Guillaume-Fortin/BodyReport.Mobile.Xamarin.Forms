@@ -12,6 +12,7 @@ using BodyReportMobile.Core.Manager;
 using BodyReportMobile.Core.WebServices;
 using BodyReportMobile.Core.Framework;
 using Xamarin.Forms;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -77,8 +78,8 @@ namespace BodyReportMobile.Core.ViewModels
 				await Task.Delay(200); //TODO replace it by Main form loaded Event
 				await LoginManager.Instance.Init ();
 
-				//Synchronise Web data to local database
-				var muscleList = await MuscleWebService.FindMuscles();
+                //Synchronise Web data to local database
+                var muscleList = await MuscleWebService.FindMuscles();
 				var muscleManager = new MuscleManager(_dbContext);
 				muscleManager.UpdateMuscleList(muscleList);
 

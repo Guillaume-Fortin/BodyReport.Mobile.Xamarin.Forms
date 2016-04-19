@@ -11,12 +11,17 @@ using BodyReportMobile.Core.WebServices;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Data;
 using Xamarin.Forms;
+using SQLite.Net;
+using BodyReportMobile.Core.ServiceManagers;
 
 namespace BodyReportMobile.Core.ViewModels
 {
 	public class EditTrainingWeekViewModel : BaseViewModel
 	{
-		public TEditMode EditMode { get; set; }
+        private SQLiteConnection _dbContext;
+        private TrainingWeekManager _trainingWeekManager;
+
+        public TEditMode EditMode { get; set; }
 
 		public TrainingWeek TrainingWeek { get; set; }
 
@@ -62,10 +67,9 @@ namespace BodyReportMobile.Core.ViewModels
 
 		public EditTrainingWeekViewModel () : base ()
 		{
-			TrainingWeek = new TrainingWeek () {
-				Year = 2015
-			};
-		}
+            _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
+            _trainingWeekManager = new TrainingWeekManager(_dbContext);
+        }
 
 		protected override void Show ()
 		{
@@ -196,9 +200,27 @@ namespace BodyReportMobile.Core.ViewModels
 
 		private async Task<bool> SaveData ()
 		{
-			var data = await TrainingWeekService.UpdateTrainingWeek (TrainingWeek);
-			return data != null;
-		}
+            TrainingWeek trainingWeek = null;
+            if (EditMode == TEditMode.Create)
+            {
+                trainingWeek = await TrainingWeekService.CreateTrainingWeek(TrainingWeek);
+                if (trainingWeek != null)
+                {
+                    _trainingWeekManager.DeleteTrainingWeek(trainingWeek);
+                    _trainingWeekManager.CreateTrainingWeek(trainingWeek);
+                }
+            }
+            else
+            {
+                trainingWeek = await TrainingWeekService.UpdateTrainingWeek(TrainingWeek);
+                if (trainingWeek != null)
+                {
+                    _trainingWeekManager.UpdateTrainingWeek(trainingWeek);
+                }
+            }
+
+            return trainingWeek != null;
+        }
 	}
 }
 
