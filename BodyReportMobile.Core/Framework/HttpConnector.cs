@@ -130,7 +130,11 @@ namespace BodyReportMobile.Core.Framework
 						var jsonStringResult = httpResponse.Content.ReadAsStringAsync ().Result;
 						result = JsonConvert.DeserializeObject<T> (jsonStringResult);
 					}
-					else if (httpResponse.StatusCode == HttpStatusCode.NotFound)
+                    else if (httpResponse.StatusCode == HttpStatusCode.NoContent)
+                    {
+                        result = default(T);
+                    }
+                    else if (httpResponse.StatusCode == HttpStatusCode.NotFound)
 					{
 						throw new Exception ("Ressource not found");
 					}
@@ -174,7 +178,11 @@ namespace BodyReportMobile.Core.Framework
 						var jsonStringResult = httpResponse.Content.ReadAsStringAsync ().Result;
 						result = JsonConvert.DeserializeObject<TResultData> (jsonStringResult);
 					}
-					else if (httpResponse.StatusCode == HttpStatusCode.NotFound)
+                    else if (httpResponse.StatusCode == HttpStatusCode.NoContent)
+                    {
+                        result = default(TResultData);
+                    }
+                    else if (httpResponse.StatusCode == HttpStatusCode.NotFound)
 					{
 						throw new Exception ("Ressource not found");
 					}

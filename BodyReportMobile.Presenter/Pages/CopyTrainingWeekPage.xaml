@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages"
+             xmlns:converter="clr-namespace:BodyReportMobile.Presenter.Framework.Converter"
+             xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
+             x:Class="BodyReportMobile.Presenter.Pages.CopyTrainingWeekPage"
+             Title="{Binding TitleLabel}">
+
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <converter:TextToIntConverter x:Key="intConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+
+  <ContentPage.ToolbarItems>
+    <ToolbarItem Text="{Binding ValidateLabel}" Command="{Binding ValidateCommand}" Order="Primary" Priority="0" />
+  </ContentPage.ToolbarItems>
+  
+  <TableView x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+    <TableRoot>
+      <TableSection Title="{Binding OriginTrainingWeekLabel}">
+
+        <localcontrol:TouchViewCell x:Name="OriginYearCell"
+          Title="{Binding YearLabel}" Value="{Binding CopyTrainingWeek.OriginYear, Mode=TwoWay}"/>
+
+        <localcontrol:TouchViewCell x:Name="OriginWeekOfYearCell"
+          Title="{Binding WeekNumberLabel}" Value="{Binding CopyTrainingWeek.OriginWeekOfYear, Mode=TwoWay}"/>
+      </TableSection>
+
+      <TableSection Title="{Binding NewTrainingWeekLabel}">
+        <localcontrol:NumericEntryCell x:Name="NewYearEntry" Label="{Binding YearLabel}"
+                Text="{Binding CopyTrainingWeek.Year, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="2000" MaxValue="9999"/>
+
+        <localcontrol:NumericEntryCell x:Name="NewWeekOfYearEntry" Label="{Binding WeekNumberLabel}"
+                Text="{Binding CopyTrainingWeek.WeekOfYear, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="0" MaxValue="999"/>
+      </TableSection>
+    </TableRoot>
+  </TableView>
+</local:BaseContentPage>

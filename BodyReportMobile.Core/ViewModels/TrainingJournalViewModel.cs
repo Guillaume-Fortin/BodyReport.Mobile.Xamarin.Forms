@@ -179,10 +179,30 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			get
 			{
-				return new Command (() =>
-				{
-                    
-				});
+				return new Command (async (bindingTrainingWeek) =>
+                {
+                    try
+                    {
+                        if (bindingTrainingWeek == null || !(bindingTrainingWeek is BindingTrainingWeek))
+                            return;
+
+                        var trainingWeek = (bindingTrainingWeek as BindingTrainingWeek).TrainingWeek;
+                        if (trainingWeek != null)
+                        {
+                            if (await CopyTrainingWeekViewModel.Show(trainingWeek, this))
+                            {
+                                //Refresh data
+                                RetreiveLocalData();
+                                SynchronizeData();
+                            }
+                        }
+                    }
+                    catch (Exception except)
+                    {
+                        var userDialog = Resolver.Resolve<IUserDialogs>();
+                        await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+                    }
+                });
 			}
 		}
 
