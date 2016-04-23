@@ -172,6 +172,8 @@ namespace BodyReportMobile.Core.ViewModels
         /// <returns></returns>
         protected void CloseViewModel(bool cancelView = false)
         {
+            DataIsRefreshing = false;
+            ActionIsInProgress = false;
             AppMessenger.AppInstance.Send(new MvxMessagePageEvent(_viewModelGuid) { ClosingRequest = true, ClosingRequest_ViewCanceled = cancelView });
         }
 
