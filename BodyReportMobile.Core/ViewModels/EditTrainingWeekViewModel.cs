@@ -106,9 +106,12 @@ namespace BodyReportMobile.Core.ViewModels
 			{
 				return new Command (async () =>
 				{
+                    if (ActionIsInProgress)
+                        return;
 					try
 					{
-						if (ValidateFields () && await SaveData ())
+                        ActionIsInProgress = true;
+                        if (await ValidateFields () && await SaveData ())
 						{
 							CloseViewModel ();
 						}
@@ -118,6 +121,11 @@ namespace BodyReportMobile.Core.ViewModels
 						var userDialog = Resolver.Resolve<IUserDialogs> ();
 						await userDialog.AlertAsync (except.Message, Translation.Get (TRS.ERROR), Translation.Get (TRS.OK));
 					}
+                    finally
+                    {
+                        ActionIsInProgress = false;
+
+                    }
 				});
 			}
 		}
@@ -191,11 +199,32 @@ namespace BodyReportMobile.Core.ViewModels
 			}
 		}
 
-		private bool ValidateFields ()
+		private async Task<bool> ValidateFields()
 		{
-			return TrainingWeek != null && TrainingWeek.Year > 0 && TrainingWeek.WeekOfYear > 0 &&
-			TrainingWeek.UserHeight > 0 && TrainingWeek.UserWeight > 0;
-			//TODO verify training week doesn't exist
+			if(TrainingWeek != null && TrainingWeek.Year > 0 && TrainingWeek.WeekOfYear > 0 &&
+			TrainingWeek.UserHeight > 0 && TrainingWeek.UserWeight > 0 && !string.IsNullOrWhiteSpace(TrainingWeek.UserId))
+            {
+                var onlineTrainingWeek = await TrainingWeekService.GetTrainingWeek(TrainingWeek);
+                if (EditMode == TEditMode.Create)
+                {
+                    //verify training week doesn't exist
+                    if (onlineTrainingWeek != null)
+                        throw new Exception(string.Format(Translation.Get(TRS.P0_ALREADY_EXIST), Translation.Get(TRS.TRAINING_WEEK)));
+                    return true;
+                }
+                else
+                {
+                    if (onlineTrainingWeek != null)
+                    {
+                        //verify training week exist
+                        if (onlineTrainingWeek == null)
+                            throw new Exception(string.Format(Translation.Get(TRS.P0_NOT_EXIST), Translation.Get(TRS.TRAINING_WEEK)));
+                        return true; 
+                    }
+                    return true;
+                }
+            }
+            return false;
 		}
 
 		private async Task<bool> SaveData ()

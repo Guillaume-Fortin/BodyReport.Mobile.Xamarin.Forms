@@ -88,8 +88,11 @@ namespace BodyReportMobile.Core.ViewModels
 
         private async Task Validate()
         {
+            if (ActionIsInProgress)
+                return;
             try
             {
+                ActionIsInProgress = true;
                 if (await ValidateFields() && await SaveData())
                 {
                     CloseViewModel();
@@ -100,6 +103,10 @@ namespace BodyReportMobile.Core.ViewModels
                 var userDialog = Resolver.Resolve<IUserDialogs>();
                 await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
+            finally
+            {
+                ActionIsInProgress = false;
+            }
         }
 
         private async Task<bool> ValidateFields()
@@ -109,7 +116,6 @@ namespace BodyReportMobile.Core.ViewModels
             // check NewTrainingWeek not empty and NewTrainingWeek != OriginTrainingWeek
             if (CopyTrainingWeek != null && CopyTrainingWeek.Year > 0 && CopyTrainingWeek.WeekOfYear > 0 &&
                (CopyTrainingWeek.Year != CopyTrainingWeek.OriginYear || CopyTrainingWeek.WeekOfYear != CopyTrainingWeek.OriginWeekOfYear))
-
             {
                 //Check new training doesn't exist
                 var key = new TrainingWeekKey() { UserId = CopyTrainingWeek.UserId, Year = CopyTrainingWeek.Year, WeekOfYear = CopyTrainingWeek.WeekOfYear };

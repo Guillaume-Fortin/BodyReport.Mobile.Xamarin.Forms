@@ -16,25 +16,32 @@
   <ContentPage.ToolbarItems>
     <ToolbarItem Text="{Binding ValidateLabel}" Command="{Binding ValidateCommand}" Order="Primary" Priority="0" />
   </ContentPage.ToolbarItems>
-  
-  <TableView x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-    <TableRoot>
-      <TableSection Title="{Binding OriginTrainingWeekLabel}">
 
-        <localcontrol:TouchViewCell x:Name="OriginYearCell"
-          Title="{Binding YearLabel}" Value="{Binding CopyTrainingWeek.OriginYear, Mode=TwoWay}"/>
+  <Grid>
+    <AbsoluteLayout>
+      <ActivityIndicator AbsoluteLayout.LayoutFlags="PositionProportional"
+                         AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1" IsRunning="{Binding ActionIsInProgress}" IsVisible="{Binding ActionIsInProgess}" Color="Red" />
 
-        <localcontrol:TouchViewCell x:Name="OriginWeekOfYearCell"
-          Title="{Binding WeekNumberLabel}" Value="{Binding CopyTrainingWeek.OriginWeekOfYear, Mode=TwoWay}"/>
-      </TableSection>
+    </AbsoluteLayout>
+    <TableView x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+      <TableRoot>
+        <TableSection Title="{Binding OriginTrainingWeekLabel}">
 
-      <TableSection Title="{Binding NewTrainingWeekLabel}">
-        <localcontrol:NumericEntryCell x:Name="NewYearEntry" Label="{Binding YearLabel}"
-                Text="{Binding CopyTrainingWeek.Year, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="2000" MaxValue="9999"/>
+          <localcontrol:TouchViewCell x:Name="OriginYearCell"
+            Title="{Binding YearLabel}" Value="{Binding CopyTrainingWeek.OriginYear, Mode=TwoWay}"/>
 
-        <localcontrol:NumericEntryCell x:Name="NewWeekOfYearEntry" Label="{Binding WeekNumberLabel}"
-                Text="{Binding CopyTrainingWeek.WeekOfYear, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="0" MaxValue="999"/>
-      </TableSection>
-    </TableRoot>
-  </TableView>
+          <localcontrol:TouchViewCell x:Name="OriginWeekOfYearCell"
+            Title="{Binding WeekNumberLabel}" Value="{Binding CopyTrainingWeek.OriginWeekOfYear, Mode=TwoWay}"/>
+        </TableSection>
+
+        <TableSection Title="{Binding NewTrainingWeekLabel}">
+          <localcontrol:NumericEntryCell x:Name="NewYearEntry" Label="{Binding YearLabel}"
+                  Text="{Binding CopyTrainingWeek.Year, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="2000" MaxValue="9999"/>
+
+          <localcontrol:NumericEntryCell x:Name="NewWeekOfYearEntry" Label="{Binding WeekNumberLabel}"
+                  Text="{Binding CopyTrainingWeek.WeekOfYear, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="0" MaxValue="999"/>
+        </TableSection>
+      </TableRoot>
+    </TableView>
+  </Grid>
 </local:BaseContentPage>

@@ -89,6 +89,8 @@ namespace BodyReportMobile.Core.ViewModels
 			catch (Exception except)
 			{
                 DataIsRefreshing = false;
+                var userDialog = Resolver.Resolve<IUserDialogs>();
+                await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
             return result;
 
@@ -96,41 +98,48 @@ namespace BodyReportMobile.Core.ViewModels
 
 		public void SynchronizeData ()
 		{
-			//Create BindingCollection
-			int currentYear = 0;
-			GroupedTrainingWeeks.Clear ();
+            try
+            {
+                //Create BindingCollection
+                int currentYear = 0;
+                GroupedTrainingWeeks.Clear();
 
-			if (_trainingWeekList != null)
-			{
-				_trainingWeekList = _trainingWeekList.OrderByDescending (m => m.Year).ThenByDescending (m => m.WeekOfYear).ToList ();
+                if (_trainingWeekList != null)
+                {
+                    _trainingWeekList = _trainingWeekList.OrderByDescending(m => m.Year).ThenByDescending(m => m.WeekOfYear).ToList();
 
-				DateTime dateTime;
-				var localGroupedTrainingWeeks = new ObservableCollection<GenericGroupModelCollection<BindingTrainingWeek>> ();
-				GenericGroupModelCollection<BindingTrainingWeek> collection = null;
-				foreach (var trainingWeek in _trainingWeekList)
-				{
-					if (collection == null || currentYear != trainingWeek.Year)
-					{
-						currentYear = trainingWeek.Year;
-						collection = new GenericGroupModelCollection<BindingTrainingWeek> ();
-						collection.LongName = currentYear.ToString ();
-						collection.ShortName = currentYear.ToString ();
-						localGroupedTrainingWeeks.Add (collection);
-					}
+                    DateTime dateTime;
+                    var localGroupedTrainingWeeks = new ObservableCollection<GenericGroupModelCollection<BindingTrainingWeek>>();
+                    GenericGroupModelCollection<BindingTrainingWeek> collection = null;
+                    foreach (var trainingWeek in _trainingWeekList)
+                    {
+                        if (collection == null || currentYear != trainingWeek.Year)
+                        {
+                            currentYear = trainingWeek.Year;
+                            collection = new GenericGroupModelCollection<BindingTrainingWeek>();
+                            collection.LongName = currentYear.ToString();
+                            collection.ShortName = currentYear.ToString();
+                            localGroupedTrainingWeeks.Add(collection);
+                        }
 
-					dateTime = Utils.YearWeekToPlanningDateTime(trainingWeek.Year, trainingWeek.WeekOfYear);
-					collection.Add (new BindingTrainingWeek () {
-						Date = string.Format(Translation.Get(TRS.FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3), dateTime.Day, dateTime.AddDays(6.0d).Day, Translation.Get(((TMonthType)dateTime.Month).ToString().ToUpper()), dateTime.Year),
-						Week = Translation.Get(TRS.WEEK_NUMBER) + ' ' + trainingWeek.WeekOfYear.ToString (),
-						TrainingWeek = trainingWeek
-					});
-				}
+                        dateTime = Utils.YearWeekToPlanningDateTime(trainingWeek.Year, trainingWeek.WeekOfYear);
+                        collection.Add(new BindingTrainingWeek()
+                        {
+                            Date = string.Format(Translation.Get(TRS.FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3), dateTime.Day, dateTime.AddDays(6.0d).Day, Translation.Get(((TMonthType)dateTime.Month).ToString().ToUpper()), dateTime.Year),
+                            Week = Translation.Get(TRS.WEEK_NUMBER) + ' ' + trainingWeek.WeekOfYear.ToString(),
+                            TrainingWeek = trainingWeek
+                        });
+                    }
 
-				foreach (var trainingWeek in localGroupedTrainingWeeks)
-				{
-					GroupedTrainingWeeks.Add (trainingWeek);
-				}
-			}
+                    foreach (var trainingWeek in localGroupedTrainingWeeks)
+                    {
+                        GroupedTrainingWeeks.Add(trainingWeek);
+                    }
+                }
+            }
+            catch
+            {
+            }
 		}
 
 		public ICommand RefreshDataCommand
@@ -181,7 +190,8 @@ namespace BodyReportMobile.Core.ViewModels
             }
             catch(Exception except)
             {
-                //TODO
+                var userDialog = Resolver.Resolve<IUserDialogs>();
+                await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
             finally
             {

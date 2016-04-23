@@ -17,28 +17,34 @@
 	  <ToolbarItem Name="LoginToolbarItem" Text="{Binding ValidateLabel}" Command="{Binding ValidateCommand}" Order="Primary" Priority="0" />
 	</ContentPage.ToolbarItems>
 	<ContentPage.Content>
-		<TableView x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-            <TableRoot>
-                <TableSection Title="{Binding EditTitle}">
+    <Grid>
+      <AbsoluteLayout>
+        <ActivityIndicator AbsoluteLayout.LayoutFlags="PositionProportional"
+                           AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1" IsRunning="{Binding ActionIsInProgress}" IsVisible="{Binding ActionIsInProgess}" Color="Red" />
+      </AbsoluteLayout>
+      <TableView x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+        <TableRoot>
+          <TableSection Title="{Binding EditTitle}">
 
-                	<localcontrol:TouchViewCell x:Name="YearCell" Tapped="OnCellTapped" 
-                		Title="{Binding YearLabel}" Value="{Binding TrainingWeek.Year, Mode=TwoWay}"
-                		IsIndicatorVisible="true" />
+            <localcontrol:TouchViewCell x:Name="YearCell" Tapped="OnCellTapped"
+              Title="{Binding YearLabel}" Value="{Binding TrainingWeek.Year, Mode=TwoWay}"
+              IsIndicatorVisible="true" />
 
-                  <localcontrol:TouchViewCell x:Name="WeekOfYearCell" Tapped="OnCellTapped" 
-                		Title="{Binding WeekNumberLabel}" 
-                		Value="{Binding TrainingWeek.WeekOfYear, Mode=TwoWay}"
-                		Description="{Binding TrainingWeek.WeekOfYearDescription}"
-                		IsIndicatorVisible="true" Height="60"/>
+            <localcontrol:TouchViewCell x:Name="WeekOfYearCell" Tapped="OnCellTapped"
+              Title="{Binding WeekNumberLabel}"
+              Value="{Binding TrainingWeek.WeekOfYear, Mode=TwoWay}"
+              Description="{Binding TrainingWeek.WeekOfYearDescription}"
+              IsIndicatorVisible="true" Height="60"/>
 
-                  <localcontrol:NumericEntryCell x:Name="HeightCell" Label="{Binding HeightLabel}"
-                    			Text="{Binding TrainingWeek.UserHeight, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="0" MaxValue="999"/>
+            <localcontrol:NumericEntryCell x:Name="HeightCell" Label="{Binding HeightLabel}"
+                    Text="{Binding TrainingWeek.UserHeight, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="0" MaxValue="999"/>
 
-                  <localcontrol:NumericEntryCell x:Name="WeightCell" Label="{Binding WeightLabel}"  
-                    			Text="{Binding TrainingWeek.UserWeight, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="0" MaxValue="999"/>
+            <localcontrol:NumericEntryCell x:Name="WeightCell" Label="{Binding WeightLabel}"
+                    Text="{Binding TrainingWeek.UserWeight, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="0" MaxValue="999"/>
 
-                </TableSection>
-            </TableRoot>
-        </TableView>
+          </TableSection>
+        </TableRoot>
+      </TableView>
+    </Grid>
 	</ContentPage.Content>
 </local:BaseContentPage>

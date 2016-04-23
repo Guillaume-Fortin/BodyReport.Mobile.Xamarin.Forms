@@ -8,13 +8,15 @@ using System.Net.Http.Headers;
 using System.Text;
 using XLabs.Ioc;
 using BodyReportMobile.Core.MvxMessages;
+using Message.WebApi;
 
 namespace BodyReportMobile.Core.Framework
 {
 	public class HttpConnector
 	{
-		private string _baseUrl = "http://192.168.0.15:5000/";
-		private const string _relativeLoginUrl = "Api/Account/Login";
+        //private string _baseUrl = "http://192.168.0.15:5000/";
+        private string _baseUrl = "http://192.168.1.11:5000/";
+        private const string _relativeLoginUrl = "Api/Account/Login";
 		private HttpClient _httpClient = null;
 		private bool _connected = false;
 
@@ -128,7 +130,10 @@ namespace BodyReportMobile.Core.Framework
 					if (httpResponse.StatusCode == HttpStatusCode.OK)
 					{
 						var jsonStringResult = httpResponse.Content.ReadAsStringAsync ().Result;
-						result = JsonConvert.DeserializeObject<T> (jsonStringResult);
+                        if (!string.IsNullOrEmpty(jsonStringResult))
+                        {
+                            result = JsonConvert.DeserializeObject<T>(jsonStringResult);
+                        }
 					}
                     else if (httpResponse.StatusCode == HttpStatusCode.NoContent)
                     {
@@ -143,7 +148,18 @@ namespace BodyReportMobile.Core.Framework
 						_connected = false;
 						throw new Exception ("Ressource forbidden");
 					}
-					else
+                    else if (httpResponse.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        var jsonStringResult = httpResponse.Content.ReadAsStringAsync().Result;
+                        if (!string.IsNullOrEmpty(jsonStringResult))
+                        {
+                            WebApiException webApiException = JsonConvert.DeserializeObject<WebApiException>(jsonStringResult);
+                            if(webApiException != null)
+                                throw webApiException;
+                        }
+                        throw new Exception("Bad HTTP request");
+                    }
+                    else
 					{
 						throw new Exception ("HTTP request error");
 					}
@@ -176,7 +192,10 @@ namespace BodyReportMobile.Core.Framework
 					if (httpResponse.StatusCode == HttpStatusCode.OK)
 					{
 						var jsonStringResult = httpResponse.Content.ReadAsStringAsync ().Result;
-						result = JsonConvert.DeserializeObject<TResultData> (jsonStringResult);
+                        if (!string.IsNullOrEmpty(jsonStringResult))
+                        {
+                            result = JsonConvert.DeserializeObject<TResultData>(jsonStringResult);
+                        }
 					}
                     else if (httpResponse.StatusCode == HttpStatusCode.NoContent)
                     {
@@ -184,20 +203,35 @@ namespace BodyReportMobile.Core.Framework
                     }
                     else if (httpResponse.StatusCode == HttpStatusCode.NotFound)
 					{
-						throw new Exception ("Ressource not found");
+						throw new HttpException((int)httpResponse.StatusCode, "Ressource not found");
 					}
 					else if (httpResponse.StatusCode == HttpStatusCode.Forbidden)
 					{
 						_connected = false;
-						throw new Exception ("Ressource forbidden");
+						throw new HttpException((int)httpResponse.StatusCode, "Ressource forbidden");
 					}
-					else
+                    else if (httpResponse.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        var jsonStringResult = httpResponse.Content.ReadAsStringAsync().Result;
+                        if(!string.IsNullOrEmpty(jsonStringResult) && jsonStringResult.Contains("WebApiException"))
+                        {
+                            WebApiException webApiException = JsonConvert.DeserializeObject<WebApiException>(jsonStringResult);
+                            if(webApiException != null)
+                                throw webApiException;
+                        }
+                        throw new HttpException((int)httpResponse.StatusCode, "Bad request");
+                    }
+                    else
 					{
-						throw new Exception ("HTTP request error");
+						throw new HttpException((int)httpResponse.StatusCode, "error");
 					}
 				}
 			}
-			catch (Exception exception)
+            catch (TaskCanceledException timeoutException)
+            {
+                throw new HttpException("Timeout", timeoutException);
+            }
+            catch (Exception exception)
 			{
 				throw exception;
 			}

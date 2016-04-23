@@ -38,6 +38,12 @@
     <Compile Include="..\..\BodyReport\src\Message\WebApi\CopyTrainingWeek.cs">
       <Link>Message\WebApi\CopyTrainingWeek.cs</Link>
     </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\WebApi\HttpException.cs">
+      <Link>Message\WebApi\HttpException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\WebApi\WebApiException.cs">
+      <Link>Message\WebApi\WebApiException.cs</Link>
+    </Compile>
     <Compile Include="Framework\AppMessenger.cs" />
     <Compile Include="Framework\IPresenterManager.cs" />
     <Compile Include="MvxMessages\MvxMessagePageEvent.cs" />
