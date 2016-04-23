@@ -69,7 +69,6 @@ namespace BodyReportMobile.Core.ViewModels
             try
 			{
                 DataIsRefreshing = true;
-                await Task.Delay(5000);
 				var onlineTrainingWeekList = await TrainingWeekService.FindTrainingWeeks ();
 				if (onlineTrainingWeekList != null)
 				{
