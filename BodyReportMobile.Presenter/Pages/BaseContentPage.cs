@@ -27,11 +27,6 @@ namespace BodyReportMobile.Presenter.Pages
             RegisterEvent();
         }
 
-		public virtual bool CanBackButtonPressing()
-		{
-			return true;
-		}
-
         private void RegisterEvent()
         {
             AppMessenger.AppInstance.Register<MvxMessagePageEvent>(this, OnPageEvent);
@@ -42,13 +37,23 @@ namespace BodyReportMobile.Presenter.Pages
             AppMessenger.AppInstance.Unregister<MvxMessagePageEvent>(this);
         }
 
-        private void OnPageEvent(MvxMessagePageEvent message)
+        private async void OnPageEvent(MvxMessagePageEvent message)
         {
             if (_viewModel != null && message != null && !string.IsNullOrWhiteSpace(message.ViewModelGuid) &&
                 message.ViewModelGuid == _viewModel.ViewModelGuid)
             {
                 if (message.ClosingRequest)
-                    CloseView(message.ClosingRequest_ViewCanceled);
+                    await AllowClosingPage(message.ClosingRequest_ViewCanceled);
+            }
+        }
+
+        private async Task AllowClosingPage(bool backPressed)
+        {
+            var closingTask = new TaskCompletionSource<bool>();
+            AppMessenger.AppInstance.Send(new MvxMessageViewModelEvent(_viewModel.ViewModelGuid) { Closing = true, ForceClose = false, BackPressed = backPressed, ClosingTask = closingTask });
+            if (await closingTask.Task && closingTask.Task.Result)
+            {
+                CloseView(backPressed);
             }
         }
 
@@ -60,9 +65,7 @@ namespace BodyReportMobile.Presenter.Pages
         protected override bool OnBackButtonPressed()
 		{
             base.OnBackButtonPressed();
-            if (CanBackButtonPressing ()) {
-                CloseView(true);
-            }
+            AllowClosingPage(true);
 
             // If you want to stop the back button
             return true;

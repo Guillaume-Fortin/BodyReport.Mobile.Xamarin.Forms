@@ -44,7 +44,7 @@ namespace BodyReportMobile.Core.ViewModels
 
         #region view model life cycle
 
-        private void OnViewModelEvent(MvxMessageViewModelEvent message)
+        private async void OnViewModelEvent(MvxMessageViewModelEvent message)
         {
             if (message != null && !string.IsNullOrWhiteSpace(message.ViewModelGuid) &&
                 message.ViewModelGuid == _viewModelGuid)
@@ -56,7 +56,7 @@ namespace BodyReportMobile.Core.ViewModels
                 else if (message.Disappear)
                     Disappear();
                 else if (message.Closing)
-                    Closing();
+                    await InternalClosing(message.BackPressed, message.ForceClose, message.ClosingTask);
                 else if (message.Closed)
                     Closed();
             }
@@ -84,16 +84,36 @@ namespace BodyReportMobile.Core.ViewModels
         {
         }
 
+        /// <returns></returns>
         /// <summary>
         /// For block cloing view linked to viewmodel
+        /// Override for display message or block closing view
         /// </summary>
-        protected virtual bool Closing()
+        /// <param name="backPressed">back button pressed</param>
+        /// <returns>True if you ahtorize close view</returns>
+        protected virtual async Task<bool> Closing(bool backPressed)
         {
-            return false;
+            return await Task.FromResult<bool>(!BlockUIAction);
         }
 
         /// <summary>
         /// For block cloing view linked to viewmodel
+        /// <param name="backPressed">back button pressed</param>
+        /// <param name="forceClose">force close view (bypass v</param>
+        /// </summary>
+        protected async Task InternalClosing(bool backPressed, bool forceClose, TaskCompletionSource<bool> ClosingTask)
+        {
+            if (!forceClose)
+            {
+                ClosingTask.SetResult(await Closing(backPressed));
+            }
+            else
+                ClosingTask.SetResult(true);
+        }
+
+        /// <summary>
+        /// Call when view linked to viewmodel closed
+        /// Here fo Unregister event message
         /// </summary>
         protected virtual void Closed()
         {

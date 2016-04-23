@@ -52,6 +52,7 @@ namespace BodyReportMobile.Core.ViewModels
             SynchronizeData();
 
             await SynchronizeWebData();
+            //Task.Run(async () => { await SynchronizeWebData(); });
         }
 
 		private void SynchronizeData()
@@ -75,7 +76,6 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			try
 			{
-				await Task.Delay(200); //TODO replace it by Main form loaded Event
 				await LoginManager.Instance.Init ();
 
                 //Synchronise Web data to local database

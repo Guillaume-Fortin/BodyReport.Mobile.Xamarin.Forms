@@ -18,6 +18,9 @@ namespace BodyReportMobile.Core.MvxMessages
         public bool Appear { get; set; }
         public bool Disappear { get; set; }
         public bool Closing { get; set; }
+        public bool BackPressed { get; set; }
+        public bool ForceClose { get; set; }
+        public TaskCompletionSource<bool> ClosingTask { get; set; }
         public bool Closed { get; set; }
     }
 }
