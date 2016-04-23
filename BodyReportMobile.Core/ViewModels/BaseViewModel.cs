@@ -8,26 +8,36 @@ using System.Runtime.CompilerServices;
 
 namespace BodyReportMobile.Core.ViewModels
 {
-	public class BaseViewModel : INotifyPropertyChanged
+    public class BaseViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
         private static readonly string TCS_VALUE = "TCS_VALUE";
 
-		protected bool _autoClearViewModelDataCollection = true;
+        protected bool _autoClearViewModelDataCollection = true;
 
-		/// <summary>
-		/// The view model GUID.
-		/// </summary>
-		private string _viewModelGuid;
+        /// <summary>
+        /// The view model GUID.
+        /// </summary>
+        private string _viewModelGuid;
 
-		/// <summary>
-		/// Title of viewmodel
-		/// </summary>
-		private string _titleLabel = string.Empty;
-        
-		public BaseViewModel ()
-		{
+        /// <summary>
+        /// Title of viewmodel
+        /// </summary>
+        private string _titleLabel = string.Empty;
+
+        /// <summary>
+        /// Data is refreshing in list
+        /// </summary>
+        private bool _dataIsRefreshing = false;
+
+        /// <summary>
+        /// Action in progree
+        /// </summary>
+        private bool _actionIsInProgress = false;
+
+        public BaseViewModel()
+        {
             AppMessenger.AppInstance.Register<MvxMessageFormClosed>(this, OnFormClosedMvxMessage);
             AppMessenger.AppInstance.Register<MvxMessageViewModelEvent>(this, OnViewModelEvent);
         }
@@ -39,7 +49,7 @@ namespace BodyReportMobile.Core.ViewModels
             if (message != null && !string.IsNullOrWhiteSpace(message.ViewModelGuid) &&
                 message.ViewModelGuid == _viewModelGuid)
             {
-                if(message.Show)
+                if (message.Show)
                     Show();
                 else if (message.Appear)
                     Appear();
@@ -93,78 +103,84 @@ namespace BodyReportMobile.Core.ViewModels
 
         #endregion
 
-		protected virtual void InitTranslation()
-		{
-		}
+        protected virtual void InitTranslation()
+        {
+        }
 
-		private void OnFormClosedMvxMessage(MvxMessageFormClosed mvxMessageFormClosed)
-		{
-			if (mvxMessageFormClosed != null && !string.IsNullOrWhiteSpace (mvxMessageFormClosed.ViewModelGuid) && 
-				mvxMessageFormClosed.ViewModelGuid == _viewModelGuid) {
-				//It's for this view Model
-				var tcsShowingViewModel = ViewModelDataCollection.Get<TaskCompletionSource<bool>> (_viewModelGuid, TCS_VALUE);
-				if (tcsShowingViewModel != null)
-					tcsShowingViewModel.TrySetResult(!mvxMessageFormClosed.CanceledView);
+        private void OnFormClosedMvxMessage(MvxMessageFormClosed mvxMessageFormClosed)
+        {
+            if (mvxMessageFormClosed != null && !string.IsNullOrWhiteSpace(mvxMessageFormClosed.ViewModelGuid) &&
+                mvxMessageFormClosed.ViewModelGuid == _viewModelGuid)
+            {
+                //It's for this view Model
+                var tcsShowingViewModel = ViewModelDataCollection.Get<TaskCompletionSource<bool>>(_viewModelGuid, TCS_VALUE);
+                if (tcsShowingViewModel != null)
+                    tcsShowingViewModel.TrySetResult(!mvxMessageFormClosed.CanceledView);
 
-				if(_autoClearViewModelDataCollection)
-					ViewModelDataCollection.Clear (_viewModelGuid);
-			}
-		}
+                if (_autoClearViewModelDataCollection)
+                    ViewModelDataCollection.Clear(_viewModelGuid);
+            }
+        }
 
-		public static async Task<bool> ShowModalViewModel(BaseViewModel viewModel, BaseViewModel parentViewModel, bool mainViewModel=false)
+        public static async Task<bool> ShowModalViewModel(BaseViewModel viewModel, BaseViewModel parentViewModel, bool mainViewModel = false)
         {
             if (string.IsNullOrWhiteSpace(viewModel.ViewModelGuid))
                 viewModel.ViewModelGuid = Guid.NewGuid().ToString();
 
             var tcs = new TaskCompletionSource<bool>();
-            if(!mainViewModel)
-			    ViewModelDataCollection.Push (viewModel.ViewModelGuid, TCS_VALUE, tcs);
+            if (!mainViewModel)
+                ViewModelDataCollection.Push(viewModel.ViewModelGuid, TCS_VALUE, tcs);
 
             bool result = false;
             var presenter = Resolver.Resolve<IPresenterManager>();
-            if(presenter != null)
+            if (presenter != null)
             {
                 result = await presenter.TryDisplayViewAsync(viewModel, parentViewModel);
             }
 
-            if(mainViewModel && result)
+            if (mainViewModel && result)
                 tcs.SetResult(true);
             else if (!result) //Not awaiting because view is not display
-				tcs.SetResult (false);
+                tcs.SetResult(false);
 
             return await tcs.Task;
-		}
-        
+        }
+
         /// <summary>
         /// Programm demand close view model
         /// </summary>
         /// <returns></returns>
-		protected void CloseViewModel(bool cancelView = false)
-		{
+        protected void CloseViewModel(bool cancelView = false)
+        {
             AppMessenger.AppInstance.Send(new MvxMessagePageEvent(_viewModelGuid) { ClosingRequest = true, ClosingRequest_ViewCanceled = cancelView });
-		}
+        }
 
-		#region accessor
+        #region accessor
 
-		public string ViewModelGuid {
-			get {
-				return _viewModelGuid;
-			}
+        public string ViewModelGuid
+        {
+            get
+            {
+                return _viewModelGuid;
+            }
             set
             {
                 _viewModelGuid = value;
             }
         }
 
-		public string TitleLabel {
-			get {
-				return _titleLabel;
-			}
-			set {
-				_titleLabel = value;
+        public string TitleLabel
+        {
+            get
+            {
+                return _titleLabel;
+            }
+            set
+            {
+                _titleLabel = value;
                 OnPropertyChanged();
             }
-		}
+        }
 
         #endregion
 
@@ -172,7 +188,7 @@ namespace BodyReportMobile.Core.ViewModels
 
         protected void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
-           // PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            // PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
@@ -180,6 +196,37 @@ namespace BodyReportMobile.Core.ViewModels
         }
 
         #endregion
+
+        public bool DataIsRefreshing
+        {
+            get { return _dataIsRefreshing; }
+            set
+            {
+                if (_dataIsRefreshing == value)
+                    return;
+
+                _dataIsRefreshing = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool ActionIsInProgress
+        {
+            get { return _actionIsInProgress; }
+            set
+            {
+                if (_actionIsInProgress == value)
+                    return;
+
+                _actionIsInProgress = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool BlockUIAction
+        {
+            get { return _dataIsRefreshing || _actionIsInProgress; }
+        }
     }
 }
 

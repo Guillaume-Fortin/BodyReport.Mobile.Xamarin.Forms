@@ -43,8 +43,8 @@ namespace BodyReportMobile.Core.ViewModels
 
             TitleLabel = Translation.Get(TRS.TRAINING_WEEK) + ". " + Translation.Get(TRS.COPY);
             ValidateLabel = Translation.Get(TRS.VALIDATE);
-            OriginTrainingWeekLabel = "Origin training week";
-            NewTrainingWeekLabel = "New training week";
+            OriginTrainingWeekLabel = Translation.Get(TRS.ORIGIN_TRAINING_WEEK);
+            NewTrainingWeekLabel = Translation.Get(TRS.NEW_TRAINING_WEEK);
             YearLabel = Translation.Get(TRS.YEAR);
             WeekNumberLabel = Translation.Get(TRS.WEEK_NUMBER);
             OnPropertyChanged(null);

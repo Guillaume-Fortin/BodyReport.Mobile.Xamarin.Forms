@@ -28,7 +28,6 @@ namespace BodyReportMobile.Core.ViewModels
 
 		private SQLiteConnection _dbContext;
 		private TrainingWeekManager _trainingWeekManager;
-		private bool isBusy;
 
 		private string _createLabel = string.Empty;
 
@@ -41,10 +40,10 @@ namespace BodyReportMobile.Core.ViewModels
 		protected async override void Show()
 		{
 			base.Show();
-
+            
             RetreiveLocalData();
             SynchronizeData();
-
+            
             await RetreiveAndSaveOnlineData ();
             SynchronizeData();
         }
@@ -64,13 +63,12 @@ namespace BodyReportMobile.Core.ViewModels
 
         private async Task<bool> RetreiveAndSaveOnlineData ()
 		{
+            if (BlockUIAction)
+                return false;
             bool result = false;
-			try
+            try
 			{
-				if (IsBusy)
-					return false;
-				IsBusy = true;
-
+                DataIsRefreshing = true;
 				var onlineTrainingWeekList = await TrainingWeekService.FindTrainingWeeks ();
 				if (onlineTrainingWeekList != null)
 				{
@@ -85,12 +83,12 @@ namespace BodyReportMobile.Core.ViewModels
 					foreach (var trainingWeek in onlineTrainingWeekList)
                         _trainingWeekList.Add (_trainingWeekManager.UpdateTrainingWeek (trainingWeek));
 				}
-                IsBusy = false;
+                DataIsRefreshing = false;
                 result = true;
             }
 			catch (Exception except)
 			{
-                IsBusy = false;
+                DataIsRefreshing = false;
             }
             return result;
 
@@ -153,26 +151,42 @@ namespace BodyReportMobile.Core.ViewModels
 
 		private async Task CreateNewTrainingWeek ()
 		{
-            var userInfo = UserData.Instance.UserInfo;
-            if (userInfo == null)
-                userInfo = new UserInfo();
+            if (BlockUIAction)
+                return;
 
-            DateTime dateTime = DateTime.Now;
-            var trainingWeek = new TrainingWeek () {
-                UserId = userInfo.UserId,
-                Year = dateTime.Year,
-				WeekOfYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(dateTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday),
-                UserHeight = userInfo.Height,
-				UserWeight = userInfo.Weight,
-                Unit = userInfo.Unit
-        };
+            try
+            {
+                ActionIsInProgress = true;
+                var userInfo = UserData.Instance.UserInfo;
+                if (userInfo == null)
+                    userInfo = new UserInfo();
 
-			if (await EditTrainingWeekViewModel.Show (trainingWeek, TEditMode.Create, this))
-			{
-                //Refresh data
-                RetreiveLocalData();
-                SynchronizeData();
-			}
+                DateTime dateTime = DateTime.Now;
+                var trainingWeek = new TrainingWeek()
+                {
+                    UserId = userInfo.UserId,
+                    Year = dateTime.Year,
+                    WeekOfYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(dateTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday),
+                    UserHeight = userInfo.Height,
+                    UserWeight = userInfo.Weight,
+                    Unit = userInfo.Unit
+                };
+
+                if (await EditTrainingWeekViewModel.Show(trainingWeek, TEditMode.Create, this))
+                {
+                    //Refresh data
+                    RetreiveLocalData();
+                    SynchronizeData();
+                }
+            }
+            catch(Exception except)
+            {
+                //TODO
+            }
+            finally
+            {
+                ActionIsInProgress = false;
+            }
 		}
 
 		public ICommand CopyCommand
@@ -181,6 +195,8 @@ namespace BodyReportMobile.Core.ViewModels
 			{
 				return new Command (async (bindingTrainingWeek) =>
                 {
+                    if (BlockUIAction)
+                        return;
                     try
                     {
                         if (bindingTrainingWeek == null || !(bindingTrainingWeek is BindingTrainingWeek))
@@ -189,6 +205,7 @@ namespace BodyReportMobile.Core.ViewModels
                         var trainingWeek = (bindingTrainingWeek as BindingTrainingWeek).TrainingWeek;
                         if (trainingWeek != null)
                         {
+                            ActionIsInProgress = true;
                             if (await CopyTrainingWeekViewModel.Show(trainingWeek, this))
                             {
                                 //Refresh data
@@ -202,6 +219,10 @@ namespace BodyReportMobile.Core.ViewModels
                         var userDialog = Resolver.Resolve<IUserDialogs>();
                         await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
                     }
+                    finally
+                    {
+                        ActionIsInProgress = false;
+                    }
                 });
 			}
 		}
@@ -212,6 +233,8 @@ namespace BodyReportMobile.Core.ViewModels
 			{
 				return new Command (async (bindingTrainingWeek) =>
 				{
+                    if (BlockUIAction)
+                        return;
                     try
                     {
                         if (bindingTrainingWeek == null || !(bindingTrainingWeek is BindingTrainingWeek))
@@ -220,6 +243,7 @@ namespace BodyReportMobile.Core.ViewModels
                         var trainingWeek = (bindingTrainingWeek as BindingTrainingWeek).TrainingWeek;
                         if (trainingWeek != null)
                         {
+                            ActionIsInProgress = true;
                             await TrainingWeekService.DeleteTrainingWeekByKey(trainingWeek as TrainingWeek);
                             bool onlineDataRefreshed = await RetreiveAndSaveOnlineData();
                             if (!onlineDataRefreshed)
@@ -237,7 +261,11 @@ namespace BodyReportMobile.Core.ViewModels
                         var userDialog = Resolver.Resolve<IUserDialogs>();
                         await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
                     }
-				});
+                    finally
+                    {
+                        ActionIsInProgress = false;
+                    }
+                });
 			}
 		}
 
@@ -251,19 +279,6 @@ namespace BodyReportMobile.Core.ViewModels
 				_createLabel = value;
 				OnPropertyChanged ();
 			}
-		}
-
-		public bool IsBusy
-		{
-			get { return isBusy; }
-			set
-			{
-				if (isBusy == value)
-					return;
-
-				isBusy = value;
-                OnPropertyChanged();
-            }
 		}
 
 		#endregion

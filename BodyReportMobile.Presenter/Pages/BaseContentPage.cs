@@ -4,6 +4,7 @@ using BodyReportMobile.Core.ViewModels;
 using Message;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.MvxMessages;
+using System.Threading.Tasks;
 
 namespace BodyReportMobile.Presenter.Pages
 {
@@ -82,7 +83,7 @@ namespace BodyReportMobile.Presenter.Pages
             }
         }
         
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
 
@@ -90,7 +91,10 @@ namespace BodyReportMobile.Presenter.Pages
             {
                 _firstViewAppear = false;
                 if(_viewModel != null)
+                {
+                    await Task.Delay(200); // Necessary for wait update ui (Ex : activity indicator in listview)
                     AppMessenger.AppInstance.Send(new MvxMessageViewModelEvent(_viewModel.ViewModelGuid) { Show = true });
+                }   
             }
             else
             {
