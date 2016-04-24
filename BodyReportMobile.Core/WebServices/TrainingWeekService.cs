@@ -4,14 +4,21 @@ using System.Collections.Generic;
 using Message;
 using BodyReportMobile.Core.Framework;
 using Message.WebApi;
+using Message.WebApi.MultipleParameters;
 
 namespace BodyReportMobile.Core.WebServices
 {
 	public static class TrainingWeekService
 	{
-		public static async Task<List<TrainingWeek>> FindTrainingWeeks ()
+		public static async Task<List<TrainingWeek>> FindTrainingWeeks (TrainingWeekCriteria trainingWeekCriteria, TrainingWeekScenario trainingWeekScenario)
 		{
-			return await HttpConnector.Instance.GetAsync<List<TrainingWeek>> ("Api/TrainingWeeks/Find");
+            if (trainingWeekCriteria == null)
+                return null;
+            
+            var trainingWeekFinder = new TrainingWeekFinder();
+            trainingWeekFinder.TrainingWeekCriteria = trainingWeekCriteria;
+            trainingWeekFinder.TrainingWeekScenario = trainingWeekScenario;
+            return await HttpConnector.Instance.PostAsync<TrainingWeekFinder, List<TrainingWeek>> ("Api/TrainingWeeks/Find", trainingWeekFinder);
 		}
 
         public static async Task<TrainingWeek> CreateTrainingWeek(TrainingWeek trainingWeek)

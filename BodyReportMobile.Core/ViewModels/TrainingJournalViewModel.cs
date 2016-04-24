@@ -69,7 +69,10 @@ namespace BodyReportMobile.Core.ViewModels
             try
 			{
                 DataIsRefreshing = true;
-				var onlineTrainingWeekList = await TrainingWeekService.FindTrainingWeeks ();
+                var criteria = new TrainingWeekCriteria();
+                criteria.UserId = new StringCriteria() { EqualList = new List<string>() { UserData.Instance.UserInfo.UserId } };
+                var scenario = new TrainingWeekScenario() { ManageTrainingDay = false };
+				var onlineTrainingWeekList = await TrainingWeekService.FindTrainingWeeks (criteria, scenario);
 				if (onlineTrainingWeekList != null)
 				{
 					var list = _trainingWeekManager.FindTrainingWeek (null, true);

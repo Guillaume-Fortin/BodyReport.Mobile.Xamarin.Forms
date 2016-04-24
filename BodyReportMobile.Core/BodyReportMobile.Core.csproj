@@ -41,6 +41,9 @@
     <Compile Include="..\..\BodyReport\src\Message\WebApi\HttpException.cs">
       <Link>Message\WebApi\HttpException.cs</Link>
     </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\WebApi\MultipleParameters\TrainingWeekFinder.cs">
+      <Link>Message\WebApi\MultipleParameters\TrainingWeekFinder.cs</Link>
+    </Compile>
     <Compile Include="..\..\BodyReport\src\Message\WebApi\WebApiException.cs">
       <Link>Message\WebApi\WebApiException.cs</Link>
     </Compile>
