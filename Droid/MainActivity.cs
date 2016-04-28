@@ -42,6 +42,7 @@ namespace BodyReport.Droid
         {
             var resolverContainer = Resolver.Resolve<IDependencyContainer>();
             resolverContainer.Register<ISecurity, SecurityDroid>();
+            resolverContainer.Register<IAndroidAPI, AndroidAPI>();
             resolverContainer.Register<IFileManager, FileManager>();
             resolverContainer.Register<ISQLite, SQLite_Droid>();
             resolverContainer.Register(UserDialogs.Instance);

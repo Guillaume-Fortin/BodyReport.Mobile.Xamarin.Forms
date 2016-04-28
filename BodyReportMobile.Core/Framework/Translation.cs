@@ -55,14 +55,14 @@ namespace BodyReportMobile.Core.Framework
 					filePath = Path.Combine(fileManager.GetResourcesPath(), filePath);
 					if(fileManager.FileExist(filePath))
 					{
-						using (StreamReader sr = fileManager.OpenFile(filePath))
-						using (JsonTextReader reader = new JsonTextReader(sr))
-						{
-							JsonSerializer serializer = new JsonSerializer();
-							var translationDico = serializer.Deserialize<Dictionary<string, string>>(reader);
-							_translationDicoList.Add(extension, translationDico);
-							result = true;
-						}
+                        using (StreamReader sr = new StreamReader(fileManager.OpenResourceFile(filePath)))
+                        using (JsonTextReader reader = new JsonTextReader(sr))
+                        {
+                            JsonSerializer serializer = new JsonSerializer();
+                            var translationDico = serializer.Deserialize<Dictionary<string, string>>(reader);
+                            _translationDicoList.Add(extension, translationDico);
+                            result = true;
+                        }
 					}
 				}
 			}

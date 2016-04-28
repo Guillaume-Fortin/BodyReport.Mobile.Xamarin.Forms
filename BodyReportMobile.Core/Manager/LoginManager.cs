@@ -36,7 +36,7 @@ namespace BodyReportMobile.Core.Manager
 			}
 		}
 
-        private async Task<bool> SaveEncryptedAccountData()
+        private async Task<bool> RetreiveOnlineUserInfo()
         {
             bool result = false;
             try
@@ -47,11 +47,15 @@ namespace BodyReportMobile.Core.Manager
                 {
                     var dbContext = Resolver.Resolve<ISQLite>().GetConnection();
                     var userInfoManager = new UserInfoManager(dbContext);
+                    var userInfoList = userInfoManager.FindUserInfos();
+                    if(userInfoList != null && userInfoList.Count > 0)
+                    { // delete old userInfo
+                        foreach (var userInfoDeleted in userInfoList)
+                            userInfoManager.DeleteUserInfo(userInfoDeleted);
+                    }
                     userInfoManager.UpdateUserInfo(userInfo);
                     UserData.Instance.UserInfo = userInfo;
-
                     _userId = userInfo.UserId;
-                    _security.SaveUserInfo(_userId, _userName, _password);
                     result = true;
                 }
             }
@@ -62,83 +66,131 @@ namespace BodyReportMobile.Core.Manager
             return result;
         }
 
-		public async Task<bool> Init()
-		{
+        private bool SaveEncryptedAccountData()
+        {
             bool result = false;
-			try
-			{
-				_busy = true;
-                if (_security.GetUserInfo(out _userId, out _userName, out _password))
+            try
+            {
+                _security.SaveUserInfo(_userId, _userName, _password);
+                return true;
+            }
+            catch
+            {
+            }
+            return result;
+        }
+
+        private bool LoadLocalUserInfo()
+        {
+            // load local login info
+            var dbContext = Resolver.Resolve<ISQLite>().GetConnection();
+            var userInfoManager = new UserInfoManager(dbContext);
+            var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = _userId });
+            if (userInfo != null)
+            {
+                UserData.Instance.UserInfo = userInfo;
+                return true;
+            }
+            return false;
+        }
+
+        public bool Init()
+        {
+            bool result = false;
+            try
+            {
+                string userId, userName, password;
+                if (_security.GetUserInfo(out userId, out userName, out password))
                 {
-                    result = await HttpConnector.Instance.ConnectUser(_userName, _password);
-                    if (result) // web login
+                    _userId = userId;
+                    _userName = userName;
+                    _password = password;
+                    result = LoadLocalUserInfo();
+                }
+            }
+            catch
+            {
+            }
+            return result;
+        }
+
+        public async Task<bool> ConnectUser(bool autoPromptLogin)
+        {
+            return await ConnectUser(_userName, _password, autoPromptLogin);
+        }
+
+        public async Task<bool> ConnectUser(string userName, string password, bool autoPromptLogin)
+        {
+            bool result = false;
+            try
+            {
+                bool userConnected = await HttpConnector.Instance.ConnectUser(userName, password, autoPromptLogin);
+                if (userConnected) // web login
+                {
+                    _userId = string.Empty;
+                    _userName = userName;
+                    _password = password;
+                    if (await RetreiveOnlineUserInfo())
                     {
-                        result = await SaveEncryptedAccountData();
-                    }
-                    else // load local login info
-                    {
-                        var dbContext = Resolver.Resolve<ISQLite>().GetConnection();
-                        var userInfoManager = new UserInfoManager(dbContext);
-                        var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = _userId });
-                        if(userInfo != null)
-                        {
-                            UserData.Instance.UserInfo = userInfo;
-                            result = true;
-                        }
+                        result = SaveEncryptedAccountData();
                     }
                 }
 			}
-			catch
+			catch(Exception exception)
 			{
+                throw exception;
 			}
 			finally
 			{
-				_busy = false;
 			}
             return result;
 		}
 
-		private async void OnLoginEntry(MvxMessageLoginEntry message)
-		{
-			if (message == null || _busy)
-				return;
+        private async void OnLoginEntry(MvxMessageLoginEntry message)
+        {
+            if (message == null)
+                return;
 
-			try
+            await PromptLogin();
+        }
+
+        public async Task<bool> PromptLogin(bool allowCancel=false)
+        {
+			if (_busy)
+				return false;
+
+            bool connectionOK = false;
+            try
 			{
 				_busy = true;
-				LoginConfig.DefaultCancelText = Translation.Get(TRS.CANCEL);
+				LoginConfig.DefaultCancelText = allowCancel ? Translation.Get(TRS.CANCEL) : null;
 				LoginConfig.DefaultOkText = Translation.Get(TRS.OK);
 				LoginConfig.DefaultTitle = Translation.Get(TRS.LOG_IN);
 				LoginConfig.DefaultLoginPlaceholder = Translation.Get(TRS.USER_NAME);
 				LoginConfig.DefaultPasswordPlaceholder = Translation.Get(TRS.PASSWORD);
-				bool connectionOK = false;
 				LoginResult loginResult;
 				do
 				{
 					loginResult = await UserDialogs.Instance.LoginAsync(new LoginConfig
 					{
 						LoginValue = _userName,
-						Message = Translation.Get(TRS.USE_A_LOCAL_ACCOUNT_TO_LOG_IN)
+						Message = Translation.Get(TRS.USE_A_LOCAL_ACCOUNT_TO_LOG_IN),
 					});
 
 					if(loginResult.Ok)
 					{
-                        _userId = string.Empty;
-                        _userName = loginResult.LoginText;
-						_password = loginResult.Password;
+                        string userName = loginResult.LoginText;
+                        string password = loginResult.Password;
 						if(!string.IsNullOrWhiteSpace(loginResult.LoginText) && !string.IsNullOrWhiteSpace(_password))
 						{
-							bool authentificationSuccess = await HttpConnector.Instance.ConnectUser(_userName, _password);
-							if(authentificationSuccess)
-                            {
-                                connectionOK = await SaveEncryptedAccountData();
-                            }
+							if(await ConnectUser(userName, password, true))
+                                connectionOK = SaveEncryptedAccountData();
                         }
 					}
 				}
 				while(loginResult != null && loginResult.Ok && !connectionOK);
 			}
-			catch (Exception exception)
+			catch //(Exception exception)
 			{
 				//TODO LOG
 			}
@@ -146,7 +198,9 @@ namespace BodyReportMobile.Core.Manager
 			{
 				_busy = false;
 			}
-		}
+            return connectionOK;
+
+        }
 	}
 }
 

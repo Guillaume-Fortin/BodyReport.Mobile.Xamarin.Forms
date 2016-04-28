@@ -5,7 +5,21 @@
 	<ContentPage.Content>
 	</ContentPage.Content>
 
-	<ContentPage.ToolbarItems>
-	  <ToolbarItem Name="ValidateToolbarItem" Text = "{Binding LoginLabel}" Command="{Binding LoginCommand}" Order="Primary" Priority="0" />
-	</ContentPage.ToolbarItems>
+  <Grid>
+    <AbsoluteLayout>
+      <ActivityIndicator AbsoluteLayout.LayoutFlags="PositionProportional"
+                         AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1" IsRunning="{Binding ActionIsInProgress}" IsVisible="{Binding ActionIsInProgess}" Color="Red" />
+    </AbsoluteLayout>
+
+    <StackLayout Orientation="Vertical" Margin="20">
+      <Entry Placeholder="{Binding UserNameLabel}" Text="{Binding UserName}"/>
+      <Entry Placeholder="{Binding PasswordLabel}" Text="{Binding Password}" IsPassword="True"/>
+
+      <Button Text="{Binding LogInLabel}" Command="{Binding LogInCommand}" HorizontalOptions="FillAndExpand"/>
+      <Button Text="{Binding RegisterLabel}" Command="{Binding RegisterAccountCommand}" HorizontalOptions="FillAndExpand"/> 
+      
+      <Label Text="{Binding InformationsLabel}" TextColor="White" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+
+    </StackLayout>
+  </Grid>
 </local:BaseContentPage>

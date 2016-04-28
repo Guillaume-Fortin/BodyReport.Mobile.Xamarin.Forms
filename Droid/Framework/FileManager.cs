@@ -17,18 +17,28 @@ namespace BodyReport.Droid
             return "";// Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 		}
 
-		public bool FileExist (string filePath)
+        public bool FileExist (string filePath)
 		{
             return Application.Context.Assets.List("").Where(f => f == filePath).Count() > 0;
 		}
 
-		public StreamReader OpenFile (string filePath)
-		{
+        public Stream OpenResourceFile(string filePath)
+        {
             //var fileStream = System.IO.File.Open (filePath, FileMode.Open);
 
             var fileStream = Application.Context.Assets.Open(filePath, Android.Content.Res.Access.Streaming);
 
-            return new StreamReader (fileStream);
+            return fileStream;
+        }
+
+        public String GetDocumentPath()
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        }
+
+        public Stream OpenFile (string filePath)
+		{
+            return System.IO.File.Open (filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
 		}
 
 		public void CloseFile (StreamReader stream)
@@ -48,6 +58,47 @@ namespace BodyReport.Droid
 		{
 			return System.IO.File.ReadAllText (filePath, encoding);
 		}
-	}
+
+        public bool DeleteFile(string filePath)
+        {
+            try
+            {
+                System.IO.File.Delete(filePath);
+                return true;
+            }
+            catch
+            {
+            }
+            return false;
+        }
+
+        public bool DirectoryExist(string path)
+        {
+            try
+            {
+                return System.IO.Directory.Exists(path);
+            }
+            catch
+            {
+            }
+            return false;
+        }
+
+        public bool CreateDirectory(string path)
+        {
+            try
+            {
+                if (!System.IO.Directory.Exists(path))
+                {
+                    System.IO.Directory.CreateDirectory(path);
+                    return true;
+                }
+            }
+            catch
+            {
+            }
+            return false;
+        }
+    }
 }
 

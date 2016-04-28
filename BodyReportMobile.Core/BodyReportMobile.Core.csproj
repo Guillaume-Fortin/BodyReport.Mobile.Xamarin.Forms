@@ -44,10 +44,14 @@
     <Compile Include="..\..\BodyReport\src\Message\WebApi\MultipleParameters\TrainingWeekFinder.cs">
       <Link>Message\WebApi\MultipleParameters\TrainingWeekFinder.cs</Link>
     </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\WebApi\RegisterAccount.cs">
+      <Link>Message\WebApi\RegisterAccount.cs</Link>
+    </Compile>
     <Compile Include="..\..\BodyReport\src\Message\WebApi\WebApiException.cs">
       <Link>Message\WebApi\WebApiException.cs</Link>
     </Compile>
     <Compile Include="Framework\AppMessenger.cs" />
+    <Compile Include="Framework\IAndroidAPI.cs" />
     <Compile Include="Framework\IPresenterManager.cs" />
     <Compile Include="MvxMessages\MvxMessagePageEvent.cs" />
     <Compile Include="MvxMessages\MvxMessageViewModelEvent.cs" />
@@ -58,6 +62,7 @@
     <Compile Include="Framework\ViewModelDataCollection.cs" />
     <Compile Include="ViewModels\CopyTrainingWeekViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\RegisterAccountViewModel.cs" />
     <Compile Include="ViewModels\TrainingJournalViewModel.cs" />
     <Compile Include="Framework\Binding\GenericGroupModelCollection.cs" />
     <Compile Include="..\..\BodyReport\src\Message\TrainingWeek.cs">
@@ -136,6 +141,7 @@
     <Compile Include="Crud\Module\TranslationModule.cs" />
     <Compile Include="Crud\Module\Crud.cs" />
     <Compile Include="Crud\Module\MuscleModule.cs" />
+    <Compile Include="WebServices\AccountWebService.cs" />
     <Compile Include="WebServices\MuscleWebService.cs" />
     <Compile Include="WebServices\TranslationWebService.cs" />
     <Compile Include="WebServices\TrainingWeekService.cs" />

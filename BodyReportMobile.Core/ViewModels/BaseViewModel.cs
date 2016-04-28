@@ -16,6 +16,8 @@ namespace BodyReportMobile.Core.ViewModels
 
         protected bool _autoClearViewModelDataCollection = true;
 
+        protected bool _allowCancelViewModel = true;
+
         /// <summary>
         /// The view model GUID.
         /// </summary>
@@ -35,6 +37,11 @@ namespace BodyReportMobile.Core.ViewModels
         /// Action in progree
         /// </summary>
         private bool _actionIsInProgress = false;
+
+        /// <summary>
+        /// Show view model with delay
+        /// </summary>
+        private int _showDelayInMs = 200;
 
         public BaseViewModel()
         {
@@ -93,7 +100,10 @@ namespace BodyReportMobile.Core.ViewModels
         /// <returns>True if you ahtorize close view</returns>
         protected virtual async Task<bool> Closing(bool backPressed)
         {
-            return await Task.FromResult<bool>(!BlockUIAction);
+            if (!backPressed || (backPressed && _allowCancelViewModel))
+                return await Task.FromResult<bool>(!BlockUIAction);
+            else
+                return await Task.FromResult<bool>(false);
         }
 
         /// <summary>
@@ -248,6 +258,19 @@ namespace BodyReportMobile.Core.ViewModels
         public bool BlockUIAction
         {
             get { return _dataIsRefreshing || _actionIsInProgress; }
+        }
+
+        public int ShowDelayInMs
+        {
+            get
+            {
+                return _showDelayInMs;
+            }
+
+            set
+            {
+                _showDelayInMs = value;
+            }
         }
     }
 }

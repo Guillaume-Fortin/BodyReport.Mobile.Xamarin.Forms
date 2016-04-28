@@ -9,6 +9,7 @@ using System.Text;
 using XLabs.Ioc;
 using BodyReportMobile.Core.MvxMessages;
 using Message.WebApi;
+using System.IO;
 
 namespace BodyReportMobile.Core.Framework
 {
@@ -35,6 +36,19 @@ namespace BodyReportMobile.Core.Framework
             }
         }
 
+        public string BaseUrl
+        {
+            get
+            {
+                return _baseUrl;
+            }
+
+            set
+            {
+                _baseUrl = value;
+            }
+        }
+
         private HttpConnector()
         {
             //Now we make the same request with the token received by the auth service.
@@ -43,16 +57,16 @@ namespace BodyReportMobile.Core.Framework
             handler.CookieContainer = cookies;
 
             _httpClient = new System.Net.Http.HttpClient(handler);
-            _httpClient.BaseAddress = new Uri(_baseUrl);
+            _httpClient.BaseAddress = new Uri(BaseUrl);
             _httpClient.Timeout = TimeSpan.FromSeconds(30);
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public async Task<bool> ConnectUser(string userName, string password)
+        public async Task<bool> ConnectUser(string userName, string password, bool autoPromptLogin)
         {
             _userName = userName;
             _password = password;
-            bool result = await ConnectUser();
+            bool result = await ConnectUser(autoPromptLogin);
             _connected = result;
             return result;
         }
@@ -60,7 +74,7 @@ namespace BodyReportMobile.Core.Framework
         /// <summary>
         /// Connect user to WebSite with user identifier (Login/Password)
         /// </summary>
-        private async Task<bool> ConnectUser()
+        private async Task<bool> ConnectUser(bool autoPromptLogin = true)
         {
             bool result = false;
             try
@@ -77,11 +91,23 @@ namespace BodyReportMobile.Core.Framework
                 {
                     if (response.StatusCode == HttpStatusCode.Forbidden)
                     {
-                        AppMessenger.AppInstance.Send(new MvxMessageLoginEntry());
+                        if (autoPromptLogin)
+                            AppMessenger.AppInstance.Send(new MvxMessageLoginEntry());
+                    }
+                    else if (response.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        var jsonStringResult = response.Content.ReadAsStringAsync().Result;
+                        WebApiException webApiException = ConvertJsonExceptionToWebApiException(jsonStringResult);
+                        if (webApiException != null)
+                            throw webApiException;
                     }
                     else if (response.StatusCode == HttpStatusCode.OK)
                         result = true;
                 }
+            }
+            catch (WebApiException webApiException)
+            {
+                throw webApiException;
             }
             catch (Exception exception)
             {
@@ -151,12 +177,9 @@ namespace BodyReportMobile.Core.Framework
                     else if (httpResponse.StatusCode == HttpStatusCode.BadRequest)
                     {
                         var jsonStringResult = httpResponse.Content.ReadAsStringAsync().Result;
-                        if (!string.IsNullOrEmpty(jsonStringResult))
-                        {
-                            WebApiException webApiException = JsonConvert.DeserializeObject<WebApiException>(jsonStringResult);
-                            if (webApiException != null)
-                                throw webApiException;
-                        }
+                        WebApiException webApiException = ConvertJsonExceptionToWebApiException(jsonStringResult);
+                        if (webApiException != null)
+                            throw webApiException;
                         throw new HttpException("Bad HTTP request");
                     }
                     else
@@ -177,12 +200,13 @@ namespace BodyReportMobile.Core.Framework
             return result;
         }
 
-        public async Task<TResultData> PostAsync<TData, TResultData>(string relativeUrl, TData postData)
+        public async Task<TResultData> PostAsync<TData, TResultData>(string relativeUrl, TData postData, bool isAnonymousRequest = false)
         {
             TResultData result = default(TResultData);
             try
             {
-                await AutoConnect();
+                if(!isAnonymousRequest)
+                    await AutoConnect();
 
                 string postBody = JsonConvert.SerializeObject(postData, new JsonSerializerSettings { Formatting = Formatting.None });
                 var httpResponse = await _httpClient.PostAsync(relativeUrl, new StringContent(postBody, Encoding.UTF8, "application/json"));
@@ -213,12 +237,9 @@ namespace BodyReportMobile.Core.Framework
                     else if (httpResponse.StatusCode == HttpStatusCode.BadRequest)
                     {
                         var jsonStringResult = httpResponse.Content.ReadAsStringAsync().Result;
-                        if (!string.IsNullOrEmpty(jsonStringResult) && jsonStringResult.Contains("WebApiException"))
-                        {
-                            WebApiException webApiException = JsonConvert.DeserializeObject<WebApiException>(jsonStringResult);
-                            if (webApiException != null)
-                                throw webApiException;
-                        }
+                        WebApiException webApiException = ConvertJsonExceptionToWebApiException(jsonStringResult);
+                        if (webApiException != null)
+                            throw webApiException;
                         throw new HttpException((int)httpResponse.StatusCode, "Bad request");
                     }
                     else
@@ -236,6 +257,53 @@ namespace BodyReportMobile.Core.Framework
                 throw exception;
             }
 
+            return result;
+        }
+
+        private WebApiException ConvertJsonExceptionToWebApiException(string jsonException)
+        {
+            WebApiException result = null;
+            try
+            {
+                if (!string.IsNullOrEmpty(jsonException))
+                {
+                    result = JsonConvert.DeserializeObject<WebApiException>(jsonException);
+                    if(result != null)
+                    { // BUG with my exception, json parse bad field Message and InnerException
+                        result = new WebApiException(result.Code, result.Message, result.InnerException);
+                    }
+                }
+            }
+            catch(Exception except)
+            {
+                //TODO log
+            }
+            return result;
+        }
+
+        public async Task<bool> DownloadFile(string relativeUrl, string filePath)
+        {
+            bool result = false;
+
+            try
+            {
+                var fileManager = Resolver.Resolve<IFileManager>();
+                if(fileManager.FileExist(filePath))
+                    fileManager.DeleteFile(filePath);
+
+                using (Stream contentStream = await _httpClient.GetStreamAsync(relativeUrl))
+                {
+                    using (Stream fileStream = fileManager.OpenFile(filePath))
+                    {
+                        await contentStream.CopyToAsync(fileStream);
+                    }
+                }
+                return true;
+            }
+            catch (Exception exception)
+            {
+
+            }
             return result;
         }
     }

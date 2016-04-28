@@ -5,6 +5,7 @@ using Message;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.MvxMessages;
 using System.Threading.Tasks;
+using XLabs.Ioc;
 
 namespace BodyReportMobile.Presenter.Pages
 {
@@ -65,6 +66,10 @@ namespace BodyReportMobile.Presenter.Pages
         protected override bool OnBackButtonPressed()
 		{
             base.OnBackButtonPressed();
+
+            if (Device.OS == TargetPlatform.Android && this.Navigation.NavigationStack.Count <= 1)
+                Resolver.Resolve<IAndroidAPI>().CloseApp();
+
             AllowClosingPage(true);
 
             // If you want to stop the back button
@@ -95,7 +100,8 @@ namespace BodyReportMobile.Presenter.Pages
                 _firstViewAppear = false;
                 if(_viewModel != null)
                 {
-                    await Task.Delay(200); // Necessary for wait update ui (Ex : activity indicator in listview)
+                    if(_viewModel.ShowDelayInMs > 0)
+                        await Task.Delay(_viewModel.ShowDelayInMs); // Necessary for wait update ui (Ex : activity indicator in listview)
                     AppMessenger.AppInstance.Send(new MvxMessageViewModelEvent(_viewModel.ViewModelGuid) { Show = true });
                 }   
             }
