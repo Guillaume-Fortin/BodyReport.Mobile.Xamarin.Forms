@@ -5,7 +5,7 @@
                x:Class="BodyReportMobile.Presenter.Pages.Generics.ListPage"
  				       Title="{Binding TitleLabel}" x:Name="myPage">
 	<ContentPage.Content>
-		<ListView x:Name="listView" ItemsSource="{Binding Datas}" SelectedItem="{Binding SelectedItem}" ItemSelected="OnItemSelected" HasUnevenRows="true">
+		<ListView x:Name="listView" ItemsSource="{Binding Datas}" SelectedItem="{Binding SelectedItem}" ItemSelected="OnItemSelected" HasUnevenRows="true"  CachingStrategy="RecycleElement">
 			<ListView.ItemTemplate>
 	        <DataTemplate>
 	          <!--ImageCell ImageSource="{Binding Image}" Text="{Binding Name}" TextColor="{Binding BackgroundColor}" Detail="{Binding Description}" DetailColor="Gray">
