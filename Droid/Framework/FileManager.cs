@@ -24,11 +24,7 @@ namespace BodyReport.Droid
 
         public Stream OpenResourceFile(string filePath)
         {
-            //var fileStream = System.IO.File.Open (filePath, FileMode.Open);
-
-            var fileStream = Application.Context.Assets.Open(filePath, Android.Content.Res.Access.Streaming);
-
-            return fileStream;
+            return  Application.Context.Assets.Open(filePath, Android.Content.Res.Access.Streaming);
         }
 
         public String GetDocumentPath()
