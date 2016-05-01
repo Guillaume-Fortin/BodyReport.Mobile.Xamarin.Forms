@@ -120,7 +120,7 @@ namespace BodyReportMobile.Core.ViewModels
             try
             {
                 if (await RegisterAccountViewModel.DisplayViewModel(this))
-                    InformationsLabel = "Verify spam into your mail";
+                    InformationsLabel = Translation.Get(TRS.VERIFY_SPAM_INTO_YOUR_MAIL_BOX);
             }
             catch (Exception except)
             {
