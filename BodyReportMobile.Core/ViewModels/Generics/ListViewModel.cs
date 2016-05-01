@@ -21,18 +21,15 @@ namespace BodyReportMobile.Core.ViewModels.Generic
         public ObservableCollection<GenericData> Datas { get; set; } = new ObservableCollection<GenericData>();
 		public GenericData SelectedItem { get; set; }
 
-		public ListViewModel() : base()
+        public ListViewModel() : base()
         {
-		}
+        }
 
-        protected override void Show()
+        private void Init()
         {
-            base.Show();
-
             try
             {
                 SelectItem(_defaultSelectedData);
-                OnPropertyChanged(null);
             }
             catch
             {
@@ -65,6 +62,7 @@ namespace BodyReportMobile.Core.ViewModels.Generic
                 foreach (var data in datas)
                     listViewModel.Datas.Add(data);
             }
+            listViewModel.Init();
 
             var result = new ListViewModelResult ();
 			result.Validated = await ShowModalViewModel(listViewModel, parent);
