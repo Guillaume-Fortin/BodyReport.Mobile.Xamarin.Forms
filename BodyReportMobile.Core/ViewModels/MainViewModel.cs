@@ -71,22 +71,22 @@ namespace BodyReportMobile.Core.ViewModels
         protected override async void Show()
         {
             base.Show();
-
-            SynchronizeData();
-
+            
             await ManageUserConnection();
 
             await SynchronizeWebData();
         }
 
-		private void SynchronizeData()
+		protected override void InitTranslation()
 		{
+            base.InitTranslation();
+
 			TitleLabel = "BodyReport";
 			MenuLabel = Translation.Get (TRS.MENU);
 			ConfigurationLabel = Translation.Get (TRS.CONFIGURATION);
 			TrainingJournalLabel = Translation.Get (TRS.TRAINING_JOURNAL);
 			ChangeLanguageLabel = Translation.Get (TRS.LANGUAGE);
-			LanguageFlagImageSource = GeLanguageFlagImageSource (Translation.CurrentLang);
+			LanguageFlagImageSource = LanguageViewModel.GeLanguageFlagImageSource (Translation.CurrentLang);
 
             OnPropertyChanged(null);
         }
@@ -122,6 +122,7 @@ namespace BodyReportMobile.Core.ViewModels
                 else
                 {
                     await LoginViewModel.DisplayViewModel();
+                    InitTranslation(); // Security if user change language
                 }
             }
             catch //(Exception except)
@@ -204,28 +205,8 @@ namespace BodyReportMobile.Core.ViewModels
                     try
                     {
                         ActionIsInProgress = true;
-
-                        var datas = new List<GenericData>();
-                        string trName;
-                        var languageValues = Enum.GetValues(typeof(LangType));
-                        GenericData data, currentData = null;
-                        foreach (LangType languageValue in languageValues)
-                        {
-                            trName = languageValue == LangType.en_US ? "English" : "Français";
-                            data = new GenericData() { Tag = languageValue, Name = trName, Image = GeLanguageFlagImageSource(languageValue) };
-                            datas.Add(data);
-
-                            if (languageValue == Translation.CurrentLang)
-                                currentData = data;
-                        }
-
-                        var result = await ListViewModel.ShowGenericList(Translation.Get(TRS.LANGUAGE), datas, currentData, this);
-
-                        if (result.Validated && result.SelectedData != null && result.SelectedData.Tag != null)
-                        {
-                            Translation.ChangeLang((LangType)result.SelectedData.Tag);
-                            SynchronizeData();
-                        }
+                        if(await LanguageViewModel.DisplayChooseLanguage(this))
+                            InitTranslation();
                     }
                     catch
                     {

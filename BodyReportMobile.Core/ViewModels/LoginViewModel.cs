@@ -9,6 +9,7 @@ using BodyReportMobile.Core.Manager;
 using XLabs.Ioc;
 using Acr.UserDialogs;
 using BodyReportMobile.Core.Data;
+using BodyReportMobile.Core.Message;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -24,15 +25,36 @@ namespace BodyReportMobile.Core.ViewModels
         private string _userName = string.Empty;
         private string _password = string.Empty;
 
+        private string _languageFlagImageSource;
+
+        public string LanguageFlagImageSource
+        {
+            get { return _languageFlagImageSource; }
+            set
+            {
+                if (value != _languageFlagImageSource)
+                {
+                    _languageFlagImageSource = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public LoginViewModel () : base()
         {
-            _allowCancelViewModel = false;
+           _allowCancelViewModel = false;
+            ShowDelayInMs = 0;
         }
 
         public static async Task<bool> DisplayViewModel(BaseViewModel parent = null)
         {
             var viewModel = new LoginViewModel();
             return await ShowModalViewModel(viewModel, parent);
+        }
+        
+        private string GeLanguageFlagImageSource(LangType langType)
+        {
+            return string.Format("flag_{0}.png", Translation.GetLangExt(langType)).Replace('-', '_');
         }
 
         protected override void InitTranslation()
@@ -46,6 +68,9 @@ namespace BodyReportMobile.Core.ViewModels
             LogInLabel = Translation.Get(TRS.LOG_IN);
             RegisterLabel = Translation.Get(TRS.REGISTER);
             InformationsLabel = Translation.Get(TRS.USE_A_LOCAL_ACCOUNT_TO_LOG_IN);
+            LanguageFlagImageSource = LanguageViewModel.GeLanguageFlagImageSource(Translation.CurrentLang);
+
+            OnPropertyChanged(null);
         }
 
 		public ICommand LogInCommand
@@ -132,6 +157,35 @@ namespace BodyReportMobile.Core.ViewModels
                 ActionIsInProgress = false;
             }
             return result;
+        }
+
+        /// <summary>
+        /// Change language with user choice list view
+        /// </summary>
+		public ICommand ChangeLanguageCommand
+        {
+            get
+            {
+                return new Command(async () => {
+
+                    if (ActionIsInProgress)
+                        return;
+
+                    try
+                    {
+                        ActionIsInProgress = true;
+                        if (await LanguageViewModel.DisplayChooseLanguage(this))
+                            InitTranslation();
+                    }
+                    catch
+                    {
+                    }
+                    finally
+                    {
+                        ActionIsInProgress = false;
+                    }
+                });
+            }
         }
 
         #region label properties binding

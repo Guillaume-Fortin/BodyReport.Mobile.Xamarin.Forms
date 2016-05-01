@@ -64,6 +64,7 @@
     <Compile Include="MvxMessages\MvxMessageFormClosed.cs" />
     <Compile Include="Framework\ViewModelDataCollection.cs" />
     <Compile Include="ViewModels\CopyTrainingWeekViewModel.cs" />
+    <Compile Include="ViewModels\LanguageViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\RegisterAccountViewModel.cs" />
     <Compile Include="ViewModels\TrainingJournalViewModel.cs" />
