@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Entry xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+		  xmlns:local="clr-namespace:BodyReportMobile.Presenter"
+      xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
+      xmlns:behaviors="clr-namespace:BodyReportMobile.Presenter.Framework.Behaviors"
+      x:Name="textEntry" x:Class="BodyReportMobile.Presenter.Framework.Controls.TextEntry">
+  <Entry.Behaviors>
+    <behaviors:MaxLengthValidator MaxLength="{Binding MaxLength, Source={x:Reference textEntry}}"/>
+  </Entry.Behaviors>
+</Entry>

@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-			xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages" x:Class="BodyReportMobile.Presenter.Pages.LoginPage"
+			xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages"
+      xmlns:controls="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
+      x:Class="BodyReportMobile.Presenter.Pages.LoginPage"
 			Title="{Binding TitleLabel}">
 	<ContentPage.Content>
 	</ContentPage.Content>
@@ -12,12 +14,10 @@
     </AbsoluteLayout>
 
     <StackLayout Orientation="Vertical" Margin="20">
-      <Entry Placeholder="{Binding UserNameLabel}" Text="{Binding UserName}"/>
-      <Entry Placeholder="{Binding PasswordLabel}" Text="{Binding Password}" IsPassword="True"/>
-
+      <controls:TextEntry Placeholder="{Binding UserNameLabel}" Text="{Binding UserName}" MaxLength="{Binding UserNameMaxLength}"/>
+      <controls:TextEntry Placeholder="{Binding PasswordLabel}" Text="{Binding Password}" IsPassword="True" MaxLength="{Binding PasswordMaxLength}"/>
       <Button Text="{Binding LogInLabel}" Command="{Binding LogInCommand}" HorizontalOptions="FillAndExpand"/>
       <Button Text="{Binding RegisterLabel}" Command="{Binding RegisterAccountCommand}" HorizontalOptions="FillAndExpand"/> 
-      
       <Label Text="{Binding InformationsLabel}" TextColor="White" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
 
     </StackLayout>

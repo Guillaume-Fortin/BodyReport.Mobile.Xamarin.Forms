@@ -35,6 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Framework\Behaviors\MaxLengthValidator.cs" />
     <Compile Include="Framework\Controls\CircleImage.cs" />
     <Compile Include="Framework\Controls\ListViewCell.xaml.cs">
       <DependentUpon>ListViewCell.xaml</DependentUpon>
@@ -42,6 +43,9 @@
     <Compile Include="Framework\Controls\NumericEntry.cs" />
     <Compile Include="Framework\Controls\NumericEntryCell.xaml.cs">
       <DependentUpon>NumericEntryCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Framework\Controls\TextEntry.xaml.cs" >
+		<DependentUpon>TextEntry.xaml</DependentUpon>
     </Compile>
     <Compile Include="Framework\Controls\TouchViewCell.xaml.cs">
       <DependentUpon>TouchViewCell.xaml</DependentUpon>
@@ -126,6 +130,9 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="Framework\Controls\TouchViewCell.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+	<EmbeddedResource Include="Framework\Controls\TextEntry.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

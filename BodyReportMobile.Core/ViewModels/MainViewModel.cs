@@ -169,8 +169,22 @@ namespace BodyReportMobile.Core.ViewModels
 			get
 			{
 				return new Command (async () => {
-                    var viewModel = new TrainingJournalViewModel();
-                    await ShowModalViewModel(viewModel, this);
+                    if (ActionIsInProgress)
+                        return;
+
+                    try
+                    {
+                        ActionIsInProgress = true;
+                        var viewModel = new TrainingJournalViewModel();
+                        await ShowModalViewModel(viewModel, this);
+                    }
+                    catch
+                    {
+                    }
+                    finally
+                    {
+                        ActionIsInProgress = false;
+                    }
 				});
 			}
 		}
@@ -184,29 +198,42 @@ namespace BodyReportMobile.Core.ViewModels
 			{
 				return new Command(async () => {
 
-					var datas = new List<GenericData> ();
+                    if (ActionIsInProgress)
+                        return;
 
-					string trName;
-					var languageValues = Enum.GetValues(typeof(LangType));
-					GenericData data, currentData = null;
-					foreach(LangType languageValue in languageValues)
-					{
-						trName = languageValue == LangType.en_US ? "English" : "Français";
-						data = new GenericData(){ Tag = languageValue, Name = trName, Image = GeLanguageFlagImageSource(languageValue)};
-						datas.Add(data);
+                    try
+                    {
+                        ActionIsInProgress = true;
 
-						if(languageValue == Translation.CurrentLang)
-							currentData = data;
-					}
+                        var datas = new List<GenericData>();
+                        string trName;
+                        var languageValues = Enum.GetValues(typeof(LangType));
+                        GenericData data, currentData = null;
+                        foreach (LangType languageValue in languageValues)
+                        {
+                            trName = languageValue == LangType.en_US ? "English" : "Français";
+                            data = new GenericData() { Tag = languageValue, Name = trName, Image = GeLanguageFlagImageSource(languageValue) };
+                            datas.Add(data);
 
-					var result = await ListViewModel.ShowGenericList (Translation.Get(TRS.LANGUAGE), datas, currentData, this);
+                            if (languageValue == Translation.CurrentLang)
+                                currentData = data;
+                        }
 
-					if(result.Validated && result.SelectedData != null && result.SelectedData.Tag != null)
-					{
-						Translation.ChangeLang((LangType)result.SelectedData.Tag);
-						SynchronizeData();
-					}
+                        var result = await ListViewModel.ShowGenericList(Translation.Get(TRS.LANGUAGE), datas, currentData, this);
 
+                        if (result.Validated && result.SelectedData != null && result.SelectedData.Tag != null)
+                        {
+                            Translation.ChangeLang((LangType)result.SelectedData.Tag);
+                            SynchronizeData();
+                        }
+                    }
+                    catch
+                    {
+                    }
+                    finally
+                    {
+                        ActionIsInProgress = false;
+                    }
 				});
 			}
 		}

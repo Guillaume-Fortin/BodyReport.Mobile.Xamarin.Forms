@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages" 
+             xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages"
+             xmlns:controls="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
              x:Class="BodyReportMobile.Presenter.Pages.RegisterAccountPage"
              Title="{Binding TitleLabel}">
   <ContentPage.Content>
@@ -14,11 +15,10 @@
     </AbsoluteLayout>
 
     <StackLayout Orientation="Vertical" Margin="20">
-      <Entry Placeholder="{Binding UserNameLabel}" Text="{Binding UserName}"/>
-      <Entry Placeholder="{Binding EmailLabel}" Text="{Binding Email}"/>
-      <Entry Placeholder="{Binding PasswordLabel}" Text="{Binding Password}" IsPassword="True"/>
-      <Entry Placeholder="{Binding ConfirmPasswordLabel}" Text="{Binding ConfirmPassword}" IsPassword="True"/>
-
+      <controls:TextEntry Placeholder="{Binding UserNameLabel}" Text="{Binding UserName}" MaxLength="{Binding UserNameMaxLength}"/>
+      <controls:TextEntry Placeholder="{Binding EmailLabel}" Text="{Binding Email}" MaxLength="{Binding EmailMaxLength}"/>
+      <controls:TextEntry Placeholder="{Binding PasswordLabel}" Text="{Binding Password}" IsPassword="True" MaxLength="{Binding PasswordMaxLength}"/>
+      <controls:TextEntry Placeholder="{Binding ConfirmPasswordLabel}" Text="{Binding ConfirmPassword}" IsPassword="True" MaxLength="{Binding PasswordMaxLength}"/>
       <Button Text="{Binding RegisterLabel}" Command="{Binding RegisterAccountCommand}" HorizontalOptions="FillAndExpand"/>
     </StackLayout>
   </Grid>

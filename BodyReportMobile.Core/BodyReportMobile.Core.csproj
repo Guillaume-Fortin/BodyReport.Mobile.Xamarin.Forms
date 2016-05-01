@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\BodyReport\src\Message\FieldsLength.cs">
+      <Link>Message\FieldsLength.cs</Link>
+    </Compile>
     <Compile Include="..\..\BodyReport\src\Message\WebApi\CopyTrainingWeek.cs">
       <Link>Message\WebApi\CopyTrainingWeek.cs</Link>
     </Compile>

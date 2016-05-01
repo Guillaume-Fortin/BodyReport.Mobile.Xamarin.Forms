@@ -241,6 +241,10 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
+        public int UserNameMaxLength { get; set; } = FieldsLength.UserName.Max;
+        public int PasswordMaxLength { get; set; } = FieldsLength.Password.Max;
+        public int EmailMaxLength { get; set; } = FieldsLength.Email.Max;
+
         #endregion
     }
 }
