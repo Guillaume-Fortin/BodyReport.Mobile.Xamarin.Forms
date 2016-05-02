@@ -124,7 +124,7 @@ namespace BodyReportMobile.Core.Manager
             bool result = false;
             try
             {
-                bool userConnected = await HttpConnector.Instance.ConnectUser(userName, password, autoPromptLogin);
+                bool userConnected = await HttpConnector.Instance.ConnectUser(userName, password, Translation.CurrentLang, autoPromptLogin);
                 if (userConnected) // web login
                 {
                     _userId = string.Empty;

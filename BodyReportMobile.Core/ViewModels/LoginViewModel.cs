@@ -175,7 +175,10 @@ namespace BodyReportMobile.Core.ViewModels
                     {
                         ActionIsInProgress = true;
                         if (await LanguageViewModel.DisplayChooseLanguage(this))
+                        {
                             InitTranslation();
+                            LanguageViewModel.SaveApplicationLanguage();
+                        }
                     }
                     catch
                     {

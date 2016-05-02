@@ -17,7 +17,7 @@ namespace BodyReport.Droid
             return "";// Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 		}
 
-        public bool FileExist (string filePath)
+        public bool ResourceFileExist (string filePath)
 		{
             return Application.Context.Assets.List("").Where(f => f == filePath).Count() > 0;
 		}
@@ -30,6 +30,11 @@ namespace BodyReport.Droid
         public String GetDocumentPath()
         {
             return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        }
+
+        public bool FileExist(string filePath)
+        {
+            return File.Exists(filePath);
         }
 
         public Stream OpenFile (string filePath)
@@ -54,6 +59,13 @@ namespace BodyReport.Droid
 		{
 			return System.IO.File.ReadAllText (filePath, encoding);
 		}
+
+        public void WriteAllTextFile(string filePath, string contents, Encoding encoding)
+        {
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+            File.WriteAllText(filePath, contents, encoding);
+        }
 
         public bool DeleteFile(string filePath)
         {

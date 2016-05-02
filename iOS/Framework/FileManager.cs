@@ -14,11 +14,11 @@ namespace BodyReport.iOS
 			//return Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData);
 		}
 
-		public bool FileExist (string filePath)
-		{
-			return File.Exists (filePath);
-		}
-        
+        public bool ResourceFileExist(string filePath)
+        {
+            return File.Exists(filePath);
+        }
+
         public Stream OpenResourceFile(string filePath)
 		{
 			return File.Open (filePath, FileMode.Open);
@@ -27,6 +27,11 @@ namespace BodyReport.iOS
         public String GetDocumentPath()
         {
             return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        }
+
+        public bool FileExist(string filePath)
+        {
+            return File.Exists(filePath);
         }
 
         public Stream OpenFile(string filePath)
@@ -51,7 +56,14 @@ namespace BodyReport.iOS
 		{
 			return System.IO.File.ReadAllText (filePath, encoding);
 		}
-        
+
+        public void WriteAllTextFile(string filePath, string contents, Encoding encoding)
+        {
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+            File.WriteAllText(filePath, contents, encoding);
+        }
+
         public bool DeleteFile(string filePath)
         {
             try

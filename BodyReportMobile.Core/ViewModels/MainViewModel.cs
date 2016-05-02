@@ -67,11 +67,14 @@ namespace BodyReportMobile.Core.ViewModels
             if (!_fileManager.DirectoryExist(_userProfilLocalPath))
                 _fileManager.CreateDirectory(_userProfilLocalPath);
         }
-
+        
         protected override async void Show()
         {
             base.Show();
-            
+
+            LanguageViewModel.ReloadApplicationLanguage();
+            InitTranslation(); //Reload for language
+
             await ManageUserConnection();
 
             await SynchronizeWebData();
@@ -205,8 +208,11 @@ namespace BodyReportMobile.Core.ViewModels
                     try
                     {
                         ActionIsInProgress = true;
-                        if(await LanguageViewModel.DisplayChooseLanguage(this))
+                        if (await LanguageViewModel.DisplayChooseLanguage(this))
+                        {
                             InitTranslation();
+                            LanguageViewModel.SaveApplicationLanguage();
+                        }
                     }
                     catch
                     {

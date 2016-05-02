@@ -4,11 +4,13 @@ using BodyReportMobile.Core.ViewModels.Generic;
 using Message;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
+using XLabs.Ioc;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -54,6 +56,49 @@ namespace BodyReportMobile.Core.ViewModels
             }
 
             return await Task.FromResult(result);
+        }
+
+        public static void SaveApplicationLanguage()
+        {
+            try
+            {
+                IFileManager fileManager = Resolver.Resolve<IFileManager>();
+                string temFile = Path.Combine(fileManager.GetDocumentPath(), "culture.tem");
+                if (fileManager.FileExist(temFile))
+                    fileManager.DeleteFile(temFile);
+                fileManager.WriteAllTextFile(temFile, Translation.CurrentLang.ToString(), Encoding.UTF8);
+            }
+            catch(Exception except)
+            {
+
+            }
+        }
+
+        public static void ReloadApplicationLanguage()
+        {
+            try
+            {
+                //sytem culture
+                if (System.Globalization.RegionInfo.CurrentRegion.TwoLetterISORegionName.ToUpper() == "FR")
+                    Translation.CurrentLang = LangType.fr_FR;
+                else
+                    Translation.CurrentLang = LangType.en_US;
+
+                //user culture
+                IFileManager fileManager = Resolver.Resolve<IFileManager>();
+                string temFile = Path.Combine(fileManager.GetDocumentPath(), "culture.tem");
+                Translation.CurrentLang = LangType.en_US;
+                if (fileManager.FileExist(temFile))
+                {
+                    string langTypeStr = fileManager.ReadAllTextFile(temFile, Encoding.UTF8);
+                    if (langTypeStr == LangType.fr_FR.ToString())
+                        Translation.CurrentLang = LangType.fr_FR;
+                }
+            }
+            catch (Exception except)
+            {
+
+            }
         }
     }
 }

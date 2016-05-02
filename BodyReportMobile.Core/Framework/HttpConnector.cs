@@ -10,6 +10,7 @@ using XLabs.Ioc;
 using BodyReportMobile.Core.MvxMessages;
 using Message.WebApi;
 using System.IO;
+using Message;
 
 namespace BodyReportMobile.Core.Framework
 {
@@ -23,6 +24,7 @@ namespace BodyReportMobile.Core.Framework
 
         private string _userName = string.Empty;
         private string _password = string.Empty;
+        private LangType _langType = LangType.en_US;
 
         private static HttpConnector _instance = null;
 
@@ -62,10 +64,11 @@ namespace BodyReportMobile.Core.Framework
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public async Task<bool> ConnectUser(string userName, string password, bool autoPromptLogin)
+        public async Task<bool> ConnectUser(string userName, string password, LangType langType, bool autoPromptLogin)
         {
             _userName = userName;
             _password = password;
+            _langType = langType;
             bool result = await ConnectUser(autoPromptLogin);
             _connected = result;
             return result;
@@ -85,6 +88,9 @@ namespace BodyReportMobile.Core.Framework
                 postData.Add(new KeyValuePair<string, string>("password", _password));
 
                 HttpContent content = new FormUrlEncodedContent(postData);
+                _httpClient.DefaultRequestHeaders.Remove("Accept-Language");
+                if(_langType == LangType.fr_FR)
+                    _httpClient.DefaultRequestHeaders.Add("Accept-Language", "fr-FR");
                 var response = await _httpClient.PostAsync(_relativeLoginUrl, content);
 
                 if (response != null)

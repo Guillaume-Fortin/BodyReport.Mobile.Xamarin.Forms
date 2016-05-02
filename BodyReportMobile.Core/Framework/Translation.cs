@@ -53,7 +53,7 @@ namespace BodyReportMobile.Core.Framework
 
 					filePath = string.Format("Translation-{0}.json", extension);
 					filePath = Path.Combine(fileManager.GetResourcesPath(), filePath);
-					if(fileManager.FileExist(filePath))
+					if(fileManager.ResourceFileExist(filePath))
 					{
                         using (StreamReader sr = new StreamReader(fileManager.OpenResourceFile(filePath)))
                         using (JsonTextReader reader = new JsonTextReader(sr))
