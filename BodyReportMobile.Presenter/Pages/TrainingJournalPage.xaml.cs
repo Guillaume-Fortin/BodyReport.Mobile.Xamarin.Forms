@@ -12,6 +12,16 @@ namespace BodyReportMobile.Presenter.Pages
         {
 			InitializeComponent ();
 		}
-	}
+
+        private void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            if (e.SelectedItem == null)
+            {
+                return;
+            }
+
+            (BindingContext as TrainingJournalViewModel).ViewTrainingWeekCommand.Execute(null);
+        }
+    }
 }
 

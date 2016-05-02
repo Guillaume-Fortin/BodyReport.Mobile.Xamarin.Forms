@@ -24,7 +24,7 @@
 	    <Image BackgroundColor="Red" Source="disclosure_indicator.png" WidthRequest="20" HeightRequest="40" HorizontalOptions="EndAndExpand" VerticalOptions="Center" IsVisible="{Binding Path=IsIndicatorVisible Source={x:Reference touchViewCell}}" />
 	</StackLayout-->
 
-  <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="2">
+  <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="2" BackgroundColor="{Binding Path=BackgroundColor, Mode=TwoWay, Source={x:Reference touchViewCell}}">
     <Grid.Resources>
       <ResourceDictionary>
         <converter:StringToImageConverter x:Key="stringToImageConverter" />
@@ -84,8 +84,8 @@
         </Label.Triggers>
       </Label>
     </StackLayout>
-    <Image Source="disclosure_indicator.png" WidthRequest="20" HeightRequest="40"
+    <Image x:Name="myImage" Source="disclosure_indicator.png" WidthRequest="20" HeightRequest="40"
 	     Grid.Row="0" Grid.Column="3" HorizontalOptions="EndAndExpand" VerticalOptions="Center"
-       IsVisible="{Binding Path=IsIndicatorVisible Source={x:Reference touchViewCell}}" />
+       IsVisible="{Binding Path=IsIndicatorVisible, Mode=TwoWay, Source={x:Reference touchViewCell}}" />
   </Grid>
 </ViewCell>

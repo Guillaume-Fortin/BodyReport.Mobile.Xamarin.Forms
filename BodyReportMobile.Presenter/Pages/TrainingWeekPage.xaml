@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages"
+             xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
+             x:Class="BodyReportMobile.Presenter.Pages.TrainingWeekPage"
+             Title="{Binding TitleLabel}">
+  
+  <ContentPage.Content>
+    <Grid>
+      <!--Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Label Grid.Row ="0" Grid.Column="0" Text="{Binding UserName}" />
+      <Label Grid.Row ="1" Grid.Column="0" Text="{Binding YearLabel}" />
+      <Label Grid.Row ="1" Grid.Column="1" Text="{Binding TrainingWeek.Year}" />
+      <Label Grid.Row ="2" Grid.Column="0" Text="{Binding WeekNumberLabel}" />
+      <Label Grid.Row ="2" Grid.Column="1" Text="{Binding TrainingWeek.WeekOfYear}" /-->
+
+      <TableView x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+        <TableRoot>
+          <TableSection Title="{Binding UserNameLabel}">
+
+            <localcontrol:TouchViewCell x:Name="YearCell" 
+                                        Title="{Binding YearLabel}"
+                                        Value="{Binding TrainingWeek.Year}"
+                                        IsIndicatorVisible="false" IsEnabled="false"/>
+
+            <localcontrol:TouchViewCell x:Name="WeekOfYearCell"
+              Title="{Binding WeekNumberLabel}"
+              Value="{Binding TrainingWeek.WeekOfYear}"
+              Description="{Binding TrainingWeek.WeekOfYearDescription}"
+              IsIndicatorVisible="false" Height="60" IsEnabled="false"/>
+
+            <localcontrol:TouchViewCell x:Name="WeightCell"
+                                        Title="{Binding WeightLabel}"
+                                        Value="{Binding TrainingWeek.UserWeight}"
+                                        IsIndicatorVisible="false" IsEnabled="false"/>
+
+            <localcontrol:TouchViewCell x:Name="HeightCell"
+                                        Title="{Binding HeightLabel}"
+                                        Value="{Binding TrainingWeek.UserHeight}"
+                                        IsIndicatorVisible="false" IsEnabled="false"/>
+            
+          </TableSection>
+          
+          <TableSection Title="{Binding TrainingDayLabel}">
+              <localcontrol:TouchViewCell x:Name="MondayCell"
+                                          Value="{Binding MondayLabel}"
+                                          IsIndicatorVisible="true" Tapped="OnCellTapped" BackgroundColor="#337ab7"/>
+            <localcontrol:TouchViewCell x:Name="TuesdayCell"
+                                          Value="{Binding TuesdayLabel}"
+                                          IsIndicatorVisible="true" Tapped="OnCellTapped" BackgroundColor="#337ab7"/>
+            <localcontrol:TouchViewCell x:Name="WednesdayCell"
+                                          Value="{Binding WednesdayLabel}"
+                                          IsIndicatorVisible="true" Tapped="OnCellTapped"/>
+            <localcontrol:TouchViewCell x:Name="ThursdayCell"
+                                          Value="{Binding ThursdayLabel}"
+                                          IsIndicatorVisible="true" Tapped="OnCellTapped"/>
+            <localcontrol:TouchViewCell x:Name="FridayCell"
+                                          Value="{Binding FridayLabel}"
+                                          IsIndicatorVisible="true" Tapped="OnCellTapped"/>
+            <localcontrol:TouchViewCell x:Name="SaturdayCell"
+                                          Value="{Binding SaturdayLabel}"
+                                          IsIndicatorVisible="true" Tapped="OnCellTapped"/>
+            <localcontrol:TouchViewCell x:Name="SundayCell"
+                                          Value="{Binding SundayLabel}"
+                                          IsIndicatorVisible="true" Tapped="OnCellTapped"/>
+          </TableSection>
+        </TableRoot>
+      </TableView>
+    </Grid>
+  </ContentPage.Content>
+</local:BaseContentPage>

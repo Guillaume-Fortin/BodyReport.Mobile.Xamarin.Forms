@@ -19,7 +19,9 @@
 			          IsGroupingEnabled="true"
 			          IsPullToRefreshEnabled="True"
 			          RefreshCommand="{Binding RefreshDataCommand}"
-			          IsRefreshing="{Binding DataIsRefreshing, Mode=OneWay}">
+			          IsRefreshing="{Binding DataIsRefreshing, Mode=OneWay}"
+                SelectedItem="{Binding SelectedItem}"
+                ItemSelected="OnItemSelected">
 			  <!--ListView.Header >
 			      <StackLayout Orientation="Horizontal" >
 			          <Button Text="Create New" BindingContext="{Binding Source={x:Reference myPage}, Path=BindingContext}" Command="{Binding CreateNewCommand}"/>	

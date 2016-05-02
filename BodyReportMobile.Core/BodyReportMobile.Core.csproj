@@ -145,6 +145,7 @@
     <Compile Include="Crud\Module\TranslationModule.cs" />
     <Compile Include="Crud\Module\Crud.cs" />
     <Compile Include="Crud\Module\MuscleModule.cs" />
+    <Compile Include="ViewModels\TrainingWeekViewModel.cs" />
     <Compile Include="WebServices\AccountWebService.cs" />
     <Compile Include="WebServices\MuscleWebService.cs" />
     <Compile Include="WebServices\TranslationWebService.cs" />

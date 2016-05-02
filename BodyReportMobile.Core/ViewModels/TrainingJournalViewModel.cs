@@ -25,8 +25,9 @@ namespace BodyReportMobile.Core.ViewModels
 	{
 		List<TrainingWeek> _trainingWeekList = null;
 		public ObservableCollection<GenericGroupModelCollection<BindingTrainingWeek>> GroupedTrainingWeeks { get; set; } = new ObservableCollection<GenericGroupModelCollection<BindingTrainingWeek>>();
+        public BindingTrainingWeek SelectedItem { get; set; }
 
-		private SQLiteConnection _dbContext;
+        private SQLiteConnection _dbContext;
 		private TrainingWeekManager _trainingWeekManager;
 
 		private string _createLabel = string.Empty;
@@ -282,9 +283,48 @@ namespace BodyReportMobile.Core.ViewModels
 			}
 		}
 
-		#region accessor
+        public ICommand ViewTrainingWeekCommand
+        {
+            get
+            {
+                return new Command(async () => { await ViewTrainingWeek(); });
+            }
+        }
 
-		public string CreateLabel {
+        private async Task ViewTrainingWeek()
+        {
+            if (BlockUIAction)
+                return;
+
+            try
+            {
+                ActionIsInProgress = true;
+
+                if (SelectedItem != null)
+                {
+                    var trainingWeek = SelectedItem.TrainingWeek;
+                    if (trainingWeek != null && await TrainingWeekViewModel.Show(trainingWeek, this))
+                    {
+                        //Refresh data
+                        RetreiveLocalData();
+                        SynchronizeData();
+                    }
+                }
+            }
+            catch (Exception except)
+            {
+                var userDialog = Resolver.Resolve<IUserDialogs>();
+                await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+            }
+            finally
+            {
+                ActionIsInProgress = false;
+            }
+        }
+
+        #region accessor
+
+        public string CreateLabel {
 			get {
 				return _createLabel;
 			}

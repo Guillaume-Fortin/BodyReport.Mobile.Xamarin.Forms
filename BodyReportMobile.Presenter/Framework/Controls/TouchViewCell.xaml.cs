@@ -48,13 +48,21 @@ namespace BodyReportMobile.Presenter.Framework.Controls
 			set { SetValue (IsImageVisibleProperty, value); }
 		}
 
-		public TouchViewCell ()
+        public static readonly BindableProperty BackgroundColorProperty = BindableProperty.Create("Title", typeof(Color), typeof(TouchViewCell), Color.Default, BindingMode.TwoWay);
+
+        public Color BackgroundColor
+        {
+            get { return (Color)GetValue(BackgroundColorProperty); }
+            set { SetValue(BackgroundColorProperty, value); }
+        }
+
+        public TouchViewCell ()
 		{
 			InitializeComponent ();
 
-		/*	this.TitleLabel.SetBinding (Label.TextProperty, new Binding(path: "Title", source: this));
+        /*	this.TitleLabel.SetBinding (Label.TextProperty, new Binding(path: "Title", source: this));
 			this.TitleLabel.SetBinding (Label.TextProperty, new Binding(path: "Title", source: this));*/
-		}
+        }
 	}
 }
 

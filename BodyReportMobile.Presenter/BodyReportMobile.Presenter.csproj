@@ -44,8 +44,8 @@
     <Compile Include="Framework\Controls\NumericEntryCell.xaml.cs">
       <DependentUpon>NumericEntryCell.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Framework\Controls\TextEntry.xaml.cs" >
-		<DependentUpon>TextEntry.xaml</DependentUpon>
+    <Compile Include="Framework\Controls\TextEntry.xaml.cs">
+      <DependentUpon>TextEntry.xaml</DependentUpon>
     </Compile>
     <Compile Include="Framework\Controls\TouchViewCell.xaml.cs">
       <DependentUpon>TouchViewCell.xaml</DependentUpon>
@@ -73,6 +73,9 @@
     </Compile>
     <Compile Include="Pages\TrainingJournalPage.xaml.cs">
       <DependentUpon>TrainingJournalPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\TrainingWeekPage.xaml.cs">
+      <DependentUpon>TrainingWeekPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App.cs" />
@@ -132,7 +135,7 @@
     <EmbeddedResource Include="Framework\Controls\TouchViewCell.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-	<EmbeddedResource Include="Framework\Controls\TextEntry.xaml">
+    <EmbeddedResource Include="Framework\Controls\TextEntry.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
@@ -158,6 +161,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\RegisterAccountPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\TrainingWeekPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

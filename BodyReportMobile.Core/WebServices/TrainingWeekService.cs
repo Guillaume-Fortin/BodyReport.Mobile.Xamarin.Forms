@@ -37,7 +37,7 @@ namespace BodyReportMobile.Core.WebServices
             return;
         }
 
-        public static async Task<TrainingWeek> GetTrainingWeek(TrainingWeekKey key)
+        public static async Task<TrainingWeek> GetTrainingWeek(TrainingWeekKey key, bool manageDay=false)
         {
             if (key == null)
                 return null;
@@ -46,6 +46,7 @@ namespace BodyReportMobile.Core.WebServices
             datas.Add("UserId", key.UserId);
             datas.Add("Year", key.Year.ToString());
             datas.Add("WeekOfYear", key.WeekOfYear.ToString());
+            datas.Add("manageDay", manageDay.ToString());
             return await HttpConnector.Instance.GetAsync<TrainingWeek>("Api/TrainingWeeks/Get", datas);
         }
 
