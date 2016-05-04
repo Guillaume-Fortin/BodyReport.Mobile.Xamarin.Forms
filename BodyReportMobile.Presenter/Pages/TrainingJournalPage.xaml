@@ -20,7 +20,6 @@
 			          IsPullToRefreshEnabled="True"
 			          RefreshCommand="{Binding RefreshDataCommand}"
 			          IsRefreshing="{Binding DataIsRefreshing, Mode=OneWay}"
-                SelectedItem="{Binding SelectedItem}"
                 ItemSelected="OnItemSelected">
 			  <!--ListView.Header >
 			      <StackLayout Orientation="Horizontal" >

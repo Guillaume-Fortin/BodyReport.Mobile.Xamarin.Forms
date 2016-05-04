@@ -15,12 +15,12 @@ namespace BodyReportMobile.Presenter.Pages
 
         private void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            if (e.SelectedItem == null)
-            {
+            if (e.SelectedItem == null || (sender as ListView) == null)
                 return;
-            }
 
-            (BindingContext as TrainingJournalViewModel).ViewTrainingWeekCommand.Execute(null);
+            var selectItem = e.SelectedItem;
+            (sender as ListView).SelectedItem = null; // necessary for reselect item
+            (BindingContext as TrainingJournalViewModel).ViewTrainingWeekCommand.Execute(selectItem);
         }
     }
 }

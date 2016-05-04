@@ -25,8 +25,7 @@ namespace BodyReportMobile.Core.ViewModels
 	{
 		List<TrainingWeek> _trainingWeekList = null;
 		public ObservableCollection<GenericGroupModelCollection<BindingTrainingWeek>> GroupedTrainingWeeks { get; set; } = new ObservableCollection<GenericGroupModelCollection<BindingTrainingWeek>>();
-        public BindingTrainingWeek SelectedItem { get; set; }
-
+        
         private SQLiteConnection _dbContext;
 		private TrainingWeekManager _trainingWeekManager;
 
@@ -287,11 +286,11 @@ namespace BodyReportMobile.Core.ViewModels
         {
             get
             {
-                return new Command(async () => { await ViewTrainingWeek(); });
+                return new Command(async (selectItem) => { await ViewTrainingWeek(selectItem as BindingTrainingWeek); });
             }
         }
 
-        private async Task ViewTrainingWeek()
+        private async Task ViewTrainingWeek(BindingTrainingWeek bindingTrainingWeek)
         {
             if (BlockUIAction)
                 return;
@@ -300,9 +299,9 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 ActionIsInProgress = true;
 
-                if (SelectedItem != null)
+                if (bindingTrainingWeek != null)
                 {
-                    var trainingWeek = SelectedItem.TrainingWeek;
+                    var trainingWeek = bindingTrainingWeek.TrainingWeek;
                     if (trainingWeek != null && await TrainingWeekViewModel.Show(trainingWeek, this))
                     {
                         //Refresh data
@@ -323,7 +322,7 @@ namespace BodyReportMobile.Core.ViewModels
         }
 
         #region accessor
-
+        
         public string CreateLabel {
 			get {
 				return _createLabel;
@@ -333,6 +332,7 @@ namespace BodyReportMobile.Core.ViewModels
 				OnPropertyChanged ();
 			}
 		}
+
 
 		#endregion
 	}
