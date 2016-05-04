@@ -294,11 +294,12 @@ namespace BodyReportMobile.Core.Framework
             try
             {
                 var fileManager = Resolver.Resolve<IFileManager>();
-                if(fileManager.FileExist(filePath))
-                    fileManager.DeleteFile(filePath);
 
                 using (Stream contentStream = await _httpClient.GetStreamAsync(relativeUrl))
                 {
+                    if (fileManager.FileExist(filePath))
+                        fileManager.DeleteFile(filePath);
+
                     using (Stream fileStream = fileManager.OpenFile(filePath))
                     {
                         await contentStream.CopyToAsync(fileStream);
