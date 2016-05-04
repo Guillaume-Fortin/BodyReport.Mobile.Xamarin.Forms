@@ -78,22 +78,23 @@ namespace BodyReportMobile.Core.ViewModels
         {
             try
             {
+                LangType applicationLangType;
                 //sytem culture
                 if (System.Globalization.RegionInfo.CurrentRegion.TwoLetterISORegionName.ToUpper() == "FR")
-                    Translation.CurrentLang = LangType.fr_FR;
+                    applicationLangType = LangType.fr_FR;
                 else
-                    Translation.CurrentLang = LangType.en_US;
+                    applicationLangType = LangType.en_US;
 
                 //user culture
                 IFileManager fileManager = Resolver.Resolve<IFileManager>();
                 string temFile = Path.Combine(fileManager.GetDocumentPath(), "culture.tem");
-                Translation.CurrentLang = LangType.en_US;
                 if (fileManager.FileExist(temFile))
                 {
                     string langTypeStr = fileManager.ReadAllTextFile(temFile, Encoding.UTF8);
                     if (langTypeStr == LangType.fr_FR.ToString())
-                        Translation.CurrentLang = LangType.fr_FR;
+                        applicationLangType = LangType.fr_FR;
                 }
+                Translation.ChangeLang(applicationLangType);
             }
             catch (Exception except)
             {

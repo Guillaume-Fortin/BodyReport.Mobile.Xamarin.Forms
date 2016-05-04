@@ -14,7 +14,9 @@ namespace BodyReportMobile.Core.Framework
 
 		private static Dictionary<string, Dictionary<string, string>> _translationDicoList = new Dictionary<string, Dictionary<string, string>>();
 		private static Dictionary<string, string> _currentTranslation = null;
-		public static LangType CurrentLang { get; set; }
+
+        private static LangType _currentLang;
+        public static LangType CurrentLang { get { return _currentLang; } }
 
 		static Translation ()
 		{
@@ -69,8 +71,7 @@ namespace BodyReportMobile.Core.Framework
 			catch//(Exception except)
 			{
 			}
-
-			CurrentLang = LangType.en_US;
+            
 			ChangeLang (CurrentLang);
 
 			return result;
@@ -78,7 +79,7 @@ namespace BodyReportMobile.Core.Framework
 
 		public static void ChangeLang(LangType langType)
 		{
-			CurrentLang = langType;
+            _currentLang = langType;
 
             if(_translationDicoList.ContainsKey(GetLangExt(langType)))
 			    _currentTranslation = _translationDicoList[GetLangExt(langType)];
