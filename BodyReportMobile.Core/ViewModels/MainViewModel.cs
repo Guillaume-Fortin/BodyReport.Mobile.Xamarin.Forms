@@ -14,6 +14,7 @@ using BodyReportMobile.Core.Framework;
 using Xamarin.Forms;
 using BodyReportMobile.Core.Data;
 using System.IO;
+using Acr.UserDialogs;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -70,14 +71,22 @@ namespace BodyReportMobile.Core.ViewModels
         
         protected override async void Show()
         {
-            base.Show();
+            try
+            {
+                base.Show();
 
-            LanguageViewModel.ReloadApplicationLanguage();
-            InitTranslation(); //Reload for language
+                LanguageViewModel.ReloadApplicationLanguage();
+                InitTranslation(); //Reload for language
 
-            await ManageUserConnection();
+                await ManageUserConnection();
 
-            await SynchronizeWebData();
+                await SynchronizeWebData();
+            }
+            catch(Exception except)
+            {
+                var userDialog = Resolver.Resolve<IUserDialogs>();
+                await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+            }
         }
 
 		protected override void InitTranslation()
