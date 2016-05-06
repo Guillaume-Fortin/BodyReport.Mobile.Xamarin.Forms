@@ -38,24 +38,30 @@ namespace BodyReportMobile.Core.Framework
 
         private object GetView(BaseViewModel viewModel)
         {
-            if (viewModel == null)
-                return null;
-            object view = null;
-            Type viewModelType = viewModel.GetType();
-            if (_viewDependencies.ContainsKey(viewModelType))
+            try
             {
-                Type viewType = _viewDependencies[viewModelType];
-                view = Activator.CreateInstance(viewType, viewModel);
+                if (viewModel == null)
+                    return null;
+                Type viewModelType = viewModel.GetType();
+                if (_viewDependencies.ContainsKey(viewModelType))
+                {
+                    Type viewType = _viewDependencies[viewModelType];
+                    return Activator.CreateInstance(viewType, viewModel);
+                }
+            }
+            catch(Exception except)
+            {
+
             }
 
-            return view;
+            return null;
         }
 
         public async Task<bool> TryDisplayViewAsync(BaseViewModel viewModel, BaseViewModel parentViewModel)
         {
             bool result = false;
 
-            var parentView = GetView(parentViewModel);
+            //var parentView = GetView(parentViewModel);
             var view = GetView(viewModel);
             if (view != null && view is Page)
             {
@@ -63,7 +69,7 @@ namespace BodyReportMobile.Core.Framework
                 if(viewModel != null && page.BindingContext == null)
                     page.BindingContext = viewModel;
 
-                if (parentView == null && _mainNavigationPage == null)
+                if (parentViewModel == null && _mainNavigationPage == null)
                 {
                     _mainNavigationPage = new NavigationPage(page);
                     result = true;

@@ -37,6 +37,9 @@
   <ItemGroup>
     <Compile Include="Framework\Behaviors\MaxLengthValidator.cs" />
     <Compile Include="Framework\Controls\CircleImage.cs" />
+    <Compile Include="Framework\Controls\DateViewCell.xaml.cs">
+      <DependentUpon>DateViewCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Framework\Controls\ListViewCell.xaml.cs">
       <DependentUpon>ListViewCell.xaml</DependentUpon>
     </Compile>
@@ -47,6 +50,9 @@
     <Compile Include="Framework\Controls\TextEntry.xaml.cs">
       <DependentUpon>TextEntry.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Framework\Controls\TimeViewCell.xaml.cs">
+      <DependentUpon>TimeViewCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Framework\Controls\TouchViewCell.xaml.cs">
       <DependentUpon>TouchViewCell.xaml</DependentUpon>
     </Compile>
@@ -55,6 +61,9 @@
     <Compile Include="Pages\BaseContentPage.cs" />
     <Compile Include="Pages\CopyTrainingWeekPage.xaml.cs">
       <DependentUpon>CopyTrainingWeekPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\CreateTrainingDayPage.xaml.cs">
+      <DependentUpon>CreateTrainingDayPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\EditTrainingWeekPage.xaml.cs">
       <DependentUpon>EditTrainingWeekPage.xaml</DependentUpon>
@@ -166,6 +175,22 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\TrainingWeekPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\CreateTrainingDayPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Framework\Controls\DateViewCell.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Framework\Controls\TimeViewCell.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

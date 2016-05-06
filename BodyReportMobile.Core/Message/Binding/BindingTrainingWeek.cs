@@ -3,10 +3,11 @@ using Message;
 
 namespace BodyReportMobile.Core.Message.Binding
 {
-	public class BindingTrainingWeek
+	public class BindingTrainingWeek : NotifyPropertyChanged
 	{
-		public string Date {get; set;}
-		public string Week {get; set;}
+		public string Year {get; set;}
+		public string Week { get; set;}
+        public string Date { get; set; }
 		public TrainingWeek TrainingWeek {get; set;}
 	}
 }

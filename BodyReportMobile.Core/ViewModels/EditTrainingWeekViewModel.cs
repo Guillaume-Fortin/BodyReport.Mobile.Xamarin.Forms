@@ -204,7 +204,7 @@ namespace BodyReportMobile.Core.ViewModels
 			if(TrainingWeek != null && TrainingWeek.Year > 0 && TrainingWeek.WeekOfYear > 0 &&
 			TrainingWeek.UserHeight > 0 && TrainingWeek.UserWeight > 0 && !string.IsNullOrWhiteSpace(TrainingWeek.UserId))
             {
-                var onlineTrainingWeek = await TrainingWeekService.GetTrainingWeek(TrainingWeek);
+                var onlineTrainingWeek = await TrainingWeekWebService.GetTrainingWeek(TrainingWeek);
                 if (EditMode == TEditMode.Create)
                 {
                     //verify training week doesn't exist
@@ -232,7 +232,7 @@ namespace BodyReportMobile.Core.ViewModels
             TrainingWeek trainingWeek = null;
             if (EditMode == TEditMode.Create)
             {
-                trainingWeek = await TrainingWeekService.CreateTrainingWeek(TrainingWeek);
+                trainingWeek = await TrainingWeekWebService.CreateTrainingWeek(TrainingWeek);
                 if (trainingWeek != null)
                 {
                     _trainingWeekManager.DeleteTrainingWeek(trainingWeek);
@@ -241,7 +241,7 @@ namespace BodyReportMobile.Core.ViewModels
             }
             else
             {
-                trainingWeek = await TrainingWeekService.UpdateTrainingWeek(TrainingWeek);
+                trainingWeek = await TrainingWeekWebService.UpdateTrainingWeek(TrainingWeek);
                 if (trainingWeek != null)
                 {
                     _trainingWeekManager.UpdateTrainingWeek(trainingWeek);

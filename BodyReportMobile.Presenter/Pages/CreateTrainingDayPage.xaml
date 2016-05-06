@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages"
+             xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
+             x:Class="BodyReportMobile.Presenter.Pages.CreateTrainingDayPage"
+             Title="{Binding TitleLabel}">
+
+  <ContentPage.ToolbarItems>
+    <ToolbarItem Name="ValidateToolbarItem" Text="{Binding ValidateLabel}" Command="{Binding ValidateCommand}" Order="Primary" Priority="0" />
+  </ContentPage.ToolbarItems>
+  
+  <ContentPage.Content>
+    <Grid>
+      <AbsoluteLayout>
+        <ActivityIndicator AbsoluteLayout.LayoutFlags="PositionProportional"
+                           AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1" IsRunning="{Binding ActionIsInProgress}" IsVisible="{Binding ActionIsInProgess}" Color="Red" />
+      </AbsoluteLayout>
+      <TableView x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+        <TableRoot>
+          <TableSection Title="{Binding CreateTitle}">
+            <localcontrol:TouchViewCell x:Name="YearCell"
+                Title="{Binding YearLabel}" Value="{Binding BindingTrainingDay.Year}" />
+            <localcontrol:TouchViewCell x:Name="WeekOfYearCell"
+              Title="{Binding WeekOfYearLabel}" Value="{Binding BindingTrainingDay.WeekOfYear}" />
+            <localcontrol:TouchViewCell x:Name="DayCell"
+              Title="{Binding DayLabel}" Value="{Binding BindingTrainingDay.DayLabel}"/>
+
+            <localcontrol:TimeViewCell x:Name="BeginTimeCell" Title="{Binding BindingTrainingDay.BeginTimeLabel}" Time="{Binding BindingTrainingDay.BeginTime, Mode=TwoWay}" />
+            <localcontrol:TimeViewCell x:Name="EndTimeCell" Title="{Binding BindingTrainingDay.EndTimeLabel}" Time="{Binding BindingTrainingDay.EndTime, Mode=TwoWay}" />
+            
+          </TableSection>
+        </TableRoot>
+      </TableView>
+    </Grid>
+  </ContentPage.Content>
+</local:BaseContentPage>

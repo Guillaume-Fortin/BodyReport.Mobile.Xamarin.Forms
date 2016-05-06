@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ViewCell xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Name="timeViewCell" x:Class="BodyReportMobile.Presenter.Framework.Controls.TimeViewCell">
+  <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" >
+    <Label x:Name="TitleLabel" Text="{Binding Path=Title, Mode=TwoWay, Source={x:Reference timeViewCell}}"
+           WidthRequest="120" LineBreakMode="MiddleTruncation" HorizontalOptions="Start" VerticalOptions="Center"/>
+    <TimePicker x:Name="timePicker" HorizontalOptions="FillAndExpand" VerticalOptions="Center"
+                Time="{Binding Path=Time, Mode=TwoWay, Source={x:Reference timeViewCell}}"
+                Format="HH:mm"/>
+  </StackLayout>
+</ViewCell>

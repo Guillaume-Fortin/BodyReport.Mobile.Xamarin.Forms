@@ -5,13 +5,12 @@ using BodyReportMobile.Core.MvxMessages;
 using XLabs.Ioc;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Message;
 
 namespace BodyReportMobile.Core.ViewModels
 {
-    public class BaseViewModel : INotifyPropertyChanged
+    public class BaseViewModel : NotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private static readonly string TCS_VALUE = "TCS_VALUE";
 
         protected bool _autoClearViewModelDataCollection = true;
@@ -211,19 +210,6 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 _titleLabel = value;
                 OnPropertyChanged();
-            }
-        }
-
-        #endregion
-
-        #region binding
-
-        protected void OnPropertyChanged([CallerMemberName]string propertyName = null)
-        {
-            // PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 

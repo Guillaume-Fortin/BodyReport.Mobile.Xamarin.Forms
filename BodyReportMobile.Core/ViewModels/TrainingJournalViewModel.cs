@@ -72,7 +72,7 @@ namespace BodyReportMobile.Core.ViewModels
                 var criteria = new TrainingWeekCriteria();
                 criteria.UserId = new StringCriteria() { EqualList = new List<string>() { UserData.Instance.UserInfo.UserId } };
                 var scenario = new TrainingWeekScenario() { ManageTrainingDay = false };
-				var onlineTrainingWeekList = await TrainingWeekService.FindTrainingWeeks (criteria, scenario);
+				var onlineTrainingWeekList = await TrainingWeekWebService.FindTrainingWeeks (criteria, scenario);
 				if (onlineTrainingWeekList != null)
 				{
 					var list = _trainingWeekManager.FindTrainingWeek (null, true);
@@ -257,7 +257,7 @@ namespace BodyReportMobile.Core.ViewModels
                         if (trainingWeek != null)
                         {
                             ActionIsInProgress = true;
-                            await TrainingWeekService.DeleteTrainingWeekByKey(trainingWeek as TrainingWeek);
+                            await TrainingWeekWebService.DeleteTrainingWeekByKey(trainingWeek as TrainingWeek);
                             bool onlineDataRefreshed = await RetreiveAndSaveOnlineData();
                             if (!onlineDataRefreshed)
                             {

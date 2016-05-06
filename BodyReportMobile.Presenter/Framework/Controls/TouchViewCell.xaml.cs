@@ -48,7 +48,7 @@ namespace BodyReportMobile.Presenter.Framework.Controls
 			set { SetValue (IsImageVisibleProperty, value); }
 		}
 
-        public static readonly BindableProperty BackgroundColorProperty = BindableProperty.Create("Title", typeof(Color), typeof(TouchViewCell), Color.Default, BindingMode.TwoWay);
+        public static readonly BindableProperty BackgroundColorProperty = BindableProperty.Create("BackgroundColor", typeof(Color), typeof(TouchViewCell), Color.Default, BindingMode.TwoWay);
 
         public Color BackgroundColor
         {
@@ -56,13 +56,54 @@ namespace BodyReportMobile.Presenter.Framework.Controls
             set { SetValue(BackgroundColorProperty, value); }
         }
 
+        public static readonly BindableProperty TitleTextColorProperty = BindableProperty.Create("TitleTextColor", typeof(Color), typeof(TouchViewCell), Color.Default, BindingMode.TwoWay);
+
+        public Color TitleTextColor
+        {
+            get { return (Color)GetValue(TitleTextColorProperty); }
+            set { SetValue(TitleTextColorProperty, value); }
+        }
+
+        public static readonly BindableProperty ValueTextColorProperty = BindableProperty.Create("ValueTextColor", typeof(Color), typeof(TouchViewCell), Color.Default, BindingMode.TwoWay);
+
+        public Color ValueTextColor
+        {
+            get { return (Color)GetValue(ValueTextColorProperty); }
+            set { SetValue(ValueTextColorProperty, value); }
+        }
+
+        public static readonly BindableProperty DescriptionTextColorProperty = BindableProperty.Create("DescriptionTextColor", typeof(Color), typeof(TouchViewCell), Color.Default, BindingMode.TwoWay);
+
+        public Color TextColor
+        {
+            get { return (Color)GetValue(DescriptionTextColorProperty); }
+            set { SetValue(DescriptionTextColorProperty, value); }
+        }
+
         public TouchViewCell ()
 		{
 			InitializeComponent ();
 
+            //ValueLabel.Triggers.Add()
+
         /*	this.TitleLabel.SetBinding (Label.TextProperty, new Binding(path: "Title", source: this));
 			this.TitleLabel.SetBinding (Label.TextProperty, new Binding(path: "Title", source: this));*/
         }
-	}
+
+        public void SetTitleTrigger(TriggerBase trigger)
+        {
+            TitleLabel.Triggers.Add(trigger);
+        }
+
+        public void SetValueTrigger(TriggerBase trigger)
+        {
+            ValueLabel.Triggers.Add(trigger);
+        }
+
+        public void SetDescriptionTrigger(TriggerBase trigger)
+        {
+            DescriptionLabel.Triggers.Add(trigger);
+        }
+    }
 }
 

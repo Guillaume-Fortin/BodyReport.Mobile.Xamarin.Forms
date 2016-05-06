@@ -12,7 +12,7 @@ namespace BodyReportMobile.Presenter.Pages
 	public class BaseContentPage : ContentPage
 	{
         private bool _firstViewAppear = true;
-        private BaseViewModel _viewModel = null;
+        protected BaseViewModel _viewModel = null;
 
         public bool DisableBackButton { get; set;} = false;
 		public string BackButtonTitle { get; set;} = Translation.Get(TRS.RETURN);

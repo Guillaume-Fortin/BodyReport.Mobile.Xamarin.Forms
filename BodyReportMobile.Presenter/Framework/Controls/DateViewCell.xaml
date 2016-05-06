@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ViewCell xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Name="dateViewCell" x:Class="BodyReportMobile.Presenter.Framework.Controls.DateViewCell">
+  <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" >
+	    <Label x:Name="TitleLabel" Text="{Binding Path=Title, Mode=TwoWay, Source={x:Reference dateViewCell}}"
+	    	     WidthRequest="120" LineBreakMode="MiddleTruncation" HorizontalOptions="Start" VerticalOptions="Center"/>
+      <DatePicker x:Name="datePicker" HorizontalOptions="FillAndExpand" VerticalOptions="Center"
+                  Date="{Binding Path=Date, Mode=TwoWay, Source={x:Reference dateViewCell}}"/>
+  </StackLayout>
+</ViewCell>

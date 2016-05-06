@@ -38,11 +38,17 @@
     <Compile Include="..\..\BodyReport\src\Message\FieldsLength.cs">
       <Link>Message\FieldsLength.cs</Link>
     </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\NotifyPropertyChanged.cs">
+      <Link>Message\NotifyPropertyChanged.cs</Link>
+    </Compile>
     <Compile Include="..\..\BodyReport\src\Message\WebApi\CopyTrainingWeek.cs">
       <Link>Message\WebApi\CopyTrainingWeek.cs</Link>
     </Compile>
     <Compile Include="..\..\BodyReport\src\Message\WebApi\HttpException.cs">
       <Link>Message\WebApi\HttpException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\WebApi\MultipleParameters\TrainingDayFinder.cs">
+      <Link>Message\WebApi\MultipleParameters\TrainingDayFinder.cs</Link>
     </Compile>
     <Compile Include="..\..\BodyReport\src\Message\WebApi\MultipleParameters\TrainingWeekFinder.cs">
       <Link>Message\WebApi\MultipleParameters\TrainingWeekFinder.cs</Link>
@@ -54,8 +60,10 @@
       <Link>Message\WebApi\WebApiException.cs</Link>
     </Compile>
     <Compile Include="Framework\AppMessenger.cs" />
+    <Compile Include="Framework\Binding\BindingWeekTrainingDay.cs" />
     <Compile Include="Framework\IAndroidAPI.cs" />
     <Compile Include="Framework\IPresenterManager.cs" />
+    <Compile Include="Message\Binding\BindingTrainingDay.cs" />
     <Compile Include="MvxMessages\MvxMessagePageEvent.cs" />
     <Compile Include="MvxMessages\MvxMessageViewModelEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -64,6 +72,7 @@
     <Compile Include="MvxMessages\MvxMessageFormClosed.cs" />
     <Compile Include="Framework\ViewModelDataCollection.cs" />
     <Compile Include="ViewModels\CopyTrainingWeekViewModel.cs" />
+    <Compile Include="ViewModels\CreateTrainingDayViewModel.cs" />
     <Compile Include="ViewModels\LanguageViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\RegisterAccountViewModel.cs" />
@@ -148,8 +157,9 @@
     <Compile Include="ViewModels\TrainingWeekViewModel.cs" />
     <Compile Include="WebServices\AccountWebService.cs" />
     <Compile Include="WebServices\MuscleWebService.cs" />
+    <Compile Include="WebServices\TrainingDayWebService.cs" />
     <Compile Include="WebServices\TranslationWebService.cs" />
-    <Compile Include="WebServices\TrainingWeekService.cs" />
+    <Compile Include="WebServices\TrainingWeekWebService.cs" />
     <Compile Include="Crud\Module\TrainingWeekModule.cs" />
     <Compile Include="Models\TrainingWeekRow.cs" />
     <Compile Include="Crud\Transformer\TrainingWeekTransformer.cs" />

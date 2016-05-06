@@ -1,4 +1,6 @@
-﻿using BodyReportMobile.Core.ViewModels;
+﻿using BodyReportMobile.Core.Framework.Binding;
+using BodyReportMobile.Core.ViewModels;
+using BodyReportMobile.Presenter.Framework.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,25 +16,76 @@ namespace BodyReportMobile.Presenter.Pages
         public TrainingWeekPage(TrainingWeekViewModel baseViewModel) : base(baseViewModel)
         {
             InitializeComponent();
+
+            baseViewModel.PropertyChanged += TrainingWeekPage_PropertyChanged;
         }
 
-        public void OnCellTapped(object sender, EventArgs e)
+        private void TrainingWeekPage_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            var viewModel = BindingContext as TrainingWeekViewModel;
-            if (sender == MondayCell)
-                viewModel.ViewTrainingDayCommand.Execute(DayOfWeek.Monday);
-            else if (sender == TuesdayCell)
-                viewModel.ViewTrainingDayCommand.Execute(DayOfWeek.Tuesday);
-            else if (sender == WednesdayCell)
-                viewModel.ViewTrainingDayCommand.Execute(DayOfWeek.Wednesday);
-            else if (sender == ThursdayCell)
-                viewModel.ViewTrainingDayCommand.Execute(DayOfWeek.Thursday);
-            else if (sender == FridayCell)
-                viewModel.ViewTrainingDayCommand.Execute(DayOfWeek.Friday);
-            else if (sender == SaturdayCell)
-                viewModel.ViewTrainingDayCommand.Execute(DayOfWeek.Saturday);
-            else if (sender == SundayCell)
-                viewModel.ViewTrainingDayCommand.Execute(DayOfWeek.Sunday);
+            if (e.PropertyName == "BindingWeekTrainingDays")
+            {
+                TrainingWeekViewModel viewModel = sender as TrainingWeekViewModel;
+                if (viewModel != null)
+                {
+                    TouchViewCell touchViewCell;
+                    DaySection.Clear();
+                    foreach (var bindingWeekTrainingDay in viewModel.BindingWeekTrainingDays)
+                    {
+                        touchViewCell = new TouchViewCell()
+                        {
+                            IsIndicatorVisible = true,
+                            BindingContext = bindingWeekTrainingDay,
+                            TitleTextColor = Color.Red,
+                            ValueTextColor = Color.Red
+                        };
+                        touchViewCell.Tapped += DayCellTaped;
+                        touchViewCell.SetBinding(TouchViewCell.ValueProperty, (BindingWeekTrainingDay source) => source.Label);
+
+                        
+                        var trigger = new DataTrigger(typeof(Label));
+                        trigger.BindingContext = bindingWeekTrainingDay;
+                        trigger.Binding = new Binding("TrainingDayExist");
+                        trigger.Value = true;
+                        var setter = new Setter();
+                        setter.Property = Label.TextColorProperty;
+                        setter.Value = Color.FromHex("#337ab7");
+                        trigger.Setters.Add(setter);
+                        touchViewCell.SetValueTrigger(trigger);
+
+                        trigger = new DataTrigger(typeof(Label));
+                        trigger.BindingContext = bindingWeekTrainingDay;
+                        trigger.Binding = new Binding("TrainingDayExist");
+                        trigger.Value = true;
+                        setter = new Setter();
+                        setter.Property = Label.TextColorProperty;
+                        setter.Value = Color.FromHex("#337ab7");
+                        trigger.Setters.Add(setter);
+                        touchViewCell.SetTitleTrigger(trigger);
+
+                        DaySection.Add(touchViewCell);
+                    }   
+                }
+            }
+        }
+
+        /*<Label.Triggers>
+        <Trigger TargetType="Label"
+                     Property="Text"
+                     Value="">
+          <Setter Property="IsVisible" Value="false" />
+        </Trigger>
+      </Label.Triggers>*/
+
+        public void DayCellTaped(object sender, EventArgs e)
+        {
+            if (sender != null)
+            {
+                var bindingWeekTrainingDay = (sender as TouchViewCell).BindingContext as BindingWeekTrainingDay;
+                if(bindingWeekTrainingDay != null)
+                {
+                    (_viewModel as TrainingWeekViewModel).ViewTrainingDayCommand.Execute(bindingWeekTrainingDay.DayOfWeek);
+                }
+            }
         }
     }
 }

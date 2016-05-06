@@ -8,7 +8,7 @@ using Message.WebApi.MultipleParameters;
 
 namespace BodyReportMobile.Core.WebServices
 {
-	public static class TrainingWeekService
+	public static class TrainingWeekWebService
 	{
 		public static async Task<List<TrainingWeek>> FindTrainingWeeks (TrainingWeekCriteria trainingWeekCriteria, TrainingWeekScenario trainingWeekScenario)
 		{

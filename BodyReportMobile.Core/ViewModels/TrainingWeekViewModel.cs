@@ -1,6 +1,7 @@
 ﻿using Acr.UserDialogs;
 using BodyReportMobile.Core.Data;
 using BodyReportMobile.Core.Framework;
+using BodyReportMobile.Core.Framework.Binding;
 using BodyReportMobile.Core.Message.Binding;
 using BodyReportMobile.Core.ServiceManagers;
 using BodyReportMobile.Core.WebServices;
@@ -23,15 +24,23 @@ namespace BodyReportMobile.Core.ViewModels
         private SQLiteConnection _dbContext;
         private TrainingWeekManager _trainingWeekManager;
         private IUserDialogs _userDialog;
-
-        private TrainingWeekKey _trainingWeekKey;
+        
         public TrainingWeek TrainingWeek { get; set; }
 
         public TrainingWeekViewModel() : base()
         {
+            ShowDelayInMs = 0;
             _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
             _trainingWeekManager = new TrainingWeekManager(_dbContext);
             _userDialog = Resolver.Resolve<IUserDialogs>();
+            
+            for (int i=0; i < BindingWeekTrainingDays.Length; i++)
+            {
+                BindingWeekTrainingDays[i] = new BindingWeekTrainingDay()
+                {
+                    DayOfWeek = i == 6 ? DayOfWeek.Sunday : (DayOfWeek)i + 1
+                };
+            }
         }
 
         protected override async void Show()
@@ -48,13 +57,12 @@ namespace BodyReportMobile.Core.ViewModels
             YearLabel = Translation.Get(TRS.YEAR);
             WeekNumberLabel = Translation.Get(TRS.WEEK_NUMBER);
             TrainingDayLabel = Translation.Get(TRS.TRAINING_DAY);
-            MondayLabel = Translation.Get(TRS.MONDAY);
-            TuesdayLabel = Translation.Get(TRS.TUESDAY);
-            WednesdayLabel = Translation.Get(TRS.WEDNESDAY);
-            ThursdayLabel = Translation.Get(TRS.THURSDAY);
-            FridayLabel = Translation.Get(TRS.FRIDAY);
-            SaturdayLabel = Translation.Get(TRS.SATURDAY);
-            SundayLabel = Translation.Get(TRS.SUNDAY);
+            
+            foreach (var bindingWeekTrainingDay in BindingWeekTrainingDays)
+            {
+                bindingWeekTrainingDay.Label = Translation.Get(bindingWeekTrainingDay.DayOfWeek.ToString().ToUpper());
+            }
+            OnPropertyChanged("BindingWeekTrainingDays");
 
             string weightUnit = "kg", lengthUnit = "cm", unit = Translation.Get(TRS.METRIC);
             var userInfo = UserData.Instance.UserInfo;
@@ -74,35 +82,70 @@ namespace BodyReportMobile.Core.ViewModels
 
         public static async Task<bool> Show(TrainingWeekKey trainingWeekKey, BaseViewModel parent = null)
         {
-            var viewModel = new TrainingWeekViewModel();
-            viewModel._trainingWeekKey = trainingWeekKey;
-            return await ShowModalViewModel(viewModel, parent);
+            bool result = false;
+            if (trainingWeekKey != null)
+            {
+                var trainingWeek = await TrainingWeekWebService.GetTrainingWeek(trainingWeekKey, true);
+                if (trainingWeek != null)
+                {
+                    var viewModel = new TrainingWeekViewModel();
+                    viewModel.TrainingWeek = trainingWeek;
+                    result = await ShowModalViewModel(viewModel, parent);
+                }
+            }
+
+            return await Task.FromResult<bool>(result);
+        }
+
+        private void FillWeekOfYearDescription(TrainingWeek trainingWeek)
+        {
+            if (trainingWeek != null && trainingWeek.WeekOfYear > 0)
+            {
+                DateTime date = Utils.YearWeekToPlanningDateTime(trainingWeek.Year, trainingWeek.WeekOfYear);
+                string dateStr = string.Format(Translation.Get(TRS.FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3), date.Day, date.AddDays(6).Day, Translation.Get(((TMonthType)date.Month).ToString().ToUpper()), date.Year);
+
+                trainingWeek.WeekOfYearDescription = dateStr;
+            }
+            else
+                trainingWeek.WeekOfYearDescription = string.Empty;
+        }
+
+        private void FillWeekDays(TrainingWeek trainingWeek)
+        {
+            foreach (var bindingWeekTrainingDay in BindingWeekTrainingDays)
+                bindingWeekTrainingDay.TrainingDayExist = false;
+
+            if (trainingWeek != null && trainingWeek.TrainingDays != null)
+            {
+                foreach (var trainingDay in trainingWeek.TrainingDays)
+                {
+                    foreach (var bindingWeekTrainingDay in BindingWeekTrainingDays)
+                    {
+                        if(trainingDay.DayOfWeek == (int)bindingWeekTrainingDay.DayOfWeek)
+                        {
+                            bindingWeekTrainingDay.TrainingDayExist = true;
+                        }
+                    }
+                }
+            }
         }
 
         private async Task SynchronizeData()
         {
             try
             {
-                if (_trainingWeekKey != null)
-                {
-                    TrainingWeek = await TrainingWeekService.GetTrainingWeek(_trainingWeekKey, true);
+                ActionIsInProgress = true;
 
-                    if (TrainingWeek != null && TrainingWeek.WeekOfYear > 0)
-                    {
-                        DateTime date = Utils.YearWeekToPlanningDateTime(TrainingWeek.Year, TrainingWeek.WeekOfYear);
-                        string dateStr = string.Format(Translation.Get(TRS.FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3), date.Day, date.AddDays(6).Day, Translation.Get(((TMonthType)date.Month).ToString().ToUpper()), date.Year);
-
-                        TrainingWeek.WeekOfYearDescription = dateStr;
-                    }
-                    else
-                        TrainingWeek.WeekOfYearDescription = string.Empty;
-
-                    OnPropertyChanged("TrainingWeek");
-                }
+                FillWeekOfYearDescription(TrainingWeek);
+                FillWeekDays(TrainingWeek);
             }
             catch (Exception except)
             {
                 await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+            }
+            finally
+            {
+                ActionIsInProgress = false;
             }
         }
 
@@ -126,14 +169,30 @@ namespace BodyReportMobile.Core.ViewModels
             try
             {
                 ActionIsInProgress = true;
-
-                //TODO check training day exist. if not exist, display Create training day
-
-                //TODO view training day
+                
                 if(TrainingWeek.TrainingDays != null)
                 {
-                    var trainingDay = TrainingWeek.TrainingDays.Where(td => td.TrainingDayId == (int)dayOfWeek).FirstOrDefault();
-                    if(trainingDay != null)
+                    //Check training day exist. if not exist, create new training day
+                    var trainingDay = TrainingWeek.TrainingDays.Where(td => td.DayOfWeek == (int)dayOfWeek).FirstOrDefault();
+                    if (trainingDay == null)
+                    {
+                        var newTrainingDay = new TrainingDay()
+                        {
+                            Year = TrainingWeek.Year,
+                            WeekOfYear = TrainingWeek.WeekOfYear,
+                            DayOfWeek = (int)dayOfWeek,
+                            TrainingDayId = 0,
+                            UserId = UserData.Instance.UserInfo.UserId
+                        };
+                        if(await CreateTrainingDayViewModel.Show(newTrainingDay, this))
+                        {
+                            TrainingWeek.TrainingDays.Add(newTrainingDay);
+                            trainingDay = newTrainingDay;
+                            FillWeekDays(TrainingWeek);
+                        }
+                    }
+
+                    if (trainingDay != null)
                     { //view training day
                        
                     }
@@ -157,14 +216,7 @@ namespace BodyReportMobile.Core.ViewModels
         public string WeightLabel { get; set; }
         public string HeightLabel { get; set; }
         public string TrainingDayLabel { get; set; }
-
-        public string MondayLabel { get; set; }
-        public string TuesdayLabel { get; set; }
-        public string WednesdayLabel { get; set; }
-        public string ThursdayLabel { get; set; }
-        public string FridayLabel { get; set; }
-        public string SaturdayLabel { get; set; }
-        public string SundayLabel { get; set; }
+        public BindingWeekTrainingDay[] BindingWeekTrainingDays { get; set; } = new BindingWeekTrainingDay[7];
 
         #endregion
     }

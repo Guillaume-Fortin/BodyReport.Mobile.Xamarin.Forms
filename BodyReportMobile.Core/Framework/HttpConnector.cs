@@ -129,13 +129,13 @@ namespace BodyReportMobile.Core.Framework
                 if (string.IsNullOrWhiteSpace(_userName) || string.IsNullOrWhiteSpace(_password))
                 {
                     AppMessenger.AppInstance.Send(new MvxMessageLoginEntry());
-                    throw new Exception("Connexion impossible");
+                    throw new Exception("Can't connect to server");
                 }
                 else
                     _connected = await ConnectUser();
             }
             if (!_connected)
-                throw new Exception("Connexion impossible");
+                throw new Exception("Can't connect to server");
         }
 
         public async Task<T> GetAsync<T>(string relativeUrl, Dictionary<string, string> datas = null)
@@ -200,7 +200,7 @@ namespace BodyReportMobile.Core.Framework
             }
             catch (Exception exception)
             {
-                throw exception;
+                throw new HttpException("Can't connect to server", exception);
             }
 
             return result;

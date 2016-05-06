@@ -46,9 +46,11 @@
 	     Grid.Row="0" Grid.Column="0" HorizontalOptions="Start" VerticalOptions="Center"
 	     IsVisible="True" />
 
-    <Label x:Name="TitleLabel" Text="{Binding Path=Title, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+    <Label x:Name="TitleLabel"
+           Text="{Binding Path=Title, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+        TextColor="{Binding Path=TitleTextColor, Mode=TwoWay, Source={x:Reference touchViewCell}}"
 	    	LineBreakMode="MiddleTruncation" HorizontalOptions="Center" VerticalOptions="Center"
-	    	 Grid.Row="0" Grid.Column="1" IsVisible="true" WidthRequest="120">
+	    	Grid.Row="0" Grid.Column="1" IsVisible="true" WidthRequest="120">
       <Label.Triggers>
         <Trigger TargetType="Label"
                      Property="Text"
@@ -60,8 +62,10 @@
 
     <StackLayout Grid.Row="0" Grid.Column="2" Spacing="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
 
-      <Label x:Name="ValueLabel" Text="{Binding Path=Value, Mode=TwoWay, Source={x:Reference touchViewCell}}"
-	    		   HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" VerticalTextAlignment="Center" FontSize="14">
+      <Label x:Name="ValueLabel"
+             Text="{Binding Path=Value, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+	    		   TextColor="{Binding Path=ValueTextColor, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+             HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" VerticalTextAlignment="Center" FontSize="14">
         <Label.Triggers>
           <DataTrigger TargetType="Label"
                        Binding="{Binding Path=IsVisible, Source={x:Reference TitleLabel}}"
@@ -71,8 +75,10 @@
         </Label.Triggers>
 
       </Label>
-      <Label x:Name="DescriptionLabel" IsVisible="true" Text="{Binding Path=Description, Mode=TwoWay, Source={x:Reference touchViewCell}}"
-    		   HorizontalOptions="FillAndExpand" VerticalOptions="End" FontSize="12">
+      <Label x:Name="DescriptionLabel" IsVisible="true"
+             Text="{Binding Path=Description, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+    		     TextColor="{Binding Path=DescriptionTextColor, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+             HorizontalOptions="FillAndExpand" VerticalOptions="End" FontSize="12">
         <Label.Triggers>
           <DataTrigger TargetType="Label"
                        Binding="{Binding Path=Text.Length}"

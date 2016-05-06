@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Message;
+using System;
 
 using System.ComponentModel;
 
 namespace BodyReportMobile.Core.Message
 {
-	public class GenericData : INotifyPropertyChanged
-	{
+	public class GenericData : NotifyPropertyChanged
+    {
 		private string _image = string.Empty;
 		private string _name;
 		private string _description;
@@ -18,7 +19,7 @@ namespace BodyReportMobile.Core.Message
 			set 
 			{ 
 				_image = value;
-				OnPropertyChanged("Image");
+				OnPropertyChanged();
 			}
 		}
 
@@ -28,7 +29,7 @@ namespace BodyReportMobile.Core.Message
 			set 
 			{ 
 				_name = value;
-				OnPropertyChanged("Name");
+				OnPropertyChanged();
 			}
 		}
 
@@ -38,7 +39,7 @@ namespace BodyReportMobile.Core.Message
 			set 
 			{ 
 				_description = value;
-				OnPropertyChanged("Description");
+				OnPropertyChanged();
 			}
 		}
 
@@ -48,21 +49,9 @@ namespace BodyReportMobile.Core.Message
 			set 
 			{ 
 				_isSelected = value;
-				OnPropertyChanged("IsSelected");
+				OnPropertyChanged();
 			}
 		}
-
-		#region INotifyPropertyChanged
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		public void OnPropertyChanged(string propertyName)
-		{
-			if (this.PropertyChanged != null)
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		#endregion
 	}
 }
 

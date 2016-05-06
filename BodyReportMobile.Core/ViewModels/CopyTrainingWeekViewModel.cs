@@ -119,7 +119,7 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 //Check new training doesn't exist
                 var key = new TrainingWeekKey() { UserId = CopyTrainingWeek.UserId, Year = CopyTrainingWeek.Year, WeekOfYear = CopyTrainingWeek.WeekOfYear };
-                var trainingWeek = await TrainingWeekService.GetTrainingWeek(key);
+                var trainingWeek = await TrainingWeekWebService.GetTrainingWeek(key);
                 if(trainingWeek != null)
                 {
                     await userDialog.AlertAsync(string.Format(Translation.Get(TRS.P0_ALREADY_EXIST), Translation.Get(TRS.TRAINING_WEEK)), Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
@@ -137,7 +137,7 @@ namespace BodyReportMobile.Core.ViewModels
         private async Task<bool> SaveData()
         {
             bool result = false;
-            TrainingWeek trainingWeek = await TrainingWeekService.CopyTrainingWeek(CopyTrainingWeek);
+            TrainingWeek trainingWeek = await TrainingWeekWebService.CopyTrainingWeek(CopyTrainingWeek);
             if(trainingWeek != null)
             {
                 _trainingWeekManager.DeleteTrainingWeek(trainingWeek);
