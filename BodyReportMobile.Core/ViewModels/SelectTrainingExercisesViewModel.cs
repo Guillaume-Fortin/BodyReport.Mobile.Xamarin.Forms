@@ -51,7 +51,7 @@ namespace BodyReportMobile.Core.ViewModels
         {
             base.Show();
 
-            await SynchronizeData(false, true);
+            await SynchronizeData();
         }
 
         public static async Task<SelectTrainingExercisesViewModelResut> Show(BaseViewModel parent = null)
@@ -78,7 +78,7 @@ namespace BodyReportMobile.Core.ViewModels
             ValidateLabel = Translation.Get(TRS.VALIDATE);
         }
 
-        private async Task SynchronizeData(bool byPassCurrentAction=false, bool onShow = false)
+        private async Task SynchronizeData(bool byPassCurrentAction=false)
         {
             try
             {
@@ -94,11 +94,12 @@ namespace BodyReportMobile.Core.ViewModels
                 if (_bodyExercises == null)
                     _bodyExercises = _bodyExerciseManager.FindBodyExercises();
 
+                /*
                 if(onShow && _muscularGroups != null && _muscularGroups.Count > 0 && _muscles != null)
                 {
                     MuscularGroup = _muscularGroups[0];
                     Muscle = _muscles.Where(m => m.MuscularGroupId == MuscularGroup.Id).FirstOrDefault();
-                }
+                }*/
 
                 //Refresh BodyExercise
                 BindingBodyExercises.Clear();
@@ -164,6 +165,7 @@ namespace BodyReportMobile.Core.ViewModels
                                 MuscularGroup = result.SelectedData.Tag as MuscularGroup;
                                 Muscle = null;
                                 await SynchronizeData(true);
+                                await SelectMuscle();
                             }
                         }
                     }
@@ -191,38 +193,7 @@ namespace BodyReportMobile.Core.ViewModels
                     {
                         ActionIsInProgress = true;
 
-                        if (MuscularGroup == null)
-                        {
-                            await _userDialog.AlertAsync("Select first one muscular group", Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
-                        }
-                        else
-                        {
-                            List<Muscle> muscleList = null;
-                            if (_muscles != null)
-                                muscleList = _muscles.Where(m => m.MuscularGroupId == MuscularGroup.Id).OrderBy(m => m.Name).ToList();
-                            if (muscleList != null && muscleList.Count > 0)
-                            {
-                                Message.GenericData data, currentData;
-                                currentData = null;
-                                var datas = new List<Message.GenericData>();
-                                foreach (var muscle in muscleList)
-                                {
-                                    data = new Message.GenericData() { Tag = muscle, Name = muscle.Name };
-                                    datas.Add(data);
-
-                                    if (muscle == Muscle)
-                                       currentData = data;
-                                }
-
-                                var result = await ListViewModel.ShowGenericList(Translation.Get(TRS.MUSCLE), datas, currentData, this);
-
-                                if (result.Validated && result.SelectedData != null)
-                                {
-                                    Muscle = result.SelectedData.Tag as Muscle;
-                                    await SynchronizeData(true);
-                                }
-                            }
-                        }
+                        await SelectMuscle();
                     }
                     catch (Exception exception)
                     {
@@ -233,6 +204,42 @@ namespace BodyReportMobile.Core.ViewModels
                     }
 
                 });
+            }
+        }
+
+        private async Task SelectMuscle()
+        {
+            if (MuscularGroup == null)
+            {
+                await _userDialog.AlertAsync("Select first one muscular group", Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+            }
+            else
+            {
+                List<Muscle> muscleList = null;
+                if (_muscles != null)
+                    muscleList = _muscles.Where(m => m.MuscularGroupId == MuscularGroup.Id).OrderBy(m => m.Name).ToList();
+                if (muscleList != null && muscleList.Count > 0)
+                {
+                    Message.GenericData data, currentData;
+                    currentData = null;
+                    var datas = new List<Message.GenericData>();
+                    foreach (var muscle in muscleList)
+                    {
+                        data = new Message.GenericData() { Tag = muscle, Name = muscle.Name };
+                        datas.Add(data);
+
+                        if (muscle == Muscle)
+                            currentData = data;
+                    }
+
+                    var result = await ListViewModel.ShowGenericList(Translation.Get(TRS.MUSCLE), datas, currentData, this);
+
+                    if (result.Validated && result.SelectedData != null)
+                    {
+                        Muscle = result.SelectedData.Tag as Muscle;
+                        await SynchronizeData(true);
+                    }
+                }
             }
         }
 
