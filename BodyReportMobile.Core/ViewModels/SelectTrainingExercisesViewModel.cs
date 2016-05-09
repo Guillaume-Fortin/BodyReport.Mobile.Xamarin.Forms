@@ -8,8 +8,11 @@ using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -36,6 +39,7 @@ namespace BodyReportMobile.Core.ViewModels
         private List<MuscularGroup> _muscularGroups;
         private List<Muscle> _muscles;
         private List<BodyExercise> _bodyExercises;
+        private CancellationTokenSource _cachingImageCancellationTokenSource = null;
 
         public SelectTrainingExercisesViewModel() : base()
         {
@@ -112,10 +116,20 @@ namespace BodyReportMobile.Core.ViewModels
                         bindingBodyExercise = new BindingBodyExercise()
                         {
                             BodyExercise = bodyexercise,
-                            Name = bodyexercise.Name,
-                            Image = "http://192.168.0.15:5000/images/bodyexercises/" + bodyexercise.ImageName,
+                            Name = bodyexercise.Name
                         };
                         BindingBodyExercises.Add(bindingBodyExercise);
+                    }
+
+                    if (_cachingImageCancellationTokenSource != null)
+                    {
+                        _cachingImageCancellationTokenSource.Cancel();
+                        _cachingImageCancellationTokenSource = null;
+                    }
+
+                    if (BindingBodyExercises.Count > 0)
+                    {
+                        Task t = CachingImages(BindingBodyExercises);
                     }
                 }
                 OnPropertyChanged("BindingBodyExercises");
@@ -131,6 +145,56 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
+        private List<BindingBodyExercise> _cachingBindingBodyExerciseList = new List<BindingBodyExercise>();
+        public async Task CachingImages(List<BindingBodyExercise> bindingBodyExerciseList)
+        {
+            _cachingImageCancellationTokenSource = new CancellationTokenSource();
+            lock (_cachingBindingBodyExerciseList)
+            {
+                _cachingBindingBodyExerciseList.Clear();
+                _cachingBindingBodyExerciseList.AddRange(bindingBodyExerciseList);
+            }
+
+            string urlImage, localImagePath;
+            string urlImages = HttpConnector.Instance.BaseUrl + "images/bodyexercises/{0}";
+            List<Task> taskList = null;
+            foreach (var bindingBodyExercise in bindingBodyExerciseList)
+            {
+                if (_cachingImageCancellationTokenSource.Token.IsCancellationRequested)
+                    _cachingImageCancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                if (taskList == null)
+                    taskList = new List<Task>();
+
+                if (bindingBodyExercise.BodyExercise != null && !string.IsNullOrWhiteSpace(bindingBodyExercise.BodyExercise.ImageName))
+                {
+                    urlImage = string.Format(urlImages, bindingBodyExercise.BodyExercise.ImageName);
+                    localImagePath = Path.Combine(AppTools.BodyExercisesImagesDirectory, bindingBodyExercise.BodyExercise.ImageName);
+                    var t = AppTools.Instance.CachingImage(bindingBodyExercise.GetHashCode(), urlImage, localImagePath, (cachingImageResult) =>
+                    {
+                        if (cachingImageResult != null && _cachingBindingBodyExerciseList != null)
+                        {
+                            lock (_cachingBindingBodyExerciseList)
+                            {
+                                var bindingBodyExerciseTmp = _cachingBindingBodyExerciseList.Where(be => be.GetHashCode() == cachingImageResult.IdImage).FirstOrDefault();
+                                if (bindingBodyExerciseTmp != null)
+                                    bindingBodyExerciseTmp.Image = cachingImageResult.ImagePath;
+                            }
+                        }
+                    });
+                    taskList.Add(t);
+                }
+            }
+
+            if (taskList != null)
+            {
+                CachingImageResult cachingImageResult;
+                foreach (Task<CachingImageResult> task in taskList)
+                    cachingImageResult = await task;
+            }
+            _cachingImageCancellationTokenSource = null;
+        }
+        
         public ICommand SelectMuscularGroupCommand
         {
             get

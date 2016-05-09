@@ -63,6 +63,7 @@
     <Compile Include="Crud\Module\MuscularGroupModule.cs" />
     <Compile Include="Crud\Transformer\MuscularGroupTransformer.cs" />
     <Compile Include="Framework\AppMessenger.cs" />
+    <Compile Include="Framework\AppTools.cs" />
     <Compile Include="Message\Binding\BindingBodyExercise.cs" />
     <Compile Include="Message\Binding\BindingTrainingExercise.cs" />
     <Compile Include="Message\Binding\BindingTrainingExerciseSet.cs" />

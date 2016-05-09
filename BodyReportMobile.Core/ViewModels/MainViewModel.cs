@@ -75,6 +75,8 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 base.Show();
 
+                AppTools.Instance.Init();
+
                 LanguageViewModel.ReloadApplicationLanguage();
                 InitTranslation(); //Reload for language
 
