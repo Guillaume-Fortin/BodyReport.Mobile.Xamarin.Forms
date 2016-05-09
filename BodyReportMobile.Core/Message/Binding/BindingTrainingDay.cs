@@ -51,6 +51,7 @@ namespace BodyReportMobile.Core.Message.Binding
             set
             {
                 _beginTime = value;
+                ChangeEndTime();
                 OnPropertyChanged();
             }
         }
@@ -96,6 +97,23 @@ namespace BodyReportMobile.Core.Message.Binding
             {
                 _endTimeLabel = value;
                 OnPropertyChanged();
+            }
+        }
+        
+        private void ChangeEndTime()
+        {
+            if (BeginTime != null)
+            {
+                if (EndTime == null)
+                    EndTime = BeginTime;
+                if(EndTime < BeginTime)
+                {
+                    var newEndTime = BeginTime.Add(new TimeSpan(0, 45, 0));
+                    var maxTime = new TimeSpan(23, 59, 0);
+                    if (newEndTime > maxTime)
+                        newEndTime = maxTime;
+                    EndTime = newEndTime;
+                }
             }
         }
     }
