@@ -287,7 +287,7 @@ namespace BodyReportMobile.Core.Framework
             return result;
         }
 
-        public async Task<bool> DownloadFile(string relativeUrl, string filePath)
+        public async Task<bool> DownloadFile(string relativeUrl, string filePath, bool anonymousCalling=false)
         {
             bool result = false;
 
@@ -295,7 +295,14 @@ namespace BodyReportMobile.Core.Framework
             {
                 var fileManager = Resolver.Resolve<IFileManager>();
 
-                using (Stream contentStream = await _httpClient.GetStreamAsync(relativeUrl))
+                HttpClient httpClient = _httpClient;
+                if (anonymousCalling)
+                {
+                    httpClient = new HttpClient();
+                    httpClient.BaseAddress = new Uri(BaseUrl);
+                }
+
+                using (Stream contentStream = await httpClient.GetStreamAsync(relativeUrl))
                 {
                     if (fileManager.FileExist(filePath))
                         fileManager.DeleteFile(filePath);
