@@ -4,6 +4,8 @@ using Message;
 using System.IO;
 using Newtonsoft.Json;
 using XLabs.Ioc;
+using SQLite.Net;
+using BodyReportMobile.Core.ServiceManagers;
 
 namespace BodyReportMobile.Core.Framework
 {
@@ -18,10 +20,17 @@ namespace BodyReportMobile.Core.Framework
         private static LangType _currentLang;
         public static LangType CurrentLang { get { return _currentLang; } }
 
-		static Translation ()
-		{
+        /// <summary>
+        /// Supported culture names
+        /// </summary>
+        public readonly static string[] SupportedCultureNames = new string[] { "en-US", "fr-FR" };
+        
+        private static SQLiteConnection _dbContext = null;
 
-		}
+        static Translation ()
+        {
+            _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
+        }
 
 		public static string GetLangExt(LangType langType)
 		{
@@ -88,18 +97,72 @@ namespace BodyReportMobile.Core.Framework
 				ChangeEvent ();
 		}
 
-		/// <summary>
-		/// Get translation in json file
-		/// </summary>
-		/// <param name="key">Translation key</param>
-		/// <returns>Transaltion value</returns>
-		public static string Get(string key)
+        /// <summary>
+        /// Get translation in json file
+        /// </summary>
+        /// <param name="key">Translation key</param>
+        /// <returns>Transaltion value</returns>
+        public static string Get(string key, bool returnNullIfNotExist = false)
 		{
 			if (_currentTranslation != null && _currentTranslation.ContainsKey(key))
 				return _currentTranslation [key];
 			else
-				return '*'+key;
+				return returnNullIfNotExist ? null : '*' +key;
 		}
-	}
+
+        private static int GetCurrentCultureId()
+        {
+            int currentCultureId = 0;
+            string culture = _currentLang.ToString().Replace("_", "-");
+            for (int i = 0; i < SupportedCultureNames.Length; i++)
+            {
+                if (SupportedCultureNames[i].ToLower() == culture.ToLower())
+                {
+                    currentCultureId = i;
+                    break;
+                }
+            }
+            return currentCultureId;
+        }
+
+        /// <summary>
+        /// Get translation in database
+        /// </summary>
+        /// <param name="key">Translation key</param>
+        /// <returns>Transaltion value</returns>
+        public static string GetInDB(string key)
+        {
+            string result = Get("DB_" + key, true);
+            if (result == null)
+            {
+                try
+                {
+                    int currentCultureId = GetCurrentCultureId();
+
+                    var translationManager = new TranslationManager(_dbContext);
+                    var translationValKey = new TranslationValKey()
+                    {
+                        CultureId = currentCultureId,
+                        Key = key
+                    };
+                    var trValue = translationManager.GetTranslation(translationValKey);
+
+                    if (trValue != null & trValue.Value != null)
+                        result = trValue.Value;
+                    /*else
+                        _logger.LogInformation(string.Format("Translation database not found {0}", key));*/
+                }
+                catch (Exception except)
+                {
+                    //_logger.LogCritical("Get translation database error", except);
+                }
+                //Add translation in memory
+                if (result != null)
+                    _currentTranslation.Add("DB_" + key, result);
+            }
+
+            return result;
+        }
+    }
 }
 

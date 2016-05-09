@@ -26,8 +26,16 @@ namespace BodyReportMobile.Presenter.Framework.Controls
 			get { return (string)GetValue (DescriptionProperty); }
 			set { SetValue (DescriptionProperty, value); }
 		}
+        
+        public static readonly BindableProperty IsCheckedVisibleProperty = BindableProperty.Create("IsCheckedVisible", typeof(bool), typeof(TouchViewCell), false, BindingMode.TwoWay);
 
-		public static readonly BindableProperty IsIndicatorVisibleProperty = BindableProperty.Create ("IsIndicatorVisible", typeof(bool), typeof(TouchViewCell), false, BindingMode.TwoWay);
+        public bool IsCheckedVisible
+        {
+            get { return (bool)GetValue(IsCheckedVisibleProperty); }
+            set { SetValue(IsCheckedVisibleProperty, value); }
+        }
+
+        public static readonly BindableProperty IsIndicatorVisibleProperty = BindableProperty.Create ("IsIndicatorVisible", typeof(bool), typeof(TouchViewCell), false, BindingMode.TwoWay);
 
 		public bool IsIndicatorVisible {
 			get { return (bool)GetValue (IsIndicatorVisibleProperty); }
@@ -41,7 +49,23 @@ namespace BodyReportMobile.Presenter.Framework.Controls
 			set { SetValue (ImageProperty, value); }
 		}
 
-		public static readonly BindableProperty IsImageVisibleProperty = BindableProperty.Create ("IsImageVisible", typeof(bool), typeof(TouchViewCell), false, BindingMode.TwoWay);
+        public static readonly BindableProperty ImageWidthRequestProperty = BindableProperty.Create("ImageWidthRequest", typeof(int), typeof(TouchViewCell), 40, BindingMode.TwoWay);
+
+        public int ImageWidthRequest
+        {
+            get { return (int)GetValue(ImageWidthRequestProperty); }
+            set { SetValue(ImageWidthRequestProperty, value); }
+        }
+
+        public static readonly BindableProperty ImageHeightRequestProperty = BindableProperty.Create("ImageHeightRequest", typeof(int), typeof(TouchViewCell), 40, BindingMode.TwoWay);
+
+        public int ImageHeightRequest
+        {
+            get { return (int)GetValue(ImageHeightRequestProperty); }
+            set { SetValue(ImageHeightRequestProperty, value); }
+        }
+
+        public static readonly BindableProperty IsImageVisibleProperty = BindableProperty.Create ("IsImageVisible", typeof(bool), typeof(TouchViewCell), false, BindingMode.TwoWay);
 
 		public bool IsImageVisible {
 			get { return (bool)GetValue (IsImageVisibleProperty); }

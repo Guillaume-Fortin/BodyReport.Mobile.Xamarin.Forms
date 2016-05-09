@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Message;
 using BodyReportMobile.Core.Crud.Transformer;
 using SQLite.Net;
+using BodyReportMobile.Core.Framework;
 
 namespace BodyReportMobile.Core.ServiceManagers
 {
@@ -17,15 +18,28 @@ namespace BodyReportMobile.Core.ServiceManagers
 
 		public List<Muscle> FindMuscles(MuscleCriteria criteria = null)
 		{
-			return _module.Find(criteria);
-		}
+			var muscleList = _module.Find(criteria);
+            if (muscleList != null)
+            {
+                foreach(var muscle in muscleList)
+                {
+                    if(muscle != null)
+                        muscle.Name = Translation.GetInDB(MuscleTransformer.GetTranslationKey(muscle.Id));
+                }
+            }
+
+            return muscleList;
+        }
 
 		internal Muscle GetMuscle(MuscleKey key)
 		{
-			return _module.Get(key);
-		}
+			var muscle = _module.Get(key);
+            if(muscle != null)
+                muscle.Name = Translation.GetInDB(MuscleTransformer.GetTranslationKey(muscle.Id));
+            return muscle;
+        }
 
-		internal Muscle UpdateMuscle(Muscle muscle)
+        internal Muscle UpdateMuscle(Muscle muscle)
 		{
 			//Update Translation Name
 			//Translation.UpdateInDB(MuscleTransformer.GetTranslationKey(muscle.Id), muscle.Name, _dbContext);

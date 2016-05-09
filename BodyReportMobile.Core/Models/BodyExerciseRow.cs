@@ -6,10 +6,11 @@ namespace BodyReportMobile.Core.Models
 	[Table("BodyExercise")]
 	public class BodyExerciseRow
 	{
-		/// <summary>
-		/// Id
-		/// </summary>
-		public int Id { get; set; }
+        /// <summary>
+        /// Id
+        /// </summary>
+        [PrimaryKey, Column("Id")]
+        public int Id { get; set; }
 
 		/// <summary>
 		/// Muscle Id

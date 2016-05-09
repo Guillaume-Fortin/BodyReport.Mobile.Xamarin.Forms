@@ -65,6 +65,12 @@
     <Compile Include="Pages\CreateTrainingDayPage.xaml.cs">
       <DependentUpon>CreateTrainingDayPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\TrainingDayPage.xaml.cs">
+      <DependentUpon>TrainingDayPage.xaml</DependentUpon>
+    </Compile>
+	<Compile Include="Pages\SelectTrainingExercisesPage.xaml.cs">
+      <DependentUpon>SelectTrainingExercisesPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\EditTrainingWeekPage.xaml.cs">
       <DependentUpon>EditTrainingWeekPage.xaml</DependentUpon>
     </Compile>
@@ -180,6 +186,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\CreateTrainingDayPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\TrainingDayPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\SelectTrainingExercisesPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

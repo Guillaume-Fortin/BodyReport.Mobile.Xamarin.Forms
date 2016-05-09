@@ -68,14 +68,6 @@ namespace BodyReportMobile.Presenter.Pages
             }
         }
 
-        /*<Label.Triggers>
-        <Trigger TargetType="Label"
-                     Property="Text"
-                     Value="">
-          <Setter Property="IsVisible" Value="false" />
-        </Trigger>
-      </Label.Triggers>*/
-
         public void DayCellTaped(object sender, EventArgs e)
         {
             if (sender != null)

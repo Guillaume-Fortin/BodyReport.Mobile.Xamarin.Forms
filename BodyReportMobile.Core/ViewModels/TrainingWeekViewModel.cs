@@ -169,32 +169,41 @@ namespace BodyReportMobile.Core.ViewModels
             try
             {
                 ActionIsInProgress = true;
-                
-                if(TrainingWeek.TrainingDays != null)
-                {
-                    //Check training day exist. if not exist, create new training day
-                    var trainingDay = TrainingWeek.TrainingDays.Where(td => td.DayOfWeek == (int)dayOfWeek).FirstOrDefault();
-                    if (trainingDay == null)
-                    {
-                        var newTrainingDay = new TrainingDay()
-                        {
-                            Year = TrainingWeek.Year,
-                            WeekOfYear = TrainingWeek.WeekOfYear,
-                            DayOfWeek = (int)dayOfWeek,
-                            TrainingDayId = 0,
-                            UserId = UserData.Instance.UserInfo.UserId
-                        };
-                        if(await CreateTrainingDayViewModel.Show(newTrainingDay, this))
-                        {
-                            TrainingWeek.TrainingDays.Add(newTrainingDay);
-                            trainingDay = newTrainingDay;
-                            FillWeekDays(TrainingWeek);
-                        }
-                    }
 
-                    if (trainingDay != null)
-                    { //view training day
-                       
+                if (TrainingWeek.TrainingDays == null)
+                    TrainingWeek.TrainingDays = new List<TrainingDay>();
+                
+                //Check training day exist. if not exist, create new training day
+                var trainingDays = TrainingWeek.TrainingDays.Where(td => td.DayOfWeek == (int)dayOfWeek).ToList();
+                if (trainingDays == null)
+                    trainingDays = new List<TrainingDay>();
+                if (trainingDays.Count == 0)
+                {
+                    var newTrainingDay = new TrainingDay()
+                    {
+                        Year = TrainingWeek.Year,
+                        WeekOfYear = TrainingWeek.WeekOfYear,
+                        DayOfWeek = (int)dayOfWeek,
+                        TrainingDayId = 0,
+                        UserId = UserData.Instance.UserInfo.UserId
+                    };
+                    if(await CreateTrainingDayViewModel.Show(newTrainingDay, this))
+                    {
+                        TrainingWeek.TrainingDays.Add(newTrainingDay);
+                        trainingDays.Add(newTrainingDay);
+                        FillWeekDays(TrainingWeek);
+                    }
+                }
+
+                if (trainingDays.Count > 0)
+                { //view training day
+                    var trainingDayViewModelResut = await TrainingDayViewModel.Show(trainingDays, this);
+                    //reload local data necessary
+                    if(trainingDayViewModelResut.Result)
+                    {
+                        TrainingWeek.TrainingDays.RemoveAll(td => td.DayOfWeek == (int)dayOfWeek);
+                        if(trainingDayViewModelResut.TrainingDays != null)
+                            TrainingWeek.TrainingDays.AddRange(trainingDayViewModelResut.TrainingDays);
                     }
                 }
             }

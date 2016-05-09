@@ -181,7 +181,11 @@
     <Compile Include="Framework\SecurityIOS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
-  <ItemGroup />
+  <ItemGroup>
+    <BundleResource Include="..\images\checked_indicator.png">
+      <Link>Resources\checked_indicator.png</Link>
+    </BundleResource>
+  </ItemGroup>
   <ItemGroup>
     <BundleResource Include="..\images\disclosure_indicator.png">
       <Link>Resources\disclosure_indicator.png</Link>

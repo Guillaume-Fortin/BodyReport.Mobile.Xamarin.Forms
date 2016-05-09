@@ -26,5 +26,20 @@ namespace BodyReportMobile.Core.WebServices
         {
             return await HttpConnector.Instance.PostAsync<TrainingDay, TrainingDay>("Api/TrainingDays/Create", trainingDay);
         }
+
+        public static async Task<TrainingDay> GetTrainingDay(TrainingDayKey key, bool manageExercise = false)
+        {
+            if (key == null)
+                return null;
+
+            Dictionary<string, string> datas = new Dictionary<string, string>();
+            datas.Add("UserId", key.UserId);
+            datas.Add("Year", key.Year.ToString());
+            datas.Add("WeekOfYear", key.WeekOfYear.ToString());
+            datas.Add("DayOfWeek", key.DayOfWeek.ToString());
+            datas.Add("TrainingDayId", key.TrainingDayId.ToString());
+            datas.Add("manageExercise", manageExercise.ToString());
+            return await HttpConnector.Instance.GetAsync<TrainingDay>("Api/TrainingDays/Get", datas);
+        }
     }
 }

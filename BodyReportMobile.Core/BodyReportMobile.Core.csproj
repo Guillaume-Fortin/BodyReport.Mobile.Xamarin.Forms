@@ -59,15 +59,25 @@
     <Compile Include="..\..\BodyReport\src\Message\WebApi\WebApiException.cs">
       <Link>Message\WebApi\WebApiException.cs</Link>
     </Compile>
+    <Compile Include="Crud\Module\BodyExerciseModule.cs" />
+    <Compile Include="Crud\Module\MuscularGroupModule.cs" />
+    <Compile Include="Crud\Transformer\MuscularGroupTransformer.cs" />
     <Compile Include="Framework\AppMessenger.cs" />
-    <Compile Include="Framework\Binding\BindingWeekTrainingDay.cs" />
+    <Compile Include="Message\Binding\BindingBodyExercise.cs" />
+    <Compile Include="Message\Binding\BindingTrainingExercise.cs" />
+    <Compile Include="Message\Binding\BindingTrainingExerciseSet.cs" />
+    <Compile Include="Message\Binding\BindingWeekTrainingDay.cs" />
     <Compile Include="Framework\IAndroidAPI.cs" />
     <Compile Include="Framework\IPresenterManager.cs" />
     <Compile Include="Message\Binding\BindingTrainingDay.cs" />
+    <Compile Include="Models\MuscularGroupRow.cs" />
     <Compile Include="MvxMessages\MvxMessagePageEvent.cs" />
     <Compile Include="MvxMessages\MvxMessageViewModelEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceManagers\BodyExerciseManager.cs" />
+    <Compile Include="ServiceManagers\MuscularGroupManager.cs" />
     <Compile Include="ServiceManagers\UserInfoManager.cs" />
+    <Compile Include="ViewModels\SelectTrainingExercisesViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="MvxMessages\MvxMessageFormClosed.cs" />
     <Compile Include="Framework\ViewModelDataCollection.cs" />
@@ -76,6 +86,7 @@
     <Compile Include="ViewModels\LanguageViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\RegisterAccountViewModel.cs" />
+    <Compile Include="ViewModels\TrainingDayViewModel.cs" />
     <Compile Include="ViewModels\TrainingJournalViewModel.cs" />
     <Compile Include="Framework\Binding\GenericGroupModelCollection.cs" />
     <Compile Include="..\..\BodyReport\src\Message\TrainingWeek.cs">
@@ -156,7 +167,9 @@
     <Compile Include="Crud\Module\MuscleModule.cs" />
     <Compile Include="ViewModels\TrainingWeekViewModel.cs" />
     <Compile Include="WebServices\AccountWebService.cs" />
+    <Compile Include="WebServices\BodyExerciseWebService.cs" />
     <Compile Include="WebServices\MuscleWebService.cs" />
+    <Compile Include="WebServices\MuscularGroupWebService.cs" />
     <Compile Include="WebServices\TrainingDayWebService.cs" />
     <Compile Include="WebServices\TranslationWebService.cs" />
     <Compile Include="WebServices\TrainingWeekWebService.cs" />

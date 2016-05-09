@@ -7,6 +7,7 @@ namespace BodyReportMobile.Core.Framework.Binding
 	{
 		public string LongName { get; set; }
 		public string ShortName { get; set; }
-	}
+        public object ReferenceObject { get; set; }
+    }
 }
 

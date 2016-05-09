@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages"
+             xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
+             x:Class="BodyReportMobile.Presenter.Pages.TrainingDayPage"
+             x:Name="trainingDayPage"
+             Title="{Binding TitleLabel}">
+
+  <ContentPage.ToolbarItems>
+    <ToolbarItem Name="CreateTrainingDayToolbarItem" Text="{Binding CreateTrainingLabel}" Command="{Binding CreateTrainingDayCommand}" Order="Secondary" Priority="0" />
+    <!--ToolbarItem Name="TrainingModeToolbarItem" Text="{Binding TrainingModeLabel}" Command="{Binding TrainingModeCommand}" Order="Secondary" Priority="0" /-->
+  </ContentPage.ToolbarItems>
+  
+  <ContentPage.Content>
+    <Grid>
+      <AbsoluteLayout>
+        <ActivityIndicator AbsoluteLayout.LayoutFlags="PositionProportional"
+                           AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1" IsRunning="{Binding ActionIsInProgress}" IsVisible="{Binding ActionIsInProgess}" Color="Red" />
+      </AbsoluteLayout>
+      <ListView x:Name="listView" ItemsSource="{Binding GroupedTrainingExercises}"
+                GroupDisplayBinding="{Binding LongName}"
+			          IsGroupingEnabled="true"
+                HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"
+                ItemTapped="ItemTapped">
+        <ListView.GroupHeaderTemplate>
+          <DataTemplate>
+            <ViewCell x:Name="groupViewCell">
+              <ViewCell.View>
+                <StackLayout Orientation="Horizontal" Padding="10" >
+                  <Label Text="{Binding LongName}"/>
+                  <Label TextColor="#3366BB"
+                    Text="{Binding Path=BindingContext.AddExerciseLabel, Source={x:Reference trainingDayPage}}">
+                    <Label.GestureRecognizers>
+                      <TapGestureRecognizer Command="{Binding BindingContext.AddExerciseCommand, Source={x:Reference trainingDayPage}}" CommandParameter="{Binding BindingContext.ReferenceObject, Source={x:Reference groupViewCell}}"/>
+                    </Label.GestureRecognizers>
+                  </Label>
+                </StackLayout>
+              </ViewCell.View>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.GroupHeaderTemplate>
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Margin="4">
+                <Image Source="{Binding Image}" VerticalOptions="Center" HorizontalOptions="Start" Aspect="Fill" WidthRequest="100" HeightRequest="100"/>
+                <StackLayout Orientation="Vertical" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
+                
+                  <Grid VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*"/>
+                      <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackLayout Grid.Column="0">
+                      <Label Text="{Binding BodyExerciseName}" />
+                    </StackLayout>
+                    <StackLayout Grid.Column="1">
+                      <Label Text="{Binding RestTime, StringFormat='{0} sec'}" />
+                    </StackLayout>
+                  </Grid>
+                  <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                      <RowDefinition Height="Auto"/>
+                      <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*"/>
+                      <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackLayout Grid.Row="0" Grid.Column="0">
+                      <Label Grid.Row="0" Grid.Column="0" Text="{Binding SetRepsTitle}" />
+                    </StackLayout>
+                    <StackLayout Grid.Row="0" Grid.Column="1">
+                      <Label Text="{Binding SetRepWeightsTitle}" />
+                    </StackLayout>
+                    <Label Grid.Row="1" Grid.Column="0" Text="{Binding SetReps}"/>
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding SetRepWeights}"/>
+                  </Grid>
+                </StackLayout>
+              </StackLayout>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+    </Grid>
+  </ContentPage.Content>
+</local:BaseContentPage>

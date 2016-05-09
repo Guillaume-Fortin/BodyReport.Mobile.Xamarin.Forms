@@ -159,13 +159,32 @@ namespace BodyReportMobile.Core.ViewModels
                 
                 //Synchronise Web data to local database
                 var muscleList = await MuscleWebService.FindMuscles();
-				var muscleManager = new MuscleManager(_dbContext);
-				muscleManager.UpdateMuscleList(muscleList);
+                if(muscleList != null)
+                {
+				    var muscleManager = new MuscleManager(_dbContext);
+				    muscleManager.UpdateMuscleList(muscleList);
+                }
 
-				var translationList = await TranslationWebService.FindTranslations();
-				var translationManager = new TranslationManager(_dbContext);
-				translationManager.UpdateTranslationList(translationList);
-                
+                var muscularGroupList = await MuscularGroupWebService.FindMuscularGroups();
+                if (muscularGroupList != null)
+                {
+                    var muscularGroupManager = new MuscularGroupManager(_dbContext);
+                    muscularGroupManager.UpdateMuscularGroupList(muscularGroupList);
+                }
+
+                var bodyExerciseList = await BodyExerciseWebService.FindBodyExercises();
+                if (bodyExerciseList != null)
+                {
+                    var bodyExerciseManager = new BodyExerciseManager(_dbContext);
+                    bodyExerciseManager.UpdateBodyExerciseList(bodyExerciseList);
+                }
+
+                var translationList = await TranslationWebService.FindTranslations();
+                if (translationList != null)
+                {
+                    var translationManager = new TranslationManager(_dbContext);
+                    translationManager.UpdateTranslationList(translationList);
+                }
 			}
 			catch (Exception exception)
 			{

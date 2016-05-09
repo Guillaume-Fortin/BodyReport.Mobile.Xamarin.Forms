@@ -37,20 +37,27 @@
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="Auto" />
       <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="Auto" />
       <ColumnDefinition Width="*" />
       <ColumnDefinition Width="Auto" />
     </Grid.ColumnDefinitions>
 
-    <Image x:Name="LogoImage" Source="{Binding Path=Image, Mode=TwoWay, Source={x:Reference touchViewCell}}"
-           WidthRequest="40" HeightRequest="40"
-	     Grid.Row="0" Grid.Column="0" HorizontalOptions="Start" VerticalOptions="Center"
+    <Image x:Name="checkImageIndicator" Source="checked_indicator.png" WidthRequest="20" HeightRequest="20"
+	     Grid.Row="0" Grid.Column="0"
+       IsVisible="{Binding Path=IsCheckedVisible, Mode=TwoWay, Source={x:Reference touchViewCell}}" />
+    
+    <Image x:Name="LogoImage" 
+           Source="{Binding Path=Image, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+           WidthRequest="{Binding Path=ImageWidthRequest, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+           HeightRequest="{Binding Path=ImageHeightRequest, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+	     Grid.Row="0" Grid.Column="1" HorizontalOptions="Start" VerticalOptions="Center"
 	     IsVisible="True" />
 
     <Label x:Name="TitleLabel"
            Text="{Binding Path=Title, Mode=TwoWay, Source={x:Reference touchViewCell}}"
         TextColor="{Binding Path=TitleTextColor, Mode=TwoWay, Source={x:Reference touchViewCell}}"
 	    	LineBreakMode="MiddleTruncation" HorizontalOptions="Center" VerticalOptions="Center"
-	    	Grid.Row="0" Grid.Column="1" IsVisible="true" WidthRequest="120">
+	    	Grid.Row="0" Grid.Column="2" IsVisible="true" WidthRequest="120">
       <Label.Triggers>
         <Trigger TargetType="Label"
                      Property="Text"
@@ -60,7 +67,7 @@
       </Label.Triggers>
     </Label>
 
-    <StackLayout Grid.Row="0" Grid.Column="2" Spacing="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+    <StackLayout Grid.Row="0" Grid.Column="3" Spacing="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
 
       <Label x:Name="ValueLabel"
              Text="{Binding Path=Value, Mode=TwoWay, Source={x:Reference touchViewCell}}"
@@ -91,7 +98,7 @@
       </Label>
     </StackLayout>
     <Image x:Name="myImage" Source="disclosure_indicator.png" WidthRequest="20" HeightRequest="40"
-	     Grid.Row="0" Grid.Column="3" HorizontalOptions="EndAndExpand" VerticalOptions="Center"
+	     Grid.Row="0" Grid.Column="4" HorizontalOptions="EndAndExpand" VerticalOptions="Center"
        IsVisible="{Binding Path=IsIndicatorVisible, Mode=TwoWay, Source={x:Reference touchViewCell}}" />
   </Grid>
 </ViewCell>
