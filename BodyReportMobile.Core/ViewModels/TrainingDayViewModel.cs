@@ -146,7 +146,7 @@ namespace BodyReportMobile.Core.ViewModels
                     {
                         BodyExerciseId = trainingExercise.Id,
                         RestTime = trainingExercise.RestTime,
-                        Image = "http://192.168.0.15:5000/images/bodyexercises/" + bodyExercise.ImageName
+                        Image = HttpConnector.Instance.BaseUrl + "images/bodyexercises/" + bodyExercise.ImageName
                     };
                     bindingTrainingExercise.BodyExerciseName = bodyExercise.Name;
                     if (trainingExercise.TrainingExerciseSets != null)
@@ -258,6 +258,7 @@ namespace BodyReportMobile.Core.ViewModels
 
                     try
                     {
+                        ActionIsInProgress = true;
                         var trainingDay = trainingDayObject as TrainingDay;
                         if (trainingDay != null)
                         {
@@ -298,7 +299,6 @@ namespace BodyReportMobile.Core.ViewModels
                     {
                         ActionIsInProgress = false;
                     }
-                    
                 });
             }
         }
