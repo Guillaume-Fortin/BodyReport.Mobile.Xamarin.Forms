@@ -39,7 +39,10 @@ namespace BodyReportMobile.Core.ViewModels
         private List<MuscularGroup> _muscularGroups;
         private List<Muscle> _muscles;
         private List<BodyExercise> _bodyExercises;
+
+        private object _locker = new object();
         private CancellationTokenSource _cachingImageCancellationTokenSource = null;
+        private List<BindingBodyExercise> _cachingBindingBodyExerciseList = new List<BindingBodyExercise>();
 
         public SelectTrainingExercisesViewModel() : base()
         {
@@ -56,6 +59,24 @@ namespace BodyReportMobile.Core.ViewModels
             base.Show();
 
             await SynchronizeData();
+        }
+
+        protected override void Closed()
+        {
+            base.Closed();
+            try
+            {
+                lock (_locker)
+                {
+                    if (_cachingImageCancellationTokenSource != null)
+                    {
+                        _cachingImageCancellationTokenSource.Cancel();
+                        _cachingImageCancellationTokenSource = null;
+                    }
+                }
+            }
+            catch
+            { }
         }
 
         public static async Task<SelectTrainingExercisesViewModelResut> Show(BaseViewModel parent = null)
@@ -120,13 +141,7 @@ namespace BodyReportMobile.Core.ViewModels
                         };
                         BindingBodyExercises.Add(bindingBodyExercise);
                     }
-
-                    if (_cachingImageCancellationTokenSource != null)
-                    {
-                        _cachingImageCancellationTokenSource.Cancel();
-                        _cachingImageCancellationTokenSource = null;
-                    }
-
+                    
                     if (BindingBodyExercises.Count > 0)
                     {
                         Task t = CachingImages(BindingBodyExercises);
@@ -145,10 +160,18 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
-        private List<BindingBodyExercise> _cachingBindingBodyExerciseList = new List<BindingBodyExercise>();
         public async Task CachingImages(List<BindingBodyExercise> bindingBodyExerciseList)
         {
-            _cachingImageCancellationTokenSource = new CancellationTokenSource();
+            lock (_locker)
+            {
+                if (_cachingImageCancellationTokenSource != null)
+                {
+                    _cachingImageCancellationTokenSource.Cancel();
+                    _cachingImageCancellationTokenSource = null;
+                }
+                _cachingImageCancellationTokenSource = new CancellationTokenSource();
+            }
+            
             lock (_cachingBindingBodyExerciseList)
             {
                 _cachingBindingBodyExerciseList.Clear();
@@ -172,7 +195,7 @@ namespace BodyReportMobile.Core.ViewModels
                     localImagePath = Path.Combine(AppTools.BodyExercisesImagesDirectory, bindingBodyExercise.BodyExercise.ImageName);
                     var t = AppTools.Instance.CachingImage(bindingBodyExercise.GetHashCode(), urlImage, localImagePath, (cachingImageResult) =>
                     {
-                        if (cachingImageResult != null && _cachingBindingBodyExerciseList != null)
+                        if (cachingImageResult != null)
                         {
                             lock (_cachingBindingBodyExerciseList)
                             {
