@@ -7,6 +7,7 @@ using BodyReportMobile.Core;
 using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Core.ViewModels;
 using BodyReportMobile.Core.Framework;
+using BodyReportMobile.Core.Message;
 
 namespace BodyReportMobile.Presenter.Pages.Generics
 {
@@ -40,7 +41,9 @@ namespace BodyReportMobile.Presenter.Pages.Generics
 				return;
 			}
 
-            (BindingContext as ListViewModel).ValidateCommand.Execute (null);
+			listView.SelectedItem = null;
+			var selectedItem = e.SelectedItem as GenericData;
+			(BindingContext as ListViewModel).ValidateCommand.Execute (selectedItem);
 		}
 	}
 }
