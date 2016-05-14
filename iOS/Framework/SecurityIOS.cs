@@ -3,7 +3,7 @@ using Security;
 using Foundation;
 using BodyReportMobile.Core.Framework;
 
-namespace BodyReport.iOS
+namespace BodyReport.iOS.Framework
 {
 	public class SecurityIOS : ISecurity
 	{
@@ -20,7 +20,7 @@ namespace BodyReport.iOS
 				
 			var s = new SecRecord (SecKind.GenericPassword) {
 				Service = "BodyReportUserInfo",
-				Account = userName,
+				Account = userId + (char)3 + userName,
 				ValueData = NSData.FromString (password),
 				Generic = NSData.FromString ("password")
 			};
@@ -44,9 +44,18 @@ namespace BodyReport.iOS
 				var match = SecKeyChain.QueryAsRecord (rec, out res);
 				if (res == SecStatusCode.Success)
 				{
-					userName = match.Account.ToString();
-					password = match.ValueData.ToString();
-					result = !string.IsNullOrWhiteSpace(userName) && !string.IsNullOrWhiteSpace(password);
+					string accountInfo = match.Account.ToString();
+					if(!string.IsNullOrWhiteSpace(accountInfo) && accountInfo.IndexOf((char)3) != -1)
+					{
+						string[] accountInfos = accountInfo.Split((char)3);
+						if(accountInfos != null && accountInfos.Length > 1)
+						{
+							userId = accountInfos[0];
+							userName = accountInfos[1];
+							password = match.ValueData.ToString();
+							result = !string.IsNullOrWhiteSpace(userName) && !string.IsNullOrWhiteSpace(password);
+						}
+					}
 				}
 			}
 			catch

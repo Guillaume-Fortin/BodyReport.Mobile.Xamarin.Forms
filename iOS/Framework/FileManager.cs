@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using BodyReportMobile.Core.Framework;
 
-namespace BodyReport.iOS
+namespace BodyReport.iOS.Framework
 {
 	public class FileManager : IFileManager
 	{

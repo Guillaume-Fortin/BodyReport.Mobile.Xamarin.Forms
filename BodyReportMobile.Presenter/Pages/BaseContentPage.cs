@@ -83,7 +83,7 @@ namespace BodyReportMobile.Presenter.Pages
                 UnRegisterEvent();
                 await this.Navigation.PopAsync();
                 if (_viewModel != null)
-                    AppMessenger.AppInstance.Send(new MvxMessageViewModelEvent(_viewModel.ViewModelGuid) { Closed = true });
+					AppMessenger.AppInstance.Send(new MvxMessageViewModelEvent(_viewModel.ViewModelGuid) { Closed = true, BackPressed = cancelView });
             }
             catch
             {

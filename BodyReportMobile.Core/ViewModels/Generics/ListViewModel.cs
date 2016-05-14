@@ -75,12 +75,13 @@ namespace BodyReportMobile.Core.ViewModels.Generic
 		{
 			get
 			{
-				return new Command (() => {
-                    if (ActionIsInProgress)
+				return new Command ((genericData) => {
+					if (ActionIsInProgress)
                         return;
                     try
                     {
                         ActionIsInProgress = true;
+						SelectedItem = genericData as GenericData;
                         if (ValidateViewModel())
                         {
                             CloseViewModel();

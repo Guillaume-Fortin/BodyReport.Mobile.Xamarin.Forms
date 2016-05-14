@@ -3,10 +3,10 @@ using SQLite.Net;
 using System.IO;
 using BodyReportMobile.Core.Framework;
 
-namespace BodyReport.iOS
+namespace BodyReport.iOS.Framework
 {
 	public class SQLite_iOS : ISQLite
-	{
+	{	
 		public SQLite_iOS ()
 		{
 		}

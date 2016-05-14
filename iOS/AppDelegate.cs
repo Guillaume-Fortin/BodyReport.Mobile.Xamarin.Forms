@@ -7,14 +7,14 @@ using UIKit;
 using XLabs.Ioc;
 using Acr.UserDialogs;
 using BodyReportMobile.Core.Framework;
+using BodyReport.iOS.Framework.Renderers;
+using BodyReport.iOS.Framework;
 
 namespace BodyReport.iOS
 {
 	[Register ("AppDelegate")]
 	public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
     {
-		UIWindow _window;
-
 		public override bool FinishedLaunching (UIApplication app, NSDictionary options)
 		{
             global::Xamarin.Forms.Forms.Init();
@@ -29,7 +29,8 @@ namespace BodyReport.iOS
             }
                 
 
-            _window = new UIWindow(UIScreen.MainScreen.Bounds);
+			LoadApplication (new BodyReportMobile.Presenter.App ());
+			ImageCircleRenderer.Init ();
 
             return base.FinishedLaunching(app, options);
         }
@@ -42,6 +43,7 @@ namespace BodyReport.iOS
             var resolverContainer = Resolver.Resolve<IDependencyContainer>();
             resolverContainer.Register<ISecurity, SecurityIOS>();
             resolverContainer.Register<IFileManager, FileManager>();
+			resolverContainer.Register<ILogger, Logger>();
             resolverContainer.Register<ISQLite, SQLite_iOS>();
             resolverContainer.Register(UserDialogs.Instance);
         }

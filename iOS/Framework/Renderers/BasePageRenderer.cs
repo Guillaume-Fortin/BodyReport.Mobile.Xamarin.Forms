@@ -3,11 +3,10 @@ using Xamarin.Forms.Platform.iOS;
 using Xamarin.Forms;
 using UIKit;
 using BodyReport;
-using BodyReport.iOS;
 using BodyReportMobile.Presenter.Pages;
 
-[assembly:ExportRenderer (typeof(BaseContentPage), typeof(BasePageRenderer))]
-namespace BodyReport.iOS
+[assembly:ExportRenderer (typeof(BodyReportMobile.Presenter.Pages.BaseContentPage), typeof(BodyReport.iOS.Framework.Renderers.BasePageRenderer))]
+namespace BodyReport.iOS.Framework.Renderers
 {
 	public class BasePageRenderer : PageRenderer
 	{
