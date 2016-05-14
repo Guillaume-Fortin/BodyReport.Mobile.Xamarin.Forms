@@ -5,9 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace BodyReportMobile.Presenter.Framework.Controls
 {
+	[XamlCompilation (XamlCompilationOptions.Compile)]
     public partial class DateViewCell : ViewCell
     {
         public static readonly BindableProperty TitleProperty = BindableProperty.Create("Title", typeof(string), typeof(DateViewCell), "", BindingMode.TwoWay);

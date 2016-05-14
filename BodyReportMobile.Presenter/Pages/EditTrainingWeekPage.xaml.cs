@@ -6,9 +6,11 @@ using System.Globalization;
 using System.Text;
 using System.Diagnostics;
 using BodyReportMobile.Core.ViewModels;
+using Xamarin.Forms.Xaml;
 
 namespace BodyReportMobile.Presenter.Pages
 {
+	[XamlCompilation (XamlCompilationOptions.Compile)]
 	public partial class EditTrainingWeekPage : BaseContentPage
 	{
 		public EditTrainingWeekPage (BaseViewModel viewModel) : base(viewModel)

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace BodyReportMobile.Presenter.Framework.Controls
 {
+	[XamlCompilation (XamlCompilationOptions.Compile)]
 	public partial class NumericEntryCell : ViewCell
 	{
 		public static readonly BindableProperty LabelProperty = BindableProperty.Create ("Label", typeof(string), typeof(TouchViewCell), "");

@@ -8,9 +8,11 @@ using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Core.ViewModels;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Message;
+using Xamarin.Forms.Xaml;
 
 namespace BodyReportMobile.Presenter.Pages.Generics
 {
+	[XamlCompilation (XamlCompilationOptions.Compile)]
     public partial class ListPage : BaseContentPage
 	{
 		public ListPage (ListViewModel baseViewModel) : base(baseViewModel)

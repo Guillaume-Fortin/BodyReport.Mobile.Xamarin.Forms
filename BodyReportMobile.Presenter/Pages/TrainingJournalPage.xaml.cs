@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace BodyReportMobile.Presenter.Pages
 {
+	[XamlCompilation (XamlCompilationOptions.Compile)]
 	public partial class TrainingJournalPage : BaseContentPage
 	{
 		public TrainingJournalPage (TrainingJournalViewModel baseViewModel) : base(baseViewModel)

@@ -6,9 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace BodyReportMobile.Presenter.Pages
 {
+	[XamlCompilation (XamlCompilationOptions.Compile)]
     public partial class TrainingDayPage : BaseContentPage
     {
         public TrainingDayPage(TrainingDayViewModel viewModel) : base(viewModel)

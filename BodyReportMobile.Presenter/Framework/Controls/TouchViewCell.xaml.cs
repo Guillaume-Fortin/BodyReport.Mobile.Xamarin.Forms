@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace BodyReportMobile.Presenter.Framework.Controls
 {
+	[XamlCompilation (XamlCompilationOptions.Compile)]
 	public partial class TouchViewCell : ViewCell
 	{
 		public static readonly BindableProperty TitleProperty = BindableProperty.Create ("Title", typeof(string), typeof(TouchViewCell), "", BindingMode.TwoWay);

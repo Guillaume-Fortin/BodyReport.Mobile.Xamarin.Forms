@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace BodyReportMobile.Presenter.Framework.Controls
 {
+	[XamlCompilation (XamlCompilationOptions.Compile)]
 	public partial class TextEntry : Entry
 	{
 		public static readonly BindableProperty MaxLengthProperty = BindableProperty.Create ("MaxLength", typeof(int), typeof(TextEntry), -1);
