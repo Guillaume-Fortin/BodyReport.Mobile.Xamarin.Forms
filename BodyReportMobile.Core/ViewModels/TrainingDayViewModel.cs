@@ -63,6 +63,7 @@ namespace BodyReportMobile.Core.ViewModels
             _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
             _bodyExerciseManager = new BodyExerciseManager(_dbContext);
             _userDialog = Resolver.Resolve<IUserDialogs>();
+			CreateTrainingLabel = Translation.Get(TRS.CREATE); //necessary for ios Toolbaritem binding failed
         }
 
         protected override void Closed(bool backPressed)
@@ -119,7 +120,7 @@ namespace BodyReportMobile.Core.ViewModels
         {
             base.InitTranslation();
             TitleLabel = Translation.Get(TRS.TRAINING_DAY);
-            CreateTrainingLabel = Translation.Get(TRS.CREATE_NEW_PE);
+			CreateTrainingLabel = Translation.Get(TRS.CREATE);
             TrainingModeLabel = "Training Mode";
             AddExerciseLabel = Translation.Get(TRS.ADD_EXERCISES);
         }

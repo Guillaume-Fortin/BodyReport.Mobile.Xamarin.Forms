@@ -166,6 +166,7 @@
     <Compile Include="Framework\Renderers\NumericEntryRenderer.cs" />
     <Compile Include="Framework\Logger.cs" />
     <Compile Include="Framework\Renderers\TextEntryRenderer.cs" />
+    <Compile Include="Framework\Renderers\LabelRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
