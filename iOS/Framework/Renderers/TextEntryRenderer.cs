@@ -1,14 +1,12 @@
 ﻿using System;
 using Xamarin.Forms;
-using Foundation;
-using UIKit;
 using Xamarin.Forms.Platform.iOS;
-using BodyReportMobile.Presenter.Framework.Controls;
+using UIKit;
 
-[assembly:ExportRenderer (typeof(NumericEntry), typeof(BodyReport.iOS.Framework.Renderers.NumericEntryRenderer))]
+[assembly:ExportRenderer (typeof(BodyReportMobile.Presenter.Framework.Controls.TextEntry), typeof(BodyReport.iOS.Framework.Renderers.TextEntryRenderer))]
 namespace BodyReport.iOS.Framework.Renderers
 {
-	public class NumericEntryRenderer : EntryRenderer
+	public class TextEntryRenderer : EntryRenderer
 	{
 		protected override void OnElementChanged (ElementChangedEventArgs<Entry> e)
 		{
