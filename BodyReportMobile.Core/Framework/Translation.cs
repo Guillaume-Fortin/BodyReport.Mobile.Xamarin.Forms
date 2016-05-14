@@ -77,8 +77,9 @@ namespace BodyReportMobile.Core.Framework
 					}
 				}
 			}
-			catch//(Exception except)
+			catch(Exception except)
 			{
+				ILogger.Instance.Error ("Unable to read translation file", except);
 			}
             
 			ChangeLang (CurrentLang);

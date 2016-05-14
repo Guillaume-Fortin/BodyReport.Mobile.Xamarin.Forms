@@ -171,14 +171,14 @@
     <BundleResource Include="..\images\checked_indicator.png">
       <Link>Resources\checked_indicator.png</Link>
     </BundleResource>
-    <BundleResource Include="..\images\flag-en-US.png">
-      <Link>Resources\flag-en-US.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\images\flag-fr-FR.png">
-      <Link>Resources\flag-fr-FR.png</Link>
-    </BundleResource>
     <BundleResource Include="..\images\icon.png">
       <Link>Resources\icon.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\images\flag_en_US.png">
+      <Link>Resources\flag_en_US.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\images\flag_fr_FR.png">
+      <Link>Resources\flag_fr_FR.png</Link>
     </BundleResource>
   </ItemGroup>
   <ItemGroup>

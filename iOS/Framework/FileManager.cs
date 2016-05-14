@@ -21,7 +21,7 @@ namespace BodyReport.iOS.Framework
 
         public Stream OpenResourceFile(string filePath)
 		{
-			return File.Open (filePath, FileMode.Open);
+			return File.Open (filePath, FileMode.Open, FileAccess.Read);
 		}
 
         public String GetDocumentPath()

@@ -192,14 +192,14 @@
     <AndroidResource Include="..\images\disclosure_indicator.png">
       <Link>Resources\drawable\disclosure_indicator.png</Link>
     </AndroidResource>
-    <AndroidResource Include="..\images\flag-en-US.png">
-      <Link>Resources\drawable\flag-en-US.png</Link>
-    </AndroidResource>
-    <AndroidResource Include="..\images\flag-fr-FR.png">
-      <Link>Resources\drawable\flag-fr-FR.png</Link>
-    </AndroidResource>
     <AndroidResource Include="..\images\icon.png">
       <Link>Resources\drawable\icon.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\images\flag_en_US.png">
+      <Link>Resources\drawable\flag_en_US.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\images\flag_fr_FR.png">
+      <Link>Resources\drawable\flag_fr_FR.png</Link>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
