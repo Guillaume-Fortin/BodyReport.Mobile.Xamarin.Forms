@@ -17,6 +17,9 @@ namespace BodyReportMobile.Core.ViewModels
 
         protected bool _allowCancelViewModel = true;
 
+        protected bool _viewModelClosing = false;
+        protected bool _viewModelClosed = false;
+
         /// <summary>
         /// The view model GUID.
         /// </summary>
@@ -33,7 +36,7 @@ namespace BodyReportMobile.Core.ViewModels
         private bool _dataIsRefreshing = false;
 
         /// <summary>
-        /// Action in progree
+        /// Action in progress
         /// </summary>
         private bool _actionIsInProgress = false;
 
@@ -44,8 +47,8 @@ namespace BodyReportMobile.Core.ViewModels
 
         public BaseViewModel()
         {
-            AppMessenger.AppInstance.Register<MvxMessageFormClosed>(this, OnFormClosedMvxMessage);
             AppMessenger.AppInstance.Register<MvxMessageViewModelEvent>(this, OnViewModelEvent);
+            ActionIsInProgress = true;
         }
 
         #region view model life cycle
@@ -56,7 +59,7 @@ namespace BodyReportMobile.Core.ViewModels
                 message.ViewModelGuid == _viewModelGuid)
             {
                 if (message.Show)
-                    Show();
+                    InternalShow();
                 else if (message.Appear)
                     Appear();
                 else if (message.Disappear)
@@ -64,7 +67,7 @@ namespace BodyReportMobile.Core.ViewModels
                 else if (message.Closing)
                     await InternalClosing(message.BackPressed, message.ForceClose, message.ClosingTask);
                 else if (message.Closed)
-                    Closed();
+                    Closed(message.BackPressed);
             }
         }
 
@@ -74,6 +77,12 @@ namespace BodyReportMobile.Core.ViewModels
         protected virtual void Show()
         {
             InitTranslation();
+        }
+
+        private void InternalShow()
+        {
+            ActionIsInProgress = false;
+            Show();
         }
 
         /// <summary>
@@ -114,7 +123,10 @@ namespace BodyReportMobile.Core.ViewModels
         {
             if (!forceClose)
             {
-                ClosingTask.SetResult(await Closing(backPressed));
+                bool closeAuthorized = await Closing(backPressed);
+                if (!closeAuthorized)
+                    _viewModelClosing = false;
+                ClosingTask.SetResult(closeAuthorized);
             }
             else
                 ClosingTask.SetResult(true);
@@ -124,10 +136,19 @@ namespace BodyReportMobile.Core.ViewModels
         /// Call when view linked to viewmodel closed
         /// Here fo Unregister event message
         /// </summary>
-        protected virtual void Closed()
+        protected virtual void Closed(bool backPressed)
         {
+            _viewModelClosed = true;
+
+            //It's for this view Model
+            var tcsShowingViewModel = ViewModelDataCollection.Get<TaskCompletionSource<bool>>(_viewModelGuid, TCS_VALUE);
+            if (tcsShowingViewModel != null)
+                tcsShowingViewModel.TrySetResult(!backPressed);
+
+            if (_autoClearViewModelDataCollection)
+                ViewModelDataCollection.Clear(_viewModelGuid);
+
             AppMessenger.AppInstance.Unregister<MvxMessageViewModelEvent>(this);
-            AppMessenger.AppInstance.Unregister<MvxMessageFormClosed>(this);
         }
 
         #endregion
@@ -135,22 +156,7 @@ namespace BodyReportMobile.Core.ViewModels
         protected virtual void InitTranslation()
         {
         }
-
-        private void OnFormClosedMvxMessage(MvxMessageFormClosed mvxMessageFormClosed)
-        {
-            if (mvxMessageFormClosed != null && !string.IsNullOrWhiteSpace(mvxMessageFormClosed.ViewModelGuid) &&
-                mvxMessageFormClosed.ViewModelGuid == _viewModelGuid)
-            {
-                //It's for this view Model
-                var tcsShowingViewModel = ViewModelDataCollection.Get<TaskCompletionSource<bool>>(_viewModelGuid, TCS_VALUE);
-                if (tcsShowingViewModel != null)
-                    tcsShowingViewModel.TrySetResult(!mvxMessageFormClosed.CanceledView);
-
-                if (_autoClearViewModelDataCollection)
-                    ViewModelDataCollection.Clear(_viewModelGuid);
-            }
-        }
-
+        
         public static async Task<bool> ShowModalViewModel(BaseViewModel viewModel, BaseViewModel parentViewModel, bool mainViewModel = false)
         {
             if (string.IsNullOrWhiteSpace(viewModel.ViewModelGuid))
@@ -181,8 +187,11 @@ namespace BodyReportMobile.Core.ViewModels
         /// <returns></returns>
         protected void CloseViewModel(bool cancelView = false)
         {
+            if (_viewModelClosing || _viewModelClosed) // Security
+                return;
             DataIsRefreshing = false;
             ActionIsInProgress = false;
+            _viewModelClosing = true;
             AppMessenger.AppInstance.Send(new MvxMessagePageEvent(_viewModelGuid) { ClosingRequest = true, ClosingRequest_ViewCanceled = cancelView });
         }
 

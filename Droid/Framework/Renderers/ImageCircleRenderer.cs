@@ -14,6 +14,7 @@ using Xamarin.Forms;
 using System.ComponentModel;
 using BodyReportMobile.Presenter.Framework.Controls;
 using Android.Graphics;
+using BodyReportMobile.Core.Framework;
 
 [assembly: ExportRenderer(typeof(BodyReportMobile.Presenter.Framework.Controls.CircleImage), typeof(BodyReport.Droid.Framework.Renderers.ImageCircleRenderer))]
 namespace BodyReport.Droid.Framework.Renderers
@@ -27,7 +28,7 @@ namespace BodyReport.Droid.Framework.Renderers
         /// <summary>
         /// Used for registration with dependency service
         /// </summary>
-        public async static void Init()
+        public static void Init()
         {
             var temp = DateTime.Now;
         }
@@ -133,7 +134,7 @@ namespace BodyReport.Droid.Framework.Renderers
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("Unable to create circle image: " + ex);
+                ILogger.Instance.Debug("Unable to create circle image: " + ex);
             }
 
             return base.DrawChild(canvas, child, drawingTime);

@@ -76,10 +76,23 @@ namespace BodyReportMobile.Core.ViewModels.Generic
 			get
 			{
 				return new Command (() => {
-					if(ValidateViewModel())
-					{
-						CloseViewModel();
-					}
+                    if (ActionIsInProgress)
+                        return;
+                    try
+                    {
+                        ActionIsInProgress = true;
+                        if (ValidateViewModel())
+                        {
+                            CloseViewModel();
+                        }
+                    }
+                    catch
+                    {
+                    }
+                    finally
+                    {
+                        ActionIsInProgress = false;
+                    }
 				});
 			}
 		}

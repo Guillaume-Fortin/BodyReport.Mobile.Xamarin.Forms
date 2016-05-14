@@ -61,9 +61,9 @@ namespace BodyReportMobile.Core.ViewModels
             await SynchronizeData();
         }
 
-        protected override void Closed()
+        protected override void Closed(bool backPressed)
         {
-            base.Closed();
+            base.Closed(backPressed);
             try
             {
                 lock (_locker)
@@ -256,8 +256,9 @@ namespace BodyReportMobile.Core.ViewModels
                             }
                         }
                     }
-                    catch (Exception exception)
+                    catch (Exception except)
                     {
+                        ILogger.Instance.Error("Unable to select muscular group", except);
                     }
                     finally
                     {
@@ -282,8 +283,9 @@ namespace BodyReportMobile.Core.ViewModels
 
                         await SelectMuscle();
                     }
-                    catch (Exception exception)
+                    catch (Exception except)
                     {
+                        ILogger.Instance.Error("Unable to select muscle", except);
                     }
                     finally
                     {
@@ -342,8 +344,9 @@ namespace BodyReportMobile.Core.ViewModels
                         if (BindingBodyExercise != null)
                             BindingBodyExercise.Selected = !BindingBodyExercise.Selected;
                     }
-                    catch (Exception exception)
+                    catch (Exception except)
                     {
+                        ILogger.Instance.Error("Unable to select body exercise", except);
                     }
                     finally
                     {

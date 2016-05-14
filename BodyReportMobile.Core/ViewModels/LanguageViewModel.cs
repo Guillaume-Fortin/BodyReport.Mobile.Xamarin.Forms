@@ -70,7 +70,7 @@ namespace BodyReportMobile.Core.ViewModels
             }
             catch(Exception except)
             {
-
+                ILogger.Instance.Error("Unable to save application language", except);
             }
         }
 
@@ -98,7 +98,7 @@ namespace BodyReportMobile.Core.ViewModels
             }
             catch (Exception except)
             {
-
+                ILogger.Instance.Error("Unable to reload application language", except);
             }
         }
     }

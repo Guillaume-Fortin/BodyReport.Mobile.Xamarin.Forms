@@ -185,6 +185,7 @@
   <ItemGroup>
     <Compile Include="Framework\AndroidAPI.cs" />
     <Compile Include="Framework\FileManager.cs" />
+    <Compile Include="Framework\Logger.cs" />
     <Compile Include="Framework\Renderers\BasePageRenderer.cs" />
     <Compile Include="Framework\Renderers\ImageCircleRenderer.cs" />
     <Compile Include="Framework\SecurityDroid.cs" />

@@ -11,6 +11,7 @@ using Acr.UserDialogs;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Presenter;
 using Android.Graphics.Drawables;
+using BodyReport.Droid.Framework;
 
 namespace BodyReport.Droid
 {
@@ -45,6 +46,7 @@ namespace BodyReport.Droid
             resolverContainer.Register<IAndroidAPI, AndroidAPI>();
             resolverContainer.Register<IFileManager, FileManager>();
             resolverContainer.Register<ISQLite, SQLite_Droid>();
+            resolverContainer.Register<ILogger, Logger>();
             resolverContainer.Register(UserDialogs.Instance);
         }
         

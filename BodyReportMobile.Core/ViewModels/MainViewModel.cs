@@ -188,10 +188,10 @@ namespace BodyReportMobile.Core.ViewModels
                     translationManager.UpdateTranslationList(translationList);
                 }
 			}
-			catch (Exception exception)
+			catch (Exception except)
 			{
-				// TODO log
-			}
+                ILogger.Instance.Error("Unable to synchronize web data for MainViewModel", except);
+            }
             finally
             {
                 ActionIsInProgress = false;

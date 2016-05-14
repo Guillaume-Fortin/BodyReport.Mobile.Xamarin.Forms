@@ -6,6 +6,7 @@ using Xamarin.Forms;
 using BodyReportMobile.Core;
 using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Core.ViewModels;
+using BodyReportMobile.Core.Framework;
 
 namespace BodyReportMobile.Presenter.Pages.Generics
 {
@@ -39,7 +40,7 @@ namespace BodyReportMobile.Presenter.Pages.Generics
 				return;
 			}
 
-			(BindingContext as ListViewModel).ValidateCommand.Execute (null);
+            (BindingContext as ListViewModel).ValidateCommand.Execute (null);
 		}
 	}
 }

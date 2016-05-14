@@ -136,28 +136,41 @@ namespace BodyReportMobile.Core.ViewModels
 			{
 				return new Command(async () =>
 				{
+                    if (ActionIsInProgress)
+                        return;
+                    try
+                    {
+                        ActionIsInProgress = true;
+                        var datas = new List<Message.GenericData>();
 
-					var datas = new List<Message.GenericData> ();
+                        int currentYear = DateTime.Now.Year;
+                        Message.GenericData data, currentData = null;
+                        for (int i = currentYear; i >= currentYear - 1; i--)
+                        {
+                            data = new Message.GenericData() { Tag = i, Name = i.ToString() };
+                            datas.Add(data);
 
-					int currentYear = DateTime.Now.Year;
-					Message.GenericData data, currentData = null;
-					for (int i = currentYear; i >= currentYear - 1; i--)
-					{
-						data = new Message.GenericData (){ Tag = i, Name = i.ToString () };
-						datas.Add (data);
+                            if (i == TrainingWeek.Year)
+                                currentData = data;
+                        }
 
-						if (i == TrainingWeek.Year)
-							currentData = data;
-					}
+                        var result = await ListViewModel.ShowGenericList(Translation.Get(TRS.YEAR), datas, currentData, this);
 
-					var result = await ListViewModel.ShowGenericList (Translation.Get (TRS.YEAR), datas, currentData, this);
-
-					if (result.Validated && result.SelectedData != null)
-					{
-						if (((int)result.SelectedData.Tag) > 0)
-							TrainingWeek.Year = (int)result.SelectedData.Tag;
-						SynchronizeData ();
-					}
+                        if (result.Validated && result.SelectedData != null)
+                        {
+                            if (((int)result.SelectedData.Tag) > 0)
+                                TrainingWeek.Year = (int)result.SelectedData.Tag;
+                            SynchronizeData();
+                        }
+                    }
+                    catch(Exception except)
+                    {
+                        ILogger.Instance.Error("Unable to change year", except);
+                    }
+                    finally
+                    {
+                        ActionIsInProgress = false;
+                    }
 				});
 			}
 		}
@@ -167,35 +180,48 @@ namespace BodyReportMobile.Core.ViewModels
 			get
 			{
 				return new Command(async () =>
-				{
+                {
+                    if (ActionIsInProgress)
+                        return;
+                    try
+                    {
+                        ActionIsInProgress = true;
+                        var datas = new List<Message.GenericData>();
 
-					var datas = new List<Message.GenericData> ();
+                        String dateStr, labelStr;
+                        DateTime date;
+                        Message.GenericData data, currentData = null;
+                        for (int i = 1; i <= 52; i++)
+                        {
+                            date = Utils.YearWeekToPlanningDateTime(TrainingWeek.Year, i);
+                            dateStr = string.Format(Translation.Get(TRS.FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3), date.Day, date.AddDays(6).Day, Translation.Get(((TMonthType)date.Month).ToString().ToUpper()), date.Year);
+                            labelStr = Translation.Get(TRS.WEEK_NUMBER) + ' ' + i;
 
-					String dateStr, labelStr;
-					DateTime date;
-					Message.GenericData data, currentData = null;
-					for (int i = 1; i <= 52; i++)
-					{
-						date = Utils.YearWeekToPlanningDateTime (TrainingWeek.Year, i);
-						dateStr = string.Format (Translation.Get (TRS.FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3), date.Day, date.AddDays (6).Day, Translation.Get (((TMonthType)date.Month).ToString ().ToUpper ()), date.Year);
-						labelStr = Translation.Get (TRS.WEEK_NUMBER) + ' ' + i;
+                            data = new Message.GenericData() { Tag = i, Name = labelStr, Description = dateStr };
+                            datas.Add(data);
 
-						data = new Message.GenericData (){ Tag = i, Name = labelStr, Description = dateStr };
-						datas.Add (data);
+                            if (i == TrainingWeek.WeekOfYear)
+                                currentData = data;
+                        }
 
-						if (i == TrainingWeek.WeekOfYear)
-							currentData = data;
-					}
+                        var result = await ListViewModel.ShowGenericList(Translation.Get(TRS.WEEK_NUMBER), datas, currentData, this);
 
-					var result = await ListViewModel.ShowGenericList (Translation.Get (TRS.WEEK_NUMBER), datas, currentData, this);
-
-					if (result.Validated && result.SelectedData != null)
-					{
-						if (((int)result.SelectedData.Tag) > 0)
-							TrainingWeek.WeekOfYear = (int)result.SelectedData.Tag;
-						SynchronizeData ();
-					}
-				});
+                        if (result.Validated && result.SelectedData != null)
+                        {
+                            if (((int)result.SelectedData.Tag) > 0)
+                                TrainingWeek.WeekOfYear = (int)result.SelectedData.Tag;
+                            SynchronizeData();
+                        }
+                    }
+                    catch (Exception except)
+                    {
+                        ILogger.Instance.Error("Unable to change week of year", except);
+                    }
+                    finally
+                    {
+                        ActionIsInProgress = false;
+                    }
+                });
 			}
 		}
 

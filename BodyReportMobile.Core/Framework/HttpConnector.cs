@@ -115,9 +115,9 @@ namespace BodyReportMobile.Core.Framework
             {
                 throw webApiException;
             }
-            catch (Exception exception)
+            catch (Exception except)
             {
-                //TODO LOG
+                ILogger.Instance.Error("Unable to connect user", except);
             }
             return result;
         }
@@ -282,7 +282,7 @@ namespace BodyReportMobile.Core.Framework
             }
             catch(Exception except)
             {
-                //TODO log
+                ILogger.Instance.Error("Unable to convert http webapi error", except);
             }
             return result;
         }
@@ -314,9 +314,9 @@ namespace BodyReportMobile.Core.Framework
                 }
                 return true;
             }
-            catch (Exception exception)
+            catch (Exception except)
             {
-
+                ILogger.Instance.Error("Unable to download file", except);
             }
             return result;
         }

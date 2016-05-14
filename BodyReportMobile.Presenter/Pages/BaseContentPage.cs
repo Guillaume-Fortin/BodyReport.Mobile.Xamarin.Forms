@@ -54,7 +54,7 @@ namespace BodyReportMobile.Presenter.Pages
             AppMessenger.AppInstance.Send(new MvxMessageViewModelEvent(_viewModel.ViewModelGuid) { Closing = true, ForceClose = false, BackPressed = backPressed, ClosingTask = closingTask });
             if (await closingTask.Task && closingTask.Task.Result)
             {
-                CloseView(backPressed);
+                await CloseView(backPressed);
             }
         }
 
@@ -76,14 +76,14 @@ namespace BodyReportMobile.Presenter.Pages
             return true;
         }
 
-        private void CloseView(bool cancelView)
+        private async Task CloseView(bool cancelView)
         {
             try
             {
                 UnRegisterEvent();
-                this.Navigation.PopAsync();
+                await this.Navigation.PopAsync();
                 if (_viewModel != null)
-                    AppMessenger.AppInstance.Send(new MvxMessageFormClosed(_viewModel.ViewModelGuid, cancelView));
+                    AppMessenger.AppInstance.Send(new MvxMessageViewModelEvent(_viewModel.ViewModelGuid) { Closed = true });
             }
             catch
             {
@@ -100,7 +100,7 @@ namespace BodyReportMobile.Presenter.Pages
                 _firstViewAppear = false;
                 if(_viewModel != null)
                 {
-                    if(_viewModel.ShowDelayInMs > 0)
+                    if (_viewModel.ShowDelayInMs > 0)
                         await Task.Delay(_viewModel.ShowDelayInMs); // Necessary for wait update ui (Ex : activity indicator in listview)
                     AppMessenger.AppInstance.Send(new MvxMessageViewModelEvent(_viewModel.ViewModelGuid) { Show = true });
                 }   

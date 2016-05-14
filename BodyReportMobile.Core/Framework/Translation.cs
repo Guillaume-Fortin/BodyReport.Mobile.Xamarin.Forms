@@ -149,12 +149,12 @@ namespace BodyReportMobile.Core.Framework
 
                     if (trValue != null & trValue.Value != null)
                         result = trValue.Value;
-                    /*else
-                        _logger.LogInformation(string.Format("Translation database not found {0}", key));*/
+                    else
+                        ILogger.Instance.Info(string.Format("Translation database not found {0}", key));
                 }
                 catch (Exception except)
                 {
-                    //_logger.LogCritical("Get translation database error", except);
+                    ILogger.Instance.Error("Get translation database error", except);
                 }
                 //Add translation in memory
                 if (result != null)

@@ -84,7 +84,7 @@ namespace BodyReportMobile.Core.Framework
                             (parentView as Page).Navigation.PushAsync(page);
                         }
                         else*/
-                            MainNavigationPage.PushAsync(page);
+                            await MainNavigationPage.PushAsync(page);
                         result = true;
                     }
                     catch (Exception e)

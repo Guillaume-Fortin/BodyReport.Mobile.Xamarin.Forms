@@ -65,9 +65,9 @@ namespace BodyReportMobile.Core.ViewModels
             _userDialog = Resolver.Resolve<IUserDialogs>();
         }
 
-        protected override void Closed()
+        protected override void Closed(bool backPressed)
         {
-            base.Closed();
+            base.Closed(backPressed);
             try
             {
                 lock (_locker)
@@ -328,8 +328,9 @@ namespace BodyReportMobile.Core.ViewModels
                     }
                 }
             }
-            catch (Exception exception)
+            catch (Exception except)
             {
+                ILogger.Instance.Error("Unable to create training day", except);
             }
             finally
             {
@@ -381,8 +382,9 @@ namespace BodyReportMobile.Core.ViewModels
                             }
                         }
                     }
-                    catch (Exception exception)
+                    catch (Exception except)
                     {
+                        ILogger.Instance.Error("Unable to add exercise", except);
                     }
                     finally
                     {

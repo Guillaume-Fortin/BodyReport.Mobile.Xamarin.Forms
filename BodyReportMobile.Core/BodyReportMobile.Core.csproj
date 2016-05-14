@@ -64,6 +64,7 @@
     <Compile Include="Crud\Transformer\MuscularGroupTransformer.cs" />
     <Compile Include="Framework\AppMessenger.cs" />
     <Compile Include="Framework\AppTools.cs" />
+    <Compile Include="Framework\ILogger.cs" />
     <Compile Include="Message\Binding\BindingBodyExercise.cs" />
     <Compile Include="Message\Binding\BindingTrainingExercise.cs" />
     <Compile Include="Message\Binding\BindingTrainingExerciseSet.cs" />
@@ -80,7 +81,6 @@
     <Compile Include="ServiceManagers\UserInfoManager.cs" />
     <Compile Include="ViewModels\SelectTrainingExercisesViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
-    <Compile Include="MvxMessages\MvxMessageFormClosed.cs" />
     <Compile Include="Framework\ViewModelDataCollection.cs" />
     <Compile Include="ViewModels\CopyTrainingWeekViewModel.cs" />
     <Compile Include="ViewModels\CreateTrainingDayViewModel.cs" />

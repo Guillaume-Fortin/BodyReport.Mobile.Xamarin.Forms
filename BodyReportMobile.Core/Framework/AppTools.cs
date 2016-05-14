@@ -65,6 +65,7 @@ namespace BodyReportMobile.Core.Framework
             }
             catch(Exception except)
             {
+                ILogger.Instance.Error("Unable to init AppTools", except);
             }
         }
 
@@ -88,7 +89,7 @@ namespace BodyReportMobile.Core.Framework
                 }
                 catch (Exception except)
                 {
-                    // TODO LOG
+                    ILogger.Instance.Error("Unable caching image", except);
                 }
             }
         }
