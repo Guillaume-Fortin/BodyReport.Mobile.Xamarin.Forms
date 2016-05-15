@@ -56,7 +56,8 @@ namespace BodyReportMobile.Core.Framework
 
 			try
 			{
-				var fileManager = Resolver.Resolve<IFileManager>();
+                _translationDicoList.Clear();
+                var fileManager = Resolver.Resolve<IFileManager>();
 				foreach(string extension in extensionList)
 				{
 					//if(!_translationDicoList.ContainsKey(extension))
@@ -148,7 +149,7 @@ namespace BodyReportMobile.Core.Framework
                     };
                     var trValue = translationManager.GetTranslation(translationValKey);
 
-                    if (trValue != null & trValue.Value != null)
+                    if (trValue != null && trValue.Value != null)
                         result = trValue.Value;
                     else
                         ILogger.Instance.Info(string.Format("Translation database not found {0}", key));

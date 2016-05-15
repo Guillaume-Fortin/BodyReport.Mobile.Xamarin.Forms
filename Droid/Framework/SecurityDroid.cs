@@ -34,7 +34,7 @@ namespace BodyReport.Droid
 			{
                 CreateStore();
                 var listValues = FindAccountsForService("BodyReport");
-                if (listValues.ContainsKey("userId") && listValues.ContainsKey("userName") && listValues.ContainsKey("password"))
+                if (listValues != null && listValues.ContainsKey("userId") && listValues.ContainsKey("userName") && listValues.ContainsKey("password"))
                 {
                     userId = listValues["userId"];
                     userName = listValues["userName"];
