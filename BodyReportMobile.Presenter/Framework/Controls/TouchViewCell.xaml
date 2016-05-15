@@ -45,13 +45,19 @@
     <Image x:Name="checkImageIndicator" Source="checked_indicator.png" WidthRequest="20" HeightRequest="20"
 	     Grid.Row="0" Grid.Column="0"
        IsVisible="{Binding Path=IsCheckedVisible, Mode=TwoWay, Source={x:Reference touchViewCell}}" />
-    
-    <Image x:Name="LogoImage" 
+
+    <Image x:Name="LogoImage"
            Source="{Binding Path=Image, Mode=OneWay, Source={x:Reference touchViewCell}, Converter={StaticResource stringToImageConverter}}"
            WidthRequest="{Binding Path=ImageWidthRequest, Mode=TwoWay, Source={x:Reference touchViewCell}}"
            HeightRequest="{Binding Path=ImageHeightRequest, Mode=TwoWay, Source={x:Reference touchViewCell}}"
-	         Grid.Row="0" Grid.Column="1" HorizontalOptions="Start" VerticalOptions="Center"
-	         IsVisible="True" />
+           Grid.Row="0" Grid.Column="1" HorizontalOptions="Start" VerticalOptions="Center"
+	         IsVisible="True">
+      <Image.Triggers>
+        <Trigger TargetType="Image" Property="Source" Value="{x:Null}">
+          <Setter Property="IsVisible" Value="false" />
+        </Trigger>
+      </Image.Triggers>
+    </Image>
 
     <Label x:Name="TitleLabel"
            Text="{Binding Path=Title, Mode=TwoWay, Source={x:Reference touchViewCell}}"
