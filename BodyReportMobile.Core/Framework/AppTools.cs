@@ -9,14 +9,14 @@ using XLabs.Ioc;
 
 namespace BodyReportMobile.Core.Framework
 {
-    public class CachingImageResult
+    public class CachingImageResult<T> where T : class
     {
         public bool ImageLoaded { get; set; } = false;
-        public int IdImage { get; set; } = 0;
+        public T BindingObject { get; set; } = null;
         public string ImagePath { get; set; }
     }
 
-    public delegate void CachingImageResultHandler(CachingImageResult result);
+    public delegate void CachingImageResultHandler<T>(CachingImageResult<T> result) where T : class;
 
     public class AppTools
     {
@@ -69,11 +69,11 @@ namespace BodyReportMobile.Core.Framework
             }
         }
 
-        public async Task CachingImageAsync(int idImage, string urlImage, string localImagePath, CachingImageResultHandler cachingImageResultEvent)
+        public async Task CachingImageAsync<T>(T bindingObject, string urlImage, string localImagePath, CachingImageResultHandler<T> cachingImageResultEvent) where T : class
         {
-            var cachingImageResult = new CachingImageResult() { IdImage = idImage, ImagePath = localImagePath };
+            var cachingImageResult = new CachingImageResult<T>() { BindingObject = bindingObject, ImagePath = localImagePath };
 
-            if (idImage != 0 && !string.IsNullOrWhiteSpace(urlImage) && !string.IsNullOrWhiteSpace(localImagePath))
+            if (bindingObject != null && !string.IsNullOrWhiteSpace(urlImage) && !string.IsNullOrWhiteSpace(localImagePath))
             {
                 try
                 {

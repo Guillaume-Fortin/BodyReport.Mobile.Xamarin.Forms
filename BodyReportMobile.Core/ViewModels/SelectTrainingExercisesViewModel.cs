@@ -41,7 +41,6 @@ namespace BodyReportMobile.Core.ViewModels
 
         private object _locker = new object();
         private CancellationTokenSource _cachingImageCancellationTokenSource = null;
-        private List<BindingBodyExercise> _cachingBindingBodyExerciseList = new List<BindingBodyExercise>();
 
         public SelectTrainingExercisesViewModel() : base()
         {
@@ -142,7 +141,9 @@ namespace BodyReportMobile.Core.ViewModels
                     
                     if (BindingBodyExercises.Count > 0)
                     {
-                        Task t = CachingImagesAsync(BindingBodyExercises);
+                        List<BindingBodyExercise> bindingList = new List<BindingBodyExercise>();
+                        bindingList.AddRange(BindingBodyExercises);
+                        Task t = CachingImagesAsync(bindingList);
                     }
                 }
                 OnPropertyChanged("BindingBodyExercises");
@@ -164,12 +165,6 @@ namespace BodyReportMobile.Core.ViewModels
                 }
                 _cachingImageCancellationTokenSource = new CancellationTokenSource();
             }
-            
-            lock (_cachingBindingBodyExerciseList)
-            {
-                _cachingBindingBodyExerciseList.Clear();
-                _cachingBindingBodyExerciseList.AddRange(bindingBodyExerciseList);
-            }
 
             string urlImage, localImagePath;
             string urlImages = HttpConnector.Instance.BaseUrl + "images/bodyexercises/{0}";
@@ -186,29 +181,26 @@ namespace BodyReportMobile.Core.ViewModels
                 {
                     urlImage = string.Format(urlImages, bindingBodyExercise.BodyExercise.ImageName);
                     localImagePath = Path.Combine(AppTools.BodyExercisesImagesDirectory, bindingBodyExercise.BodyExercise.ImageName);
-                    var t = AppTools.Instance.CachingImageAsync(bindingBodyExercise.GetHashCode(), urlImage, localImagePath, (cachingImageResult) =>
-                    {
-                        if (cachingImageResult != null)
-                        {
-                            lock (_cachingBindingBodyExerciseList)
-                            {
-                                var bindingBodyExerciseTmp = _cachingBindingBodyExerciseList.Where(be => be.GetHashCode() == cachingImageResult.IdImage).FirstOrDefault();
-                                if (bindingBodyExerciseTmp != null)
-                                    bindingBodyExerciseTmp.Image = cachingImageResult.ImagePath;
-                            }
-                        }
-                    });
-                    taskList.Add(t);
+                    var t = AppTools.Instance.CachingImageAsync<BindingBodyExercise>(bindingBodyExercise, urlImage, localImagePath, OnCachingImageResult);
+                    if(t != null)
+                        taskList.Add(t);
                 }
             }
 
             if (taskList != null)
             {
-                CachingImageResult cachingImageResult;
-                foreach (Task<CachingImageResult> task in taskList)
-                    cachingImageResult = await task;
+                foreach (Task task in taskList)
+                    await task;
             }
             _cachingImageCancellationTokenSource = null;
+        }
+
+        private void OnCachingImageResult(CachingImageResult<BindingBodyExercise> result)
+        {
+            if (result != null && result.BindingObject != null)
+            {
+                result.BindingObject.Image = result.ImagePath;
+            }
         }
 
         private async Task SelectMuscularGroupActionAsync()
@@ -458,7 +450,7 @@ namespace BodyReportMobile.Core.ViewModels
                     });
                 }
 
-                return _selectMuscleCommand;
+                return _selectBodyExerciseCommand;
             }
         }
 
