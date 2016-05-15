@@ -10,7 +10,7 @@ namespace BodyReportMobile.Core.WebServices
 {
     public static class AccountWebService
     {
-        public static async Task<bool> RegisterAccount(string userName, string email, string password)
+        public static async Task<bool> RegisterAccountAsync(string userName, string email, string password)
         {
             RegisterAccount registerAccount = new RegisterAccount()
             {

@@ -64,12 +64,12 @@ namespace BodyReportMobile.Core.Framework
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public async Task<bool> ConnectUser(string userName, string password, LangType langType, bool autoPromptLogin)
+        public async Task<bool> ConnectUserAsync(string userName, string password, LangType langType, bool autoPromptLogin)
         {
             _userName = userName;
             _password = password;
             _langType = langType;
-            bool result = await ConnectUser(autoPromptLogin);
+            bool result = await ConnectUserAsync(autoPromptLogin);
             _connected = result;
             return result;
         }
@@ -77,7 +77,7 @@ namespace BodyReportMobile.Core.Framework
         /// <summary>
         /// Connect user to WebSite with user identifier (Login/Password)
         /// </summary>
-        private async Task<bool> ConnectUser(bool autoPromptLogin = true)
+        private async Task<bool> ConnectUserAsync(bool autoPromptLogin = true)
         {
             bool result = false;
             try
@@ -122,7 +122,7 @@ namespace BodyReportMobile.Core.Framework
             return result;
         }
 
-        private async Task AutoConnect()
+        private async Task AutoConnectAsync()
         {
             if (!_connected)
             {
@@ -132,7 +132,7 @@ namespace BodyReportMobile.Core.Framework
                     throw new Exception("Can't connect to server");
                 }
                 else
-                    _connected = await ConnectUser();
+                    _connected = await ConnectUserAsync();
             }
             if (!_connected)
                 throw new Exception("Can't connect to server");
@@ -143,7 +143,7 @@ namespace BodyReportMobile.Core.Framework
             T result = default(T);
             try
             {
-                await AutoConnect();
+                await AutoConnectAsync();
 
                 HttpResponseMessage httpResponse;
                 if (datas != null && datas.Count > 0)
@@ -212,7 +212,7 @@ namespace BodyReportMobile.Core.Framework
             try
             {
                 if(!isAnonymousRequest)
-                    await AutoConnect();
+                    await AutoConnectAsync();
 
                 string postBody = JsonConvert.SerializeObject(postData, new JsonSerializerSettings { Formatting = Formatting.None });
                 var httpResponse = await _httpClient.PostAsync(relativeUrl, new StringContent(postBody, Encoding.UTF8, "application/json"));
@@ -287,7 +287,7 @@ namespace BodyReportMobile.Core.Framework
             return result;
         }
 
-        public async Task<bool> DownloadFile(string relativeUrl, string filePath, bool anonymousCalling=false)
+        public async Task<bool> DownloadFileAsync(string relativeUrl, string filePath, bool anonymousCalling=false)
         {
             bool result = false;
 

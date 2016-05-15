@@ -12,7 +12,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Xamarin.Forms;
 using XLabs.Ioc;
 
 namespace BodyReportMobile.Core.ViewModels
@@ -50,17 +49,17 @@ namespace BodyReportMobile.Core.ViewModels
             OnPropertyChanged(null);
         }
 
-        protected override void Show()
+        protected override async Task ShowAsync()
         {
-            base.Show();
+            await base.ShowAsync();
             SynchronizeData();
         }
 
-        public static async Task<bool> Show(TrainingWeek originTrainingWeek, BaseViewModel parent = null)
+        public static async Task<bool> ShowAsync(TrainingWeek originTrainingWeek, BaseViewModel parent = null)
         {
             var viewModel = new CopyTrainingWeekViewModel();
             viewModel._originTrainingWeek = originTrainingWeek;
-            return await ShowModalViewModel(viewModel, parent);
+            return await ShowModalViewModelAsync(viewModel, parent);
         }
 
         private void SynchronizeData()
@@ -75,25 +74,11 @@ namespace BodyReportMobile.Core.ViewModels
             OnPropertyChanged("CopyTrainingWeek");
         }
 
-        public ICommand ValidateCommand
+        private async Task ValidateActionAsync()
         {
-            get
-            {
-                return new Command(async () =>
-                {
-                    await Validate();
-                });
-            }
-        }
-
-        private async Task Validate()
-        {
-            if (ActionIsInProgress)
-                return;
             try
             {
-                ActionIsInProgress = true;
-                if (await ValidateFields() && await SaveData())
+                if (await ValidateFieldsAsync() && await SaveDataAsync())
                 {
                     CloseViewModel();
                 }
@@ -103,13 +88,9 @@ namespace BodyReportMobile.Core.ViewModels
                 var userDialog = Resolver.Resolve<IUserDialogs>();
                 await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
-            finally
-            {
-                ActionIsInProgress = false;
-            }
         }
 
-        private async Task<bool> ValidateFields()
+        private async Task<bool> ValidateFieldsAsync()
         {
             var userDialog = Resolver.Resolve<IUserDialogs>();
             bool result = false;
@@ -119,7 +100,7 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 //Check new training doesn't exist
                 var key = new TrainingWeekKey() { UserId = CopyTrainingWeek.UserId, Year = CopyTrainingWeek.Year, WeekOfYear = CopyTrainingWeek.WeekOfYear };
-                var trainingWeek = await TrainingWeekWebService.GetTrainingWeek(key);
+                var trainingWeek = await TrainingWeekWebService.GetTrainingWeekAsync(key);
                 if(trainingWeek != null)
                 {
                     await userDialog.AlertAsync(string.Format(Translation.Get(TRS.P0_ALREADY_EXIST), Translation.Get(TRS.TRAINING_WEEK)), Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
@@ -134,10 +115,10 @@ namespace BodyReportMobile.Core.ViewModels
             return result;
         }
 
-        private async Task<bool> SaveData()
+        private async Task<bool> SaveDataAsync()
         {
             bool result = false;
-            TrainingWeek trainingWeek = await TrainingWeekWebService.CopyTrainingWeek(CopyTrainingWeek);
+            TrainingWeek trainingWeek = await TrainingWeekWebService.CopyTrainingWeekAsync(CopyTrainingWeek);
             if(trainingWeek != null)
             {
                 _trainingWeekManager.DeleteTrainingWeek(trainingWeek);
@@ -146,5 +127,25 @@ namespace BodyReportMobile.Core.ViewModels
             }
             return result;
         }
+
+        #region Command
+
+        private ICommand _validateCommand = null;
+        public ICommand ValidateCommand
+        {
+            get
+            {
+                if (_validateCommand == null)
+                {
+                    _validateCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await ValidateActionAsync();
+                    });
+                }
+                return _validateCommand;
+            }
+        }
+
+        #endregion
     }
 }

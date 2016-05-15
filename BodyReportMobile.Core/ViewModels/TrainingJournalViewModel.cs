@@ -14,7 +14,6 @@ using XLabs.Ioc;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Framework.Binding;
 using BodyReportMobile.Core.WebServices;
-using Xamarin.Forms;
 using BodyReportMobile.Core.Data;
 using System.Globalization;
 using Acr.UserDialogs;
@@ -37,14 +36,14 @@ namespace BodyReportMobile.Core.ViewModels
 			_trainingWeekManager = new TrainingWeekManager (_dbContext);
 		}
 
-		protected async override void Show()
+		protected override async Task ShowAsync()
 		{
-			base.Show();
+			await base.ShowAsync();
             
             RetreiveLocalData();
             SynchronizeData();
             
-            await RetreiveAndSaveOnlineData ();
+            await RetreiveAndSaveOnlineDataAsync ();
             SynchronizeData();
         }
 
@@ -61,10 +60,8 @@ namespace BodyReportMobile.Core.ViewModels
             _trainingWeekList = _trainingWeekManager.FindTrainingWeek(null, false);
         }
 
-        private async Task<bool> RetreiveAndSaveOnlineData ()
+        private async Task<bool> RetreiveAndSaveOnlineDataAsync ()
 		{
-            if (BlockUIAction)
-                return false;
             bool result = false;
             try
 			{
@@ -72,7 +69,7 @@ namespace BodyReportMobile.Core.ViewModels
                 var criteria = new TrainingWeekCriteria();
                 criteria.UserId = new StringCriteria() { EqualList = new List<string>() { UserData.Instance.UserInfo.UserId } };
                 var scenario = new TrainingWeekScenario() { ManageTrainingDay = false };
-				var onlineTrainingWeekList = await TrainingWeekWebService.FindTrainingWeeks (criteria, scenario);
+				var onlineTrainingWeekList = await TrainingWeekWebService.FindTrainingWeeksAsync (criteria, scenario);
 				if (onlineTrainingWeekList != null)
 				{
 					var list = _trainingWeekManager.FindTrainingWeek (null, true);
@@ -145,30 +142,16 @@ namespace BodyReportMobile.Core.ViewModels
             }
 		}
 
-		public ICommand RefreshDataCommand
-		{
-			get
-			{
-				return new Command(async () => { await RetreiveAndSaveOnlineData(); SynchronizeData(); });
-			}
+        private async Task RefreshDataActionAsync()
+        {
+            await RetreiveAndSaveOnlineDataAsync();
+            SynchronizeData();
 		}
-
-		public ICommand CreateNewCommand
+        
+		private async Task CreateNewTrainingWeekActionAsync()
 		{
-			get
-			{
-				return new Command (async () => { await CreateNewTrainingWeek(); });
-			}
-		}
-
-		private async Task CreateNewTrainingWeek ()
-		{
-            if (BlockUIAction)
-                return;
-
             try
             {
-                ActionIsInProgress = true;
                 var userInfo = UserData.Instance.UserInfo;
                 if (userInfo == null)
                     userInfo = new UserInfo();
@@ -184,7 +167,7 @@ namespace BodyReportMobile.Core.ViewModels
                     Unit = userInfo.Unit
                 };
 
-                if (await EditTrainingWeekViewModel.Show(trainingWeek, TEditMode.Create, this))
+                if (await EditTrainingWeekViewModel.ShowAsync(trainingWeek, TEditMode.Create, this))
                 {
                     //Refresh data
                     RetreiveLocalData();
@@ -196,113 +179,66 @@ namespace BodyReportMobile.Core.ViewModels
                 var userDialog = Resolver.Resolve<IUserDialogs>();
                 await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
-            finally
-            {
-                ActionIsInProgress = false;
-            }
 		}
 
-		public ICommand CopyCommand
-		{
-			get
-			{
-				return new Command (async (bindingTrainingWeek) =>
-                {
-                    if (BlockUIAction)
-                        return;
-                    try
-                    {
-                        if (bindingTrainingWeek == null || !(bindingTrainingWeek is BindingTrainingWeek))
-                            return;
-
-                        var trainingWeek = (bindingTrainingWeek as BindingTrainingWeek).TrainingWeek;
-                        if (trainingWeek != null)
-                        {
-                            ActionIsInProgress = true;
-                            if (await CopyTrainingWeekViewModel.Show(trainingWeek, this))
-                            {
-                                //Refresh data
-                                RetreiveLocalData();
-                                SynchronizeData();
-                            }
-                        }
-                    }
-                    catch (Exception except)
-                    {
-                        var userDialog = Resolver.Resolve<IUserDialogs>();
-                        await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
-                    }
-                    finally
-                    {
-                        ActionIsInProgress = false;
-                    }
-                });
-			}
-		}
-
-		public ICommand DeleteCommand
-		{
-			get
-			{
-				return new Command (async (bindingTrainingWeek) =>
-				{
-                    if (BlockUIAction)
-                        return;
-                    try
-                    {
-                        if (bindingTrainingWeek == null || !(bindingTrainingWeek is BindingTrainingWeek))
-                            return;
-
-                        var trainingWeek = (bindingTrainingWeek as BindingTrainingWeek).TrainingWeek;
-                        if (trainingWeek != null)
-                        {
-                            ActionIsInProgress = true;
-                            await TrainingWeekWebService.DeleteTrainingWeekByKey(trainingWeek as TrainingWeek);
-                            bool onlineDataRefreshed = await RetreiveAndSaveOnlineData();
-                            if (!onlineDataRefreshed)
-                            {
-                                // delete data in local database
-                                _trainingWeekManager.DeleteTrainingWeek(trainingWeek);
-                            }
-                            //Refresh data
-                            RetreiveLocalData();
-                            SynchronizeData();
-                        }
-                    }
-                    catch(Exception except)
-                    {
-                        var userDialog = Resolver.Resolve<IUserDialogs>();
-                        await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
-                    }
-                    finally
-                    {
-                        ActionIsInProgress = false;
-                    }
-                });
-			}
-		}
-
-        public ICommand ViewTrainingWeekCommand
+        private async Task CopyActionAsync(BindingTrainingWeek bindingTrainingWeek)
         {
-            get
-            {
-                return new Command(async (selectItem) => { await ViewTrainingWeek(selectItem as BindingTrainingWeek); });
-            }
-        }
-
-        private async Task ViewTrainingWeek(BindingTrainingWeek bindingTrainingWeek)
-        {
-            if (BlockUIAction)
-                return;
-
             try
             {
-                ActionIsInProgress = true;
+                if (bindingTrainingWeek == null || bindingTrainingWeek.TrainingWeek == null)
+                    return;
+                
+                if (await CopyTrainingWeekViewModel.ShowAsync(bindingTrainingWeek.TrainingWeek, this))
+                {
+                    //Refresh data
+                    RetreiveLocalData();
+                    SynchronizeData();
+                }
+            }
+            catch (Exception except)
+            {
+                var userDialog = Resolver.Resolve<IUserDialogs>();
+                await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+            }
+		}
 
+        private async Task DeleteActionAsync(BindingTrainingWeek bindingTrainingWeek)
+		{
+            try
+            {
+                if (bindingTrainingWeek == null)
+                    return;
+
+                var trainingWeek = bindingTrainingWeek.TrainingWeek;
+                if (trainingWeek != null)
+                {
+                    await TrainingWeekWebService.DeleteTrainingWeekByKeyAsync(trainingWeek);
+                    bool onlineDataRefreshed = await RetreiveAndSaveOnlineDataAsync();
+                    if (!onlineDataRefreshed)
+                    {
+                        // delete data in local database
+                        _trainingWeekManager.DeleteTrainingWeek(trainingWeek);
+                    }
+                    //Refresh data
+                    RetreiveLocalData();
+                    SynchronizeData();
+                }
+            }
+            catch(Exception except)
+            {
+                var userDialog = Resolver.Resolve<IUserDialogs>();
+                await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+            }
+		}
+        
+        private async Task ViewTrainingWeekActionAsync(BindingTrainingWeek bindingTrainingWeek)
+        {
+            try
+            {
                 if (bindingTrainingWeek != null)
                 {
                     var trainingWeek = bindingTrainingWeek.TrainingWeek;
-                    if (trainingWeek != null && await TrainingWeekViewModel.Show(trainingWeek, this))
+                    if (trainingWeek != null && await TrainingWeekViewModel.ShowAsync(trainingWeek, this))
                     {
                         //Refresh data
                         RetreiveLocalData();
@@ -314,10 +250,6 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 var userDialog = Resolver.Resolve<IUserDialogs>();
                 await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
-            }
-            finally
-            {
-                ActionIsInProgress = false;
             }
         }
 
@@ -334,7 +266,91 @@ namespace BodyReportMobile.Core.ViewModels
 		}
 
 
-		#endregion
-	}
+        #endregion
+
+        #region Command
+
+        private ICommand _viewTrainingWeekCommand = null;
+        public ICommand ViewTrainingWeekCommand
+        {
+            get
+            {
+                if (_viewTrainingWeekCommand == null)
+                {
+                    _viewTrainingWeekCommand = new ViewModelCommandAsync(this, async (selectItem) =>
+                    {
+                        await ViewTrainingWeekActionAsync(selectItem as BindingTrainingWeek);
+                    });
+                }
+                return _viewTrainingWeekCommand;
+            }
+        }
+
+        private ICommand _refreshDataCommand = null;
+        public ICommand RefreshDataCommand
+        {
+            get
+            {
+                if (_refreshDataCommand == null)
+                {
+                    _refreshDataCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await RefreshDataActionAsync();
+                    });
+                }
+                return _refreshDataCommand;
+            }
+        }
+
+        private ICommand _createNewCommand = null;
+        public ICommand CreateNewCommand
+        {
+            get
+            {
+                if (_createNewCommand == null)
+                {
+                    _createNewCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await CreateNewTrainingWeekActionAsync();
+                    });
+                }
+                return _createNewCommand;
+            }
+        }
+
+        private ICommand _copyCommand = null;
+        public ICommand CopyCommand
+        {
+            get
+            {
+                if (_copyCommand == null)
+                {
+                    _copyCommand = new ViewModelCommandAsync(this, async (bindingTrainingWeekObject) =>
+                    {
+                        await CopyActionAsync(bindingTrainingWeekObject as BindingTrainingWeek);
+                    });
+                }
+                return _copyCommand;
+            }
+        }
+
+        private ICommand _deleteCommand = null;
+        public ICommand DeleteCommand
+        {
+            get
+            {
+                if (_deleteCommand == null)
+                {
+                    _deleteCommand = new ViewModelCommandAsync(this, async (bindingTrainingWeekObject) =>
+                    {
+                        await DeleteActionAsync(bindingTrainingWeekObject as BindingTrainingWeek);
+                    });
+                }
+                return _deleteCommand;
+            }
+        }
+
+        #endregion
+    }
 }
 

@@ -24,7 +24,7 @@ namespace BodyReportMobile.Core.Manager
 		private LoginManager ()
 		{
 			_security = Resolver.Resolve<ISecurity> ();
-            AppMessenger.AppInstance.Register<MvxMessageLoginEntry>(this, OnLoginEntry);
+            AppMessenger.AppInstance.Register<MvxMessageLoginEntry>(this, OnLoginEntryAsync);
             //TODO unscribe
 		}
 
@@ -36,13 +36,13 @@ namespace BodyReportMobile.Core.Manager
 			}
 		}
 
-        private async Task<bool> RetreiveOnlineUserInfo()
+        private async Task<bool> RetreiveOnlineUserInfoAsync()
         {
             bool result = false;
             try
             {
                 var userInfoKey = new UserInfoKey(); // no need userId here
-                var userInfo = await UserInfoWebService.GetUserInfo(userInfoKey);
+                var userInfo = await UserInfoWebService.GetUserInfoAsync(userInfoKey);
                 if (userInfo != null)
                 {
                     var dbContext = Resolver.Resolve<ISQLite>().GetConnection();
@@ -114,23 +114,23 @@ namespace BodyReportMobile.Core.Manager
             return result;
         }
 
-        public async Task<bool> ConnectUser(bool autoPromptLogin)
+        public async Task<bool> ConnectUserAsync(bool autoPromptLogin)
         {
-            return await ConnectUser(_userName, _password, autoPromptLogin);
+            return await ConnectUserAsync(_userName, _password, autoPromptLogin);
         }
 
-        public async Task<bool> ConnectUser(string userName, string password, bool autoPromptLogin)
+        public async Task<bool> ConnectUserAsync(string userName, string password, bool autoPromptLogin)
         {
             bool result = false;
             try
             {
-                bool userConnected = await HttpConnector.Instance.ConnectUser(userName, password, Translation.CurrentLang, autoPromptLogin);
+                bool userConnected = await HttpConnector.Instance.ConnectUserAsync(userName, password, Translation.CurrentLang, autoPromptLogin);
                 if (userConnected) // web login
                 {
                     _userId = string.Empty;
                     _userName = userName;
                     _password = password;
-                    if (await RetreiveOnlineUserInfo())
+                    if (await RetreiveOnlineUserInfoAsync())
                     {
                         result = SaveEncryptedAccountData();
                     }
@@ -146,15 +146,15 @@ namespace BodyReportMobile.Core.Manager
             return result;
 		}
 
-        private async void OnLoginEntry(MvxMessageLoginEntry message)
+        private async void OnLoginEntryAsync(MvxMessageLoginEntry message)
         {
             if (message == null)
                 return;
 
-            await PromptLogin();
+            await PromptLoginAsync();
         }
 
-        public async Task<bool> PromptLogin(bool allowCancel=false)
+        public async Task<bool> PromptLoginAsync(bool allowCancel=false)
         {
 			if (_busy)
 				return false;
@@ -183,7 +183,7 @@ namespace BodyReportMobile.Core.Manager
                         string password = loginResult.Password;
 						if(!string.IsNullOrWhiteSpace(loginResult.LoginText) && !string.IsNullOrWhiteSpace(_password))
 						{
-							if(await ConnectUser(userName, password, true))
+							if(await ConnectUserAsync(userName, password, true))
                                 connectionOK = SaveEncryptedAccountData();
                         }
 					}

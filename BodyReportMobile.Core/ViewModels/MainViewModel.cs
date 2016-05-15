@@ -11,7 +11,6 @@ using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Core.Manager;
 using BodyReportMobile.Core.WebServices;
 using BodyReportMobile.Core.Framework;
-using Xamarin.Forms;
 using BodyReportMobile.Core.Data;
 using System.IO;
 using Acr.UserDialogs;
@@ -69,20 +68,33 @@ namespace BodyReportMobile.Core.ViewModels
                 _fileManager.CreateDirectory(_userProfilLocalPath);
         }
         
-        protected override async void Show()
+        protected override async Task ShowAsync()
         {
             try
             {
-                base.Show();
+                await base.ShowAsync();
 
-                AppTools.Instance.Init();
+                try
+                {
+                    ActionIsInProgress = true;
 
-                LanguageViewModel.ReloadApplicationLanguage();
-                InitTranslation(); //Reload for language
+                    AppTools.Instance.Init();
 
-                await ManageUserConnection();
+                    LanguageViewModel.ReloadApplicationLanguage();
+                    InitTranslation(); //Reload for language
+                    
+                    await ManageUserConnectionAsync();
 
-                await SynchronizeWebData();
+                    await SynchronizeWebDataAsync();
+                }
+                catch(Exception except)
+                {
+                    ILogger.Instance.Error("Unable to Show MainViewModel", except);
+                }
+                finally
+                {
+                    ActionIsInProgress = false;
+                }
             }
             catch(Exception except)
             {
@@ -122,66 +134,59 @@ namespace BodyReportMobile.Core.ViewModels
             UserProfilImage = GetUserImageLocalPath();
         }
 
-        private async Task ManageUserConnection()
+        private async Task ManageUserConnectionAsync()
         {
-            ActionIsInProgress = true;
-
             try
             {
                 if (LoginManager.Instance.Init())
                 {
                     DisplayUserProfil();
-                    await LoginManager.Instance.ConnectUser(false); // no need treat response, just for connect user
+                    await LoginManager.Instance.ConnectUserAsync(false); // no need treat response, just for connect user
                 }
                 else
                 {
-                    await LoginViewModel.DisplayViewModel();
+                    await LoginViewModel.DisplayViewModelAsync();
                     InitTranslation(); // Security if user change language
                 }
             }
             catch //(Exception except)
             {
             }
-            finally
-            {
-                ActionIsInProgress = false;
-            }
         }
 
-        private async Task SynchronizeWebData()
+        private async Task SynchronizeWebDataAsync()
 		{
-            ActionIsInProgress = true;
             try
 			{
                 // download user image
                 string localUserImagePath = GetUserImageLocalPath();
                 string urlImage = string.Format("{0}images/userprofil/{1}.png", HttpConnector.Instance.BaseUrl, UserData.Instance.UserInfo.UserId);
-                if (await HttpConnector.Instance.DownloadFile(urlImage, GetUserImageLocalPath()))
+                if (await HttpConnector.Instance.DownloadFileAsync(urlImage, GetUserImageLocalPath()))
                     DisplayUserProfil();
                 
                 //Synchronise Web data to local database
-                var muscleList = await MuscleWebService.FindMuscles();
+                var muscleList = await MuscleWebService.FindMusclesAsync();
                 if(muscleList != null)
                 {
 				    var muscleManager = new MuscleManager(_dbContext);
 				    muscleManager.UpdateMuscleList(muscleList);
                 }
 
-                var muscularGroupList = await MuscularGroupWebService.FindMuscularGroups();
+                var muscularGroupList = await MuscularGroupWebService.FindMuscularGroupsAsync();
                 if (muscularGroupList != null)
                 {
                     var muscularGroupManager = new MuscularGroupManager(_dbContext);
                     muscularGroupManager.UpdateMuscularGroupList(muscularGroupList);
                 }
 
-                var bodyExerciseList = await BodyExerciseWebService.FindBodyExercises();
+                var bodyExerciseList = await BodyExerciseWebService.FindBodyExercisesAsync();
                 if (bodyExerciseList != null)
                 {
                     var bodyExerciseManager = new BodyExerciseManager(_dbContext);
                     bodyExerciseManager.UpdateBodyExerciseList(bodyExerciseList);
                 }
 
-                var translationList = await TranslationWebService.FindTranslations();
+                var translationList = await TranslationWebService.FindTranslationsAsync();
                 if (translationList != null)
                 {
                     var translationManager = new TranslationManager(_dbContext);
@@ -192,69 +197,76 @@ namespace BodyReportMobile.Core.ViewModels
 			{
                 ILogger.Instance.Error("Unable to synchronize web data for MainViewModel", except);
             }
-            finally
-            {
-                ActionIsInProgress = false;
-            }
 		}
 
-		public ICommand GoToTrainingJournalCommand
+        private async Task GoToTrainingJournalActionAsync()
 		{
-			get
-			{
-				return new Command (async () => {
-                    if (ActionIsInProgress)
-                        return;
-
-                    try
-                    {
-                        ActionIsInProgress = true;
-                        var viewModel = new TrainingJournalViewModel();
-                        await ShowModalViewModel(viewModel, this);
-                    }
-                    catch
-                    {
-                    }
-                    finally
-                    {
-                        ActionIsInProgress = false;
-                    }
-				});
-			}
+            try
+            {
+                var viewModel = new TrainingJournalViewModel();
+                await ShowModalViewModelAsync(viewModel, this);
+            }
+            catch
+            {
+            }
 		}
 
         /// <summary>
         /// Change language with user choice list view
         /// </summary>
-		public ICommand GoToChangeLanguageCommand
+		private async Task GoToChangeLanguageActionAsync()
 		{
-			get
-			{
-				return new Command(async () => {
-
-                    if (ActionIsInProgress)
-                        return;
-
-                    try
-                    {
-                        ActionIsInProgress = true;
-                        if (await LanguageViewModel.DisplayChooseLanguage(this))
-                        {
-                            InitTranslation();
-                            LanguageViewModel.SaveApplicationLanguage();
-                        }
-                    }
-                    catch
-                    {
-                    }
-                    finally
-                    {
-                        ActionIsInProgress = false;
-                    }
-				});
-			}
+            try
+            {
+                if (await LanguageViewModel.DisplayChooseLanguageAsync(this))
+                {
+                    InitTranslation();
+                    LanguageViewModel.SaveApplicationLanguage();
+                }
+            }
+            catch
+            {
+            }
 		}
-	}
+        
+        #region Command
+
+        private ICommand _goToTrainingJournalCommand = null;
+        public ICommand GoToTrainingJournalCommand
+        {
+            get
+            {
+                if (_goToTrainingJournalCommand == null)
+                {
+                    _goToTrainingJournalCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await GoToTrainingJournalActionAsync();
+                    });
+                }
+
+                return _goToTrainingJournalCommand;
+            }
+        }
+
+        private ICommand _goToChangeLanguageCommand = null;
+        public ICommand GoToChangeLanguageCommand
+        {
+            get
+            {
+                if (_goToChangeLanguageCommand == null)
+                {
+                    _goToChangeLanguageCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await GoToChangeLanguageActionAsync();
+                    });
+                }
+
+                return _goToChangeLanguageCommand;
+            }
+        }
+
+        #endregion
+    }
 }
 
 

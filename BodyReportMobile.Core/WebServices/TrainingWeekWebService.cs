@@ -10,7 +10,7 @@ namespace BodyReportMobile.Core.WebServices
 {
 	public static class TrainingWeekWebService
 	{
-		public static async Task<List<TrainingWeek>> FindTrainingWeeks (TrainingWeekCriteria trainingWeekCriteria, TrainingWeekScenario trainingWeekScenario)
+		public static async Task<List<TrainingWeek>> FindTrainingWeeksAsync (TrainingWeekCriteria trainingWeekCriteria, TrainingWeekScenario trainingWeekScenario)
 		{
             if (trainingWeekCriteria == null)
                 return null;
@@ -21,23 +21,23 @@ namespace BodyReportMobile.Core.WebServices
             return await HttpConnector.Instance.PostAsync<TrainingWeekFinder, List<TrainingWeek>> ("Api/TrainingWeeks/Find", trainingWeekFinder);
 		}
 
-        public static async Task<TrainingWeek> CreateTrainingWeek(TrainingWeek trainingWeek)
+        public static async Task<TrainingWeek> CreateTrainingWeekAsync(TrainingWeek trainingWeek)
         {
             return await HttpConnector.Instance.PostAsync<TrainingWeek, TrainingWeek>("Api/TrainingWeeks/Create", trainingWeek);
         }
 
-        public static async Task<TrainingWeek> UpdateTrainingWeek (TrainingWeek trainingWeek)
+        public static async Task<TrainingWeek> UpdateTrainingWeekAsync (TrainingWeek trainingWeek)
 		{
 			return await HttpConnector.Instance.PostAsync<TrainingWeek, TrainingWeek> ("Api/TrainingWeeks/Update", trainingWeek);
 		}
 
-        public static async Task DeleteTrainingWeekByKey(TrainingWeekKey trainingWeekKey)
+        public static async Task DeleteTrainingWeekByKeyAsync(TrainingWeekKey trainingWeekKey)
         {
             await HttpConnector.Instance.PostAsync<TrainingWeekKey, object>("Api/TrainingWeeks/DeleteByKey", trainingWeekKey);
             return;
         }
 
-        public static async Task<TrainingWeek> GetTrainingWeek(TrainingWeekKey key, bool manageDay=false)
+        public static async Task<TrainingWeek> GetTrainingWeekAsync(TrainingWeekKey key, bool manageDay=false)
         {
             if (key == null)
                 return null;
@@ -50,7 +50,7 @@ namespace BodyReportMobile.Core.WebServices
             return await HttpConnector.Instance.GetAsync<TrainingWeek>("Api/TrainingWeeks/Get", datas);
         }
 
-        internal static async Task<TrainingWeek> CopyTrainingWeek(CopyTrainingWeek copyTrainingWeek)
+        internal static async Task<TrainingWeek> CopyTrainingWeekAsync(CopyTrainingWeek copyTrainingWeek)
         {
             if (copyTrainingWeek == null)
                 return null;

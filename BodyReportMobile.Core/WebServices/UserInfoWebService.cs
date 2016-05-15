@@ -8,7 +8,7 @@ namespace BodyReportMobile.Core.WebServices
 {
 	public class UserInfoWebService
 	{
-		public static async Task<UserInfo> GetUserInfo (UserInfoKey userInfoKey)
+		public static async Task<UserInfo> GetUserInfoAsync (UserInfoKey userInfoKey)
 		{
             Dictionary<string, string> datas = new Dictionary<string, string>();
             datas.Add("userId", userInfoKey.UserId);

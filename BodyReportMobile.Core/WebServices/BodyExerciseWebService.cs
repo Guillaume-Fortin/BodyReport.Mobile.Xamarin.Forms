@@ -10,7 +10,7 @@ namespace BodyReportMobile.Core.WebServices
 {
     public static class BodyExerciseWebService
     {
-        public static async Task<List<BodyExercise>> FindBodyExercises()
+        public static async Task<List<BodyExercise>> FindBodyExercisesAsync()
         {
             return await HttpConnector.Instance.GetAsync<List<BodyExercise>>("api/BodyExercises/Find");
         }

@@ -14,7 +14,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Xamarin.Forms;
 using XLabs.Ioc;
 
 namespace BodyReportMobile.Core.ViewModels
@@ -43,11 +42,13 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
-        protected override async void Show()
+        protected override async Task ShowAsync()
         {
-            base.Show();
+            await base.ShowAsync();
 
-            await SynchronizeData();
+            ActionIsInProgress = true;
+            await SynchronizeDataAsync();
+            ActionIsInProgress = false;
         }
 
         protected override void InitTranslation()
@@ -80,17 +81,17 @@ namespace BodyReportMobile.Core.ViewModels
             OnPropertyChanged(null);
         }
 
-        public static async Task<bool> Show(TrainingWeekKey trainingWeekKey, BaseViewModel parent = null)
+        public static async Task<bool> ShowAsync(TrainingWeekKey trainingWeekKey, BaseViewModel parent = null)
         {
             bool result = false;
             if (trainingWeekKey != null)
             {
-                var trainingWeek = await TrainingWeekWebService.GetTrainingWeek(trainingWeekKey, true);
+                var trainingWeek = await TrainingWeekWebService.GetTrainingWeekAsync(trainingWeekKey, true);
                 if (trainingWeek != null)
                 {
                     var viewModel = new TrainingWeekViewModel();
                     viewModel.TrainingWeek = trainingWeek;
-                    result = await ShowModalViewModel(viewModel, parent);
+                    result = await ShowModalViewModelAsync(viewModel, parent);
                 }
             }
 
@@ -130,12 +131,10 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
-        private async Task SynchronizeData()
+        private async Task SynchronizeDataAsync()
         {
             try
             {
-                ActionIsInProgress = true;
-
                 FillWeekOfYearDescription(TrainingWeek);
                 FillWeekDays(TrainingWeek);
             }
@@ -143,33 +142,12 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
-            finally
-            {
-                ActionIsInProgress = false;
-            }
         }
 
-        public ICommand ViewTrainingDayCommand
+        private async Task ViewTrainingDayActionAsync(DayOfWeek dayOfWeek)
         {
-            get
-            {
-                return new Command(async (dayOfWeekParameter) =>
-                {
-                    if(dayOfWeekParameter != null && dayOfWeekParameter is DayOfWeek)
-                        await ViewTrainingDay((DayOfWeek)dayOfWeekParameter);
-                });
-            }
-        }
-
-        private async Task ViewTrainingDay(DayOfWeek dayOfWeek)
-        {
-            if (BlockUIAction)
-                return;
-
             try
             {
-                ActionIsInProgress = true;
-
                 if (TrainingWeek.TrainingDays == null)
                     TrainingWeek.TrainingDays = new List<TrainingDay>();
                 
@@ -187,7 +165,7 @@ namespace BodyReportMobile.Core.ViewModels
                         TrainingDayId = 0,
                         UserId = UserData.Instance.UserInfo.UserId
                     };
-                    if(await CreateTrainingDayViewModel.Show(newTrainingDay, this))
+                    if(await CreateTrainingDayViewModel.ShowAsync(newTrainingDay, this))
                     {
                         TrainingWeek.TrainingDays.Add(newTrainingDay);
                         trainingDays.Add(newTrainingDay);
@@ -197,7 +175,7 @@ namespace BodyReportMobile.Core.ViewModels
 
                 if (trainingDays.Count > 0)
                 { //view training day
-                    var trainingDayViewModelResut = await TrainingDayViewModel.Show(trainingDays, this);
+                    var trainingDayViewModelResut = await TrainingDayViewModel.ShowAsync(trainingDays, this);
                     //reload local data necessary
                     if(trainingDayViewModelResut.Result)
                     {
@@ -209,10 +187,6 @@ namespace BodyReportMobile.Core.ViewModels
             }
             catch
             {
-            }
-            finally
-            {
-                ActionIsInProgress = false;
             }
         }
 
@@ -226,6 +200,28 @@ namespace BodyReportMobile.Core.ViewModels
         public string HeightLabel { get; set; }
         public string TrainingDayLabel { get; set; }
         public BindingWeekTrainingDay[] BindingWeekTrainingDays { get; set; } = new BindingWeekTrainingDay[7];
+
+        #endregion
+
+        #region Command
+        
+
+        private ICommand _viewTrainingDayCommand = null;
+        public ICommand ViewTrainingDayCommand
+        {
+            get
+            {
+                if (_viewTrainingDayCommand == null)
+                {
+                    _viewTrainingDayCommand = new ViewModelCommandAsync(this, async (dayOfWeekParameter) =>
+                    {
+                        if(dayOfWeekParameter != null && dayOfWeekParameter is DayOfWeek)
+                            await ViewTrainingDayActionAsync((DayOfWeek)dayOfWeekParameter);
+                    });
+                }
+                return _viewTrainingDayCommand;
+            }
+        }
 
         #endregion
     }

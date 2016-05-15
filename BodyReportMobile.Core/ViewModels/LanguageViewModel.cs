@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Xamarin.Forms;
 using XLabs.Ioc;
 
 namespace BodyReportMobile.Core.ViewModels
@@ -24,7 +23,7 @@ namespace BodyReportMobile.Core.ViewModels
         /// <summary>
         /// Change language with user choice list view
         /// </summary>
-		public static async Task<bool> DisplayChooseLanguage(BaseViewModel parentViewModel)
+		public static async Task<bool> DisplayChooseLanguageAsync(BaseViewModel parentViewModel)
         {
             bool result = false;
             try
@@ -43,7 +42,7 @@ namespace BodyReportMobile.Core.ViewModels
                         currentData = data;
                 }
 
-                var resultShow = await ListViewModel.ShowGenericList(Translation.Get(TRS.LANGUAGE), datas, currentData, parentViewModel);
+                var resultShow = await ListViewModel.ShowGenericListAsync(Translation.Get(TRS.LANGUAGE), datas, currentData, parentViewModel);
 
                 if (resultShow.Validated && resultShow.SelectedData != null && resultShow.SelectedData.Tag != null)
                 {

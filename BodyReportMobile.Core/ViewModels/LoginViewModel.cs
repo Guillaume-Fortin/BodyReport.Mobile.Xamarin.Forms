@@ -3,7 +3,6 @@ using BodyReportMobile.Core.ViewModels;
 using System.Windows.Input;
 using Message;
 using BodyReportMobile.Core.Framework;
-using Xamarin.Forms;
 using System.Threading.Tasks;
 using BodyReportMobile.Core.Manager;
 using XLabs.Ioc;
@@ -46,10 +45,10 @@ namespace BodyReportMobile.Core.ViewModels
             ShowDelayInMs = 0;
         }
 
-        public static async Task<bool> DisplayViewModel(BaseViewModel parent = null)
+        public static async Task<bool> DisplayViewModelAsync(BaseViewModel parent = null)
         {
             var viewModel = new LoginViewModel();
-            return await ShowModalViewModel(viewModel, parent);
+            return await ShowModalViewModelAsync(viewModel, parent);
         }
         
         private string GeLanguageFlagImageSource(LangType langType)
@@ -73,42 +72,17 @@ namespace BodyReportMobile.Core.ViewModels
             OnPropertyChanged(null);
         }
 
-		public ICommand LogInCommand
-		{
-			get
+		private async Task LoginActionAsync()
+        {
+            if (await LogInUserAsync())
 			{
-				return new Command (async () => {
-                    if (ActionIsInProgress)
-                        return;
-
-                    if (await LogInUser())
-					{
-						CloseViewModel();
-					}
-				});
+				CloseViewModel();
 			}
 		}
 
-        public ICommand RegisterAccountCommand
-        {
-            get
-            {
-                return new Command(async () => {
-                    if (ActionIsInProgress)
-                        return;
-
-                    if (await RegisterAccount())
-                    {
-                        CloseViewModel();
-                    }
-                });
-            }
-        }
-
-        private async Task<bool> LogInUser()
+        private async Task<bool> LogInUserAsync()
 		{
             bool result = false;
-            ActionIsInProgress = true;
 
             var userDialog = Resolver.Resolve<IUserDialogs>();
             try
@@ -122,7 +96,7 @@ namespace BodyReportMobile.Core.ViewModels
                 }
                 else
                 {
-                    result = await LoginManager.Instance.ConnectUser(_userName, _password, false);
+                    result = await LoginManager.Instance.ConnectUserAsync(_userName, _password, false);
                     if(!result)
                         await userDialog.AlertAsync(Translation.Get(TRS.CONNECTION_FAILED), Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
                 }
@@ -131,20 +105,14 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
-            finally
-            {
-                ActionIsInProgress = false;
-            }
             return result;
         }
 
-        private async Task<bool> RegisterAccount()
+        private async Task RegisterAccountActionAsync()
         {
-            bool result = false;
-            ActionIsInProgress = true;
             try
             {
-                if (await RegisterAccountViewModel.DisplayViewModel(this))
+                if (await RegisterAccountViewModel.DisplayViewModelAsync(this))
                     InformationsLabel = Translation.Get(TRS.VERIFY_SPAM_INTO_YOUR_MAIL_BOX);
             }
             catch (Exception except)
@@ -152,42 +120,23 @@ namespace BodyReportMobile.Core.ViewModels
                 var userDialog = Resolver.Resolve<IUserDialogs>();
                 await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
-            finally
-            {
-                ActionIsInProgress = false;
-            }
-            return result;
         }
 
         /// <summary>
         /// Change language with user choice list view
         /// </summary>
-		public ICommand ChangeLanguageCommand
+		private async Task ChangeLanguageActionAsync()
         {
-            get
+            try
             {
-                return new Command(async () => {
-
-                    if (ActionIsInProgress)
-                        return;
-
-                    try
-                    {
-                        ActionIsInProgress = true;
-                        if (await LanguageViewModel.DisplayChooseLanguage(this))
-                        {
-                            InitTranslation();
-                            LanguageViewModel.SaveApplicationLanguage();
-                        }
-                    }
-                    catch
-                    {
-                    }
-                    finally
-                    {
-                        ActionIsInProgress = false;
-                    }
-                });
+                if (await LanguageViewModel.DisplayChooseLanguageAsync(this))
+                {
+                    InitTranslation();
+                    LanguageViewModel.SaveApplicationLanguage();
+                }
+            }
+            catch
+            {
             }
         }
 
@@ -299,6 +248,61 @@ namespace BodyReportMobile.Core.ViewModels
 
         public int UserNameMaxLength { get; set; } = FieldsLength.UserName.Max;
         public int PasswordMaxLength { get; set; } = FieldsLength.Password.Max;
+
+        #endregion
+
+        #region Command
+
+        private ICommand _logInCommand = null;
+        public ICommand LogInCommand
+        {
+            get
+            {
+                if (_logInCommand == null)
+                {
+                    _logInCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await LoginActionAsync();
+                    });
+                }
+
+                return _logInCommand;
+            }
+        }
+
+        private ICommand _registerAccountCommand = null;
+        public ICommand RegisterAccountCommand
+        {
+            get
+            {
+                if (_registerAccountCommand == null)
+                {
+                    _registerAccountCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await RegisterAccountActionAsync();
+                    });
+                }
+
+                return _registerAccountCommand;
+            }
+        }
+
+        private ICommand _changeLanguageCommand = null;
+        public ICommand ChangeLanguageCommand
+        {
+            get
+            {
+                if (_changeLanguageCommand == null)
+                {
+                    _changeLanguageCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await ChangeLanguageActionAsync();
+                    });
+                }
+
+                return _changeLanguageCommand;
+            }
+        }
 
         #endregion
     }

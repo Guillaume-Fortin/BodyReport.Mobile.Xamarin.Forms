@@ -44,17 +44,17 @@ namespace BodyReportMobile.Presenter.Pages
                 message.ViewModelGuid == _viewModel.ViewModelGuid)
             {
                 if (message.ClosingRequest)
-                    await AllowClosingPage(message.ClosingRequest_ViewCanceled);
+                    await AllowClosingPageAsync(message.ClosingRequest_ViewCanceled);
             }
         }
 
-        private async Task AllowClosingPage(bool backPressed)
+        private async Task AllowClosingPageAsync(bool backPressed)
         {
             var closingTask = new TaskCompletionSource<bool>();
             AppMessenger.AppInstance.Send(new MvxMessageViewModelEvent(_viewModel.ViewModelGuid) { Closing = true, ForceClose = false, BackPressed = backPressed, ClosingTask = closingTask });
             if (await closingTask.Task && closingTask.Task.Result)
             {
-                await CloseView(backPressed);
+                await CloseViewAsync(backPressed);
             }
         }
 
@@ -70,13 +70,13 @@ namespace BodyReportMobile.Presenter.Pages
             if (Device.OS == TargetPlatform.Android && this.Navigation.NavigationStack.Count <= 1)
                 Resolver.Resolve<IAndroidAPI>().CloseApp();
 
-            AllowClosingPage(true);
+            AllowClosingPageAsync(true);
 
             // If you want to stop the back button
             return true;
         }
 
-        private async Task CloseView(bool cancelView)
+        private async Task CloseViewAsync(bool cancelView)
         {
             try
             {

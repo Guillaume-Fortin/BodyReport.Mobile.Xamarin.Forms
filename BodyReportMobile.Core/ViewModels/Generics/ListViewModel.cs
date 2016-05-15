@@ -5,7 +5,6 @@ using BodyReportMobile.Core.Message;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BodyReportMobile.Core.Framework;
-using Xamarin.Forms;
 
 namespace BodyReportMobile.Core.ViewModels.Generic
 {
@@ -51,7 +50,7 @@ namespace BodyReportMobile.Core.ViewModels.Generic
 			}
 		}
 
-		public static async Task<ListViewModelResult> ShowGenericList(string title, List<GenericData> datas, GenericData defaultSelectedData, BaseViewModel parent = null)
+		public static async Task<ListViewModelResult> ShowGenericListAsync(string title, List<GenericData> datas, GenericData defaultSelectedData, BaseViewModel parent = null)
 		{
             ListViewModel listViewModel = new ListViewModel();
             listViewModel.ViewModelGuid = Guid.NewGuid().ToString();
@@ -65,37 +64,27 @@ namespace BodyReportMobile.Core.ViewModels.Generic
             listViewModel.Init();
 
             var result = new ListViewModelResult ();
-			result.Validated = await ShowModalViewModel(listViewModel, parent);
+			result.Validated = await ShowModalViewModelAsync(listViewModel, parent);
             result.SelectedData = listViewModel.SelectedItem;
 
 			return result;
 		}
 
-		public ICommand ValidateCommand
-		{
-			get
-			{
-				return new Command ((genericData) => {
-					if (ActionIsInProgress)
-                        return;
-                    try
-                    {
-                        ActionIsInProgress = true;
-						SelectedItem = genericData as GenericData;
-                        if (ValidateViewModel())
-                        {
-                            CloseViewModel();
-                        }
-                    }
-                    catch
-                    {
-                    }
-                    finally
-                    {
-                        ActionIsInProgress = false;
-                    }
-				});
-			}
+		public void ValidateAction(GenericData genericData)
+        {
+			if (genericData == null)
+                return;
+            try
+            {
+				SelectedItem = genericData as GenericData;
+                if (ValidateViewModel())
+                {
+                    CloseViewModel();
+                }
+            }
+            catch
+            {
+            }
 		}
 
         /// <summary>
@@ -106,6 +95,20 @@ namespace BodyReportMobile.Core.ViewModels.Generic
 		{
 			return SelectedItem != null;
 		}
-	}
+
+        #region Command
+
+        public ICommand ValidateCommand
+        {
+            get
+            {
+                return new ViewModelCommand(this, (genericData) => {
+                    ValidateAction(genericData as GenericData);
+                });
+            }
+        }
+
+        #endregion
+    }
 }
 

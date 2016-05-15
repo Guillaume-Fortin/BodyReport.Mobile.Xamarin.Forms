@@ -10,7 +10,7 @@ namespace BodyReportMobile.Core.WebServices
 {
     public static class MuscularGroupWebService
     {
-        internal static async Task<List<MuscularGroup>> FindMuscularGroups()
+        internal static async Task<List<MuscularGroup>> FindMuscularGroupsAsync()
         {
             return await HttpConnector.Instance.GetAsync<List<MuscularGroup>>("Api/MuscularGroups/Find");
         }

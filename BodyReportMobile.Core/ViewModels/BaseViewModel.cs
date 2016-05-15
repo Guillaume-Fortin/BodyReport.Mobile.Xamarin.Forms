@@ -6,6 +6,7 @@ using XLabs.Ioc;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Message;
+using System.Windows.Input;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -47,25 +48,25 @@ namespace BodyReportMobile.Core.ViewModels
 
         public BaseViewModel()
         {
-            AppMessenger.AppInstance.Register<MvxMessageViewModelEvent>(this, OnViewModelEvent);
+            AppMessenger.AppInstance.Register<MvxMessageViewModelEvent>(this, OnViewModelEventAsync);
             ActionIsInProgress = true;
         }
 
         #region view model life cycle
 
-        private async void OnViewModelEvent(MvxMessageViewModelEvent message)
+        private async void OnViewModelEventAsync(MvxMessageViewModelEvent message)
         {
             if (message != null && !string.IsNullOrWhiteSpace(message.ViewModelGuid) &&
                 message.ViewModelGuid == _viewModelGuid)
             {
                 if (message.Show)
-                    InternalShow();
+                    await InternalShowAsync();
                 else if (message.Appear)
                     Appear();
                 else if (message.Disappear)
                     Disappear();
                 else if (message.Closing)
-                    await InternalClosing(message.BackPressed, message.ForceClose, message.ClosingTask);
+                    await InternalClosingAsync(message.BackPressed, message.ForceClose, message.ClosingTask);
                 else if (message.Closed)
                     Closed(message.BackPressed);
             }
@@ -74,15 +75,16 @@ namespace BodyReportMobile.Core.ViewModels
         /// <summary>
         /// view linked to viewmodel has show
         /// </summary>
-        protected virtual void Show()
+        protected virtual Task ShowAsync()
         {
             InitTranslation();
+            return Task.FromResult(false);
         }
 
-        private void InternalShow()
+        private async Task InternalShowAsync()
         {
             ActionIsInProgress = false;
-            Show();
+            await ShowAsync();
         }
 
         /// <summary>
@@ -106,7 +108,7 @@ namespace BodyReportMobile.Core.ViewModels
         /// </summary>
         /// <param name="backPressed">back button pressed</param>
         /// <returns>True if you ahtorize close view</returns>
-        protected virtual async Task<bool> Closing(bool backPressed)
+        protected virtual async Task<bool> ClosingAsync(bool backPressed)
         {
             if (!backPressed || (backPressed && _allowCancelViewModel))
                 return await Task.FromResult<bool>(!BlockUIAction);
@@ -119,11 +121,11 @@ namespace BodyReportMobile.Core.ViewModels
         /// <param name="backPressed">back button pressed</param>
         /// <param name="forceClose">force close view (bypass v</param>
         /// </summary>
-        protected async Task InternalClosing(bool backPressed, bool forceClose, TaskCompletionSource<bool> ClosingTask)
+        protected async Task InternalClosingAsync(bool backPressed, bool forceClose, TaskCompletionSource<bool> ClosingTask)
         {
             if (!forceClose)
             {
-                bool closeAuthorized = await Closing(backPressed);
+                bool closeAuthorized = await ClosingAsync(backPressed);
                 if (!closeAuthorized)
                     _viewModelClosing = false;
                 ClosingTask.SetResult(closeAuthorized);
@@ -157,7 +159,7 @@ namespace BodyReportMobile.Core.ViewModels
         {
         }
         
-        public static async Task<bool> ShowModalViewModel(BaseViewModel viewModel, BaseViewModel parentViewModel, bool mainViewModel = false)
+        public static async Task<bool> ShowModalViewModelAsync(BaseViewModel viewModel, BaseViewModel parentViewModel, bool mainViewModel = false)
         {
             if (string.IsNullOrWhiteSpace(viewModel.ViewModelGuid))
                 viewModel.ViewModelGuid = Guid.NewGuid().ToString();
@@ -221,9 +223,7 @@ namespace BodyReportMobile.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
-        #endregion
-
+        
         public bool DataIsRefreshing
         {
             get { return _dataIsRefreshing; }
@@ -267,6 +267,8 @@ namespace BodyReportMobile.Core.ViewModels
                 _showDelayInMs = value;
             }
         }
+
+        #endregion
     }
 }
 

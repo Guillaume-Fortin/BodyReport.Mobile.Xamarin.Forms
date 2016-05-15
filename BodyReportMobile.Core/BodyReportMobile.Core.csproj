@@ -65,6 +65,8 @@
     <Compile Include="Framework\AppMessenger.cs" />
     <Compile Include="Framework\AppTools.cs" />
     <Compile Include="Framework\ILogger.cs" />
+    <Compile Include="Framework\ViewModelCommand.cs" />
+    <Compile Include="Framework\ViewModelCommandAsync.cs" />
     <Compile Include="Message\Binding\BindingBodyExercise.cs" />
     <Compile Include="Message\Binding\BindingTrainingExercise.cs" />
     <Compile Include="Message\Binding\BindingTrainingExerciseSet.cs" />

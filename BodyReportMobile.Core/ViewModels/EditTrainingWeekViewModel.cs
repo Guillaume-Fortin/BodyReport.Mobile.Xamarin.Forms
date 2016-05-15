@@ -10,7 +10,6 @@ using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Core.WebServices;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Data;
-using Xamarin.Forms;
 using SQLite.Net;
 using BodyReportMobile.Core.ServiceManagers;
 
@@ -71,20 +70,19 @@ namespace BodyReportMobile.Core.ViewModels
             _trainingWeekManager = new TrainingWeekManager(_dbContext);
         }
 
-		protected override void Show ()
+		protected override async Task ShowAsync ()
 		{
-            base.Show();
-
+            await base.ShowAsync();
 
 			SynchronizeData ();
 		}
 
-		public static async Task<bool> Show (TrainingWeek trainingWeek, TEditMode editMode, BaseViewModel parent = null)
+		public static async Task<bool> ShowAsync (TrainingWeek trainingWeek, TEditMode editMode, BaseViewModel parent = null)
 		{
             var viewModel = new EditTrainingWeekViewModel();
             viewModel.TrainingWeek = trainingWeek;
             viewModel.EditMode = editMode;
-            return await ShowModalViewModel (viewModel, parent);
+            return await ShowModalViewModelAsync (viewModel, parent);
 		}
 
 		private void SynchronizeData ()
@@ -100,137 +98,97 @@ namespace BodyReportMobile.Core.ViewModels
 				TrainingWeek.WeekOfYearDescription = string.Empty;
 		}
 
-		public ICommand ValidateCommand
-		{
-			get
-			{
-				return new Command (async () =>
-				{
-                    if (ActionIsInProgress)
-                        return;
-					try
-					{
-                        ActionIsInProgress = true;
-                        if (await ValidateFields () && await SaveData ())
-						{
-							CloseViewModel ();
-						}
-					}
-					catch (Exception except)
-					{
-						var userDialog = Resolver.Resolve<IUserDialogs> ();
-						await userDialog.AlertAsync (except.Message, Translation.Get (TRS.ERROR), Translation.Get (TRS.OK));
-					}
-                    finally
-                    {
-                        ActionIsInProgress = false;
-
-                    }
-				});
-			}
-		}
-
-		public ICommand ChangeYearCommand
-		{
-			get
-			{
-				return new Command(async () =>
-				{
-                    if (ActionIsInProgress)
-                        return;
-                    try
-                    {
-                        ActionIsInProgress = true;
-                        var datas = new List<Message.GenericData>();
-
-                        int currentYear = DateTime.Now.Year;
-                        Message.GenericData data, currentData = null;
-                        for (int i = currentYear; i >= currentYear - 1; i--)
-                        {
-                            data = new Message.GenericData() { Tag = i, Name = i.ToString() };
-                            datas.Add(data);
-
-                            if (i == TrainingWeek.Year)
-                                currentData = data;
-                        }
-
-                        var result = await ListViewModel.ShowGenericList(Translation.Get(TRS.YEAR), datas, currentData, this);
-
-                        if (result.Validated && result.SelectedData != null)
-                        {
-                            if (((int)result.SelectedData.Tag) > 0)
-                                TrainingWeek.Year = (int)result.SelectedData.Tag;
-                            SynchronizeData();
-                        }
-                    }
-                    catch(Exception except)
-                    {
-                        ILogger.Instance.Error("Unable to change year", except);
-                    }
-                    finally
-                    {
-                        ActionIsInProgress = false;
-                    }
-				});
-			}
-		}
-
-		public ICommand ChangeWeekOfYearCommand
-		{
-			get
-			{
-				return new Command(async () =>
+        private async Task ValidateActionAsync()
+        {
+            try
+            {
+                if (await ValidateFieldsAsync() && await SaveDataAsync())
                 {
-                    if (ActionIsInProgress)
-                        return;
-                    try
-                    {
-                        ActionIsInProgress = true;
-                        var datas = new List<Message.GenericData>();
+                    CloseViewModel();
+                }
+            }
+            catch (Exception except)
+            {
+                var userDialog = Resolver.Resolve<IUserDialogs>();
+                await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+            }
+        }
 
-                        String dateStr, labelStr;
-                        DateTime date;
-                        Message.GenericData data, currentData = null;
-                        for (int i = 1; i <= 52; i++)
-                        {
-                            date = Utils.YearWeekToPlanningDateTime(TrainingWeek.Year, i);
-                            dateStr = string.Format(Translation.Get(TRS.FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3), date.Day, date.AddDays(6).Day, Translation.Get(((TMonthType)date.Month).ToString().ToUpper()), date.Year);
-                            labelStr = Translation.Get(TRS.WEEK_NUMBER) + ' ' + i;
+        private async Task ChangeYearActionAsync()
+        {
+            try
+            {
+                var datas = new List<Message.GenericData>();
 
-                            data = new Message.GenericData() { Tag = i, Name = labelStr, Description = dateStr };
-                            datas.Add(data);
+                int currentYear = DateTime.Now.Year;
+                Message.GenericData data, currentData = null;
+                for (int i = currentYear; i >= currentYear - 1; i--)
+                {
+                    data = new Message.GenericData() { Tag = i, Name = i.ToString() };
+                    datas.Add(data);
 
-                            if (i == TrainingWeek.WeekOfYear)
-                                currentData = data;
-                        }
+                    if (i == TrainingWeek.Year)
+                        currentData = data;
+                }
 
-                        var result = await ListViewModel.ShowGenericList(Translation.Get(TRS.WEEK_NUMBER), datas, currentData, this);
+                var result = await ListViewModel.ShowGenericListAsync(Translation.Get(TRS.YEAR), datas, currentData, this);
 
-                        if (result.Validated && result.SelectedData != null)
-                        {
-                            if (((int)result.SelectedData.Tag) > 0)
-                                TrainingWeek.WeekOfYear = (int)result.SelectedData.Tag;
-                            SynchronizeData();
-                        }
-                    }
-                    catch (Exception except)
-                    {
-                        ILogger.Instance.Error("Unable to change week of year", except);
-                    }
-                    finally
-                    {
-                        ActionIsInProgress = false;
-                    }
-                });
-			}
-		}
+                if (result.Validated && result.SelectedData != null)
+                {
+                    if (((int)result.SelectedData.Tag) > 0)
+                        TrainingWeek.Year = (int)result.SelectedData.Tag;
+                    SynchronizeData();
+                }
+            }
+            catch (Exception except)
+            {
+                ILogger.Instance.Error("Unable to change year", except);
+            }
+        }
 
-		private async Task<bool> ValidateFields()
+        private async Task ChangeWeekOfYearActionAsync()
+        {
+            try
+            {
+                var datas = new List<Message.GenericData>();
+
+                String dateStr, labelStr;
+                DateTime date;
+                Message.GenericData data, currentData = null;
+                for (int i = 1; i <= 52; i++)
+                {
+                    date = Utils.YearWeekToPlanningDateTime(TrainingWeek.Year, i);
+                    dateStr = string.Format(Translation.Get(TRS.FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3), date.Day, date.AddDays(6).Day, Translation.Get(((TMonthType)date.Month).ToString().ToUpper()), date.Year);
+                    labelStr = Translation.Get(TRS.WEEK_NUMBER) + ' ' + i;
+
+                    data = new Message.GenericData() { Tag = i, Name = labelStr, Description = dateStr };
+                    datas.Add(data);
+
+                    if (i == TrainingWeek.WeekOfYear)
+                        currentData = data;
+                }
+
+                var result = await ListViewModel.ShowGenericListAsync(Translation.Get(TRS.WEEK_NUMBER), datas, currentData, this);
+
+                if (result.Validated && result.SelectedData != null)
+                {
+                    if (((int)result.SelectedData.Tag) > 0)
+                        TrainingWeek.WeekOfYear = (int)result.SelectedData.Tag;
+                    SynchronizeData();
+                }
+            }
+            catch (Exception except)
+            {
+                ILogger.Instance.Error("Unable to change week of year", except);
+            }
+        }
+        
+		private async Task<bool> ValidateFieldsAsync()
 		{
 			if(TrainingWeek != null && TrainingWeek.Year > 0 && TrainingWeek.WeekOfYear > 0 &&
 			TrainingWeek.UserHeight > 0 && TrainingWeek.UserWeight > 0 && !string.IsNullOrWhiteSpace(TrainingWeek.UserId))
             {
-                var onlineTrainingWeek = await TrainingWeekWebService.GetTrainingWeek(TrainingWeek);
+                var onlineTrainingWeek = await TrainingWeekWebService.GetTrainingWeekAsync(TrainingWeek);
                 if (EditMode == TEditMode.Create)
                 {
                     //verify training week doesn't exist
@@ -253,12 +211,12 @@ namespace BodyReportMobile.Core.ViewModels
             return false;
 		}
 
-		private async Task<bool> SaveData ()
+		private async Task<bool> SaveDataAsync()
 		{
             TrainingWeek trainingWeek = null;
             if (EditMode == TEditMode.Create)
             {
-                trainingWeek = await TrainingWeekWebService.CreateTrainingWeek(TrainingWeek);
+                trainingWeek = await TrainingWeekWebService.CreateTrainingWeekAsync(TrainingWeek);
                 if (trainingWeek != null)
                 {
                     _trainingWeekManager.DeleteTrainingWeek(trainingWeek);
@@ -267,7 +225,7 @@ namespace BodyReportMobile.Core.ViewModels
             }
             else
             {
-                trainingWeek = await TrainingWeekWebService.UpdateTrainingWeek(TrainingWeek);
+                trainingWeek = await TrainingWeekWebService.UpdateTrainingWeekAsync(TrainingWeek);
                 if (trainingWeek != null)
                 {
                     _trainingWeekManager.UpdateTrainingWeek(trainingWeek);
@@ -276,6 +234,58 @@ namespace BodyReportMobile.Core.ViewModels
 
             return trainingWeek != null;
         }
-	}
+
+        #region Command
+        
+        private ICommand _validateCommand = null;
+        public ICommand ValidateCommand
+        {
+            get
+            {
+                if (_validateCommand == null)
+                {
+                    _validateCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await ValidateActionAsync();
+                    });
+                }
+                return _validateCommand;
+            }
+        }
+
+        private ICommand _changeYearCommand = null;
+        public ICommand ChangeYearCommand
+        {
+            get
+            {
+                if (_changeYearCommand == null)
+                {
+                    _changeYearCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await ChangeYearActionAsync();
+                    });
+                }
+                return _changeYearCommand;
+            }
+        }
+
+        private ICommand _changeWeekOfYearCommand = null;
+        public ICommand ChangeWeekOfYearCommand
+        {
+            get
+            {
+                if (_changeWeekOfYearCommand == null)
+                {
+                    _changeWeekOfYearCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await ChangeWeekOfYearActionAsync();
+                    });
+                }
+                return _changeWeekOfYearCommand;
+            }
+        }
+
+        #endregion
+    }
 }
 

@@ -11,7 +11,7 @@ namespace BodyReportMobile.Core.WebServices
 {
     public class TrainingDayWebService
     {
-        public static async Task<List<TrainingDay>> FindTrainingDays(TrainingDayCriteria trainingDayCriteria, TrainingDayScenario trainingDayScenario)
+        public static async Task<List<TrainingDay>> FindTrainingDaysAsync(TrainingDayCriteria trainingDayCriteria, TrainingDayScenario trainingDayScenario)
         {
             if (trainingDayCriteria == null)
                 return null;
@@ -22,12 +22,12 @@ namespace BodyReportMobile.Core.WebServices
             return await HttpConnector.Instance.PostAsync<TrainingDayFinder, List<TrainingDay>>("Api/TrainingDays/Find", trainingDayFinder);
         }
 
-        public static async Task<TrainingDay> CreateTrainingDays(TrainingDay trainingDay)
+        public static async Task<TrainingDay> CreateTrainingDaysAsync(TrainingDay trainingDay)
         {
             return await HttpConnector.Instance.PostAsync<TrainingDay, TrainingDay>("Api/TrainingDays/Create", trainingDay);
         }
 
-        public static async Task<TrainingDay> GetTrainingDay(TrainingDayKey key, bool manageExercise = false)
+        public static async Task<TrainingDay> GetTrainingDayAsync(TrainingDayKey key, bool manageExercise = false)
         {
             if (key == null)
                 return null;

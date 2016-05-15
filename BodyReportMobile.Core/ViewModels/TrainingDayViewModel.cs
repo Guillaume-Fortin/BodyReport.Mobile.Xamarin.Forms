@@ -16,7 +16,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Xamarin.Forms;
 using XLabs.Ioc;
 
 namespace BodyReportMobile.Core.ViewModels
@@ -84,29 +83,41 @@ namespace BodyReportMobile.Core.ViewModels
             { }
         }
 
-        protected override async void Show()
+        protected override async Task ShowAsync()
         {
-            base.Show();
+            await base.ShowAsync();
 
-            if (_trainingDays != null && _trainingDays.Count > 0)
+            try
             {
-                var trainingDay = _trainingDays[0];
-                UserId = trainingDay.UserId;
-                Year = trainingDay.Year;
-                WeekOfYear = trainingDay.WeekOfYear;
-                DayOfWeek = trainingDay.DayOfWeek;
+                ActionIsInProgress = true;
+                if (_trainingDays != null && _trainingDays.Count > 0)
+                {
+                    var trainingDay = _trainingDays[0];
+                    UserId = trainingDay.UserId;
+                    Year = trainingDay.Year;
+                    WeekOfYear = trainingDay.WeekOfYear;
+                    DayOfWeek = trainingDay.DayOfWeek;
+                }
+                await SynchronizeDataAsync();
             }
-            await SynchronizeData();
+            catch (Exception except)
+            {
+                ILogger.Instance.Error("Unable to Show TrainingDayViewModel", except);
+            }
+            finally
+            {
+                ActionIsInProgress = false;
+            }
         }
 
-        public static async Task<TrainingDayViewModelResut> Show(List<TrainingDay> trainingDayList, BaseViewModel parent = null)
+        public static async Task<TrainingDayViewModelResut> ShowAsync(List<TrainingDay> trainingDayList, BaseViewModel parent = null)
         {
             TrainingDayViewModelResut trainingDayViewModelResut = new TrainingDayViewModelResut();
             if (trainingDayList != null && trainingDayList.Count > 0)
             {
                 var viewModel = new TrainingDayViewModel();
                 viewModel._trainingDays = trainingDayList;
-                await ShowModalViewModel(viewModel, parent);
+                await ShowModalViewModelAsync(viewModel, parent);
 
                 //Here always return true because it's an interactive page, user doesn't validate page
                 trainingDayViewModelResut.Result = true;
@@ -192,7 +203,7 @@ namespace BodyReportMobile.Core.ViewModels
 
                 if (collection != null && collection.Count > 0)
                 {
-                    Task t = CachingImages(collection);
+                    Task t = CachingImagesAsync(collection);
                 }
             }
             
@@ -204,7 +215,7 @@ namespace BodyReportMobile.Core.ViewModels
 
         List<BindingTrainingExercise> _cachingBindingList = new List<BindingTrainingExercise>();
 
-        public async Task CachingImages(GenericGroupModelCollection<BindingTrainingExercise> bindingGenericTrainingExercise)
+        public async Task CachingImagesAsync(GenericGroupModelCollection<BindingTrainingExercise> bindingGenericTrainingExercise)
         {
             lock (_locker)
             {
@@ -238,7 +249,7 @@ namespace BodyReportMobile.Core.ViewModels
                     imageName = bindingTrainingExercise.BodyExerciseId.ToString() + ".png";
                     urlImage = string.Format(urlImages, imageName);
                     localImagePath = Path.Combine(AppTools.BodyExercisesImagesDirectory, imageName);
-                    var t = AppTools.Instance.CachingImage(bindingTrainingExercise.GetHashCode(), urlImage, localImagePath, (cachingImageResult) =>
+                    var t = AppTools.Instance.CachingImageAsync(bindingTrainingExercise.GetHashCode(), urlImage, localImagePath, (cachingImageResult) =>
                     {
                         if (cachingImageResult != null)
                         {
@@ -263,16 +274,13 @@ namespace BodyReportMobile.Core.ViewModels
             _cachingImageCancellationTokenSource = null;
         }
 
-        private async Task SynchronizeData()
+        private async Task SynchronizeDataAsync()
         {
             try
             {
-                ActionIsInProgress = true;
-
                 if(_bodyExerciseList == null)
                     _bodyExerciseList = _bodyExerciseManager.FindBodyExercises();
-
-
+                
                 //Create BindingCollection
                 GroupedTrainingExercises.Clear();
 
@@ -286,31 +294,12 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
-            finally
-            {
-                ActionIsInProgress = false;
-            }
         }
 
-        public ICommand CreateTrainingDayCommand
+        private async Task CreateTrainingDayActionAsync()
         {
-            get
-            {
-                return new Command(async () => {
-                    await CreateTrainingDay();
-                });
-            }
-        }
-
-        private async Task CreateTrainingDay()
-        {
-            if (ActionIsInProgress)
-                return;
-
             try
             {
-                ActionIsInProgress = true;
-
                 if (_trainingDays != null)
                 {
                     var newTrainingDay = new TrainingDay()
@@ -321,7 +310,7 @@ namespace BodyReportMobile.Core.ViewModels
                         TrainingDayId = 0,
                         UserId = UserId
                     };
-                    if (await CreateTrainingDayViewModel.Show(newTrainingDay, this))
+                    if (await CreateTrainingDayViewModel.ShowAsync(newTrainingDay, this))
                     {
                         _trainingDays.Add(newTrainingDay);
                         //Binding trainingDay for refresh view 
@@ -333,65 +322,47 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 ILogger.Instance.Error("Unable to create training day", except);
             }
-            finally
-            {
-                ActionIsInProgress = false;
-            }
         }
 
-        public ICommand AddExerciseCommand
+        private async Task AddExerciseActionAsync(TrainingDay trainingDay)
         {
-            get
+            try
             {
-                return new Command(async (trainingDayObject) => {
-                    if (ActionIsInProgress)
-                        return;
-
-                    try
+                if (trainingDay != null)
+                {
+                    var selectTrainingExercisesViewModelResut = await SelectTrainingExercisesViewModel.ShowAsync(this);
+                    if (selectTrainingExercisesViewModelResut.Result && selectTrainingExercisesViewModelResut.BodyExerciseList != null)
                     {
-                        ActionIsInProgress = true;
-                        var trainingDay = trainingDayObject as TrainingDay;
-                        if (trainingDay != null)
+                        if (trainingDay.TrainingExercises == null)
+                            trainingDay.TrainingExercises = new List<TrainingExercise>();
+
+                        int nextIdTrainingExercise = 1;
+                        if (trainingDay.TrainingExercises.Count > 0)
+                            nextIdTrainingExercise = trainingDay.TrainingExercises.Max(te => te.Id) + 1;
+                        foreach (var bodyExercise in selectTrainingExercisesViewModelResut.BodyExerciseList)
                         {
-                            var selectTrainingExercisesViewModelResut = await SelectTrainingExercisesViewModel.Show(this);
-                            if (selectTrainingExercisesViewModelResut.Result && selectTrainingExercisesViewModelResut.BodyExerciseList != null)
+                            var trainingExercise = new TrainingExercise()
                             {
-                                if (trainingDay.TrainingExercises == null)
-                                    trainingDay.TrainingExercises = new List<TrainingExercise>();
-
-                                int nextIdTrainingExercise = 1;
-                                if (trainingDay.TrainingExercises.Count > 0)
-                                    nextIdTrainingExercise = trainingDay.TrainingExercises.Max(te => te.Id) + 1;
-                                foreach (var bodyExercise in selectTrainingExercisesViewModelResut.BodyExerciseList)
-                                {
-                                    var trainingExercise = new TrainingExercise()
-                                    {
-                                        Year = trainingDay.Year,
-                                        WeekOfYear = trainingDay.WeekOfYear,
-                                        DayOfWeek = trainingDay.DayOfWeek,
-                                        UserId = trainingDay.UserId,
-                                        BodyExerciseId = bodyExercise.Id,
-                                        Id = nextIdTrainingExercise
-                                    };
-                                    trainingDay.TrainingExercises.Add(trainingExercise);
-                                    nextIdTrainingExercise++;
-                                }
-                                //Binding trainingDay for refresh view
-                                await SynchronizeData(); // KAKA
-                                //TODO synchronise with websevice
-                                //PopulateBindingTrainingDay(trainingDay);
-                            }
+                                Year = trainingDay.Year,
+                                WeekOfYear = trainingDay.WeekOfYear,
+                                DayOfWeek = trainingDay.DayOfWeek,
+                                UserId = trainingDay.UserId,
+                                BodyExerciseId = bodyExercise.Id,
+                                Id = nextIdTrainingExercise
+                            };
+                            trainingDay.TrainingExercises.Add(trainingExercise);
+                            nextIdTrainingExercise++;
                         }
+                        //Binding trainingDay for refresh view
+                        await SynchronizeDataAsync(); // KAKA
+                        //TODO synchronise with websevice
+                        //PopulateBindingTrainingDay(trainingDay);
                     }
-                    catch (Exception except)
-                    {
-                        ILogger.Instance.Error("Unable to add exercise", except);
-                    }
-                    finally
-                    {
-                        ActionIsInProgress = false;
-                    }
-                });
+                }
+            }
+            catch (Exception except)
+            {
+                ILogger.Instance.Error("Unable to add exercise", except);
             }
         }
 
@@ -427,6 +398,42 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 _trainingModeLabel = value;
                 OnPropertyChanged();
+            }
+        }
+
+        #endregion
+
+        #region Command
+
+        private ICommand _createTrainingDayCommand = null;
+        public ICommand CreateTrainingDayCommand
+        {
+            get
+            {
+                if (_createTrainingDayCommand == null)
+                {
+                    _createTrainingDayCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await CreateTrainingDayActionAsync();
+                    });
+                }
+                return _createTrainingDayCommand;
+            }
+        }
+        
+        private ICommand _addExerciseCommand = null;
+        public ICommand AddExerciseCommand
+        {
+            get
+            {
+                if (_addExerciseCommand == null)
+                {
+                    _addExerciseCommand = new ViewModelCommandAsync(this, async (trainingDayObject) =>
+                    {
+                        await AddExerciseActionAsync(trainingDayObject as TrainingDay);
+                    });
+                }
+                return _addExerciseCommand;
             }
         }
 

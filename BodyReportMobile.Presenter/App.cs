@@ -25,7 +25,7 @@ namespace BodyReportMobile.Presenter
             RegisterViewModelViewDependencies(resolverContainer);
 
             var mainViewModel = new MainViewModel();
-            bool result = await BaseViewModel.ShowModalViewModel(mainViewModel, null, true);
+            bool result = await BaseViewModel.ShowModalViewModelAsync(mainViewModel, null, true);
 
             if(result)
             {

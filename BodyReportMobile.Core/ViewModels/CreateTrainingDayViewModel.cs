@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Xamarin.Forms;
 using XLabs.Ioc;
 
 namespace BodyReportMobile.Core.ViewModels
@@ -32,18 +31,18 @@ namespace BodyReportMobile.Core.ViewModels
             _userDialog = Resolver.Resolve<IUserDialogs>();
         }
 
-        protected override async void Show()
+        protected override async Task ShowAsync()
         {
-            base.Show();
+            await base.ShowAsync();
 
-            await SynchronizeData();
+            await SynchronizeDataAsync();
         }
 
-        public static async Task<bool> Show(TrainingDay trainingDay, BaseViewModel parent = null)
+        public static async Task<bool> ShowAsync(TrainingDay trainingDay, BaseViewModel parent = null)
         {
             var viewModel = new CreateTrainingDayViewModel();
             viewModel._trainingDay = trainingDay;
-            return await ShowModalViewModel(viewModel, parent);
+            return await ShowModalViewModelAsync(viewModel, parent);
         }
 
         protected override void InitTranslation()
@@ -57,12 +56,10 @@ namespace BodyReportMobile.Core.ViewModels
             ValidateLabel = Translation.Get(TRS.VALIDATE);
         }
 
-        private async Task SynchronizeData()
+        private async Task SynchronizeDataAsync()
         {
             try
             {
-                ActionIsInProgress = true;
-                
                 BindingTrainingDay = new BindingTrainingDay()
                 {
                     UserId = _trainingDay.UserId,
@@ -80,50 +77,32 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
-            finally
-            {
-                ActionIsInProgress = false;
-            }
         }
 
-        public ICommand ValidateCommand
+        private async Task ValidateActionAsync()
         {
-            get
+            try
             {
-                return new Command(async () =>
+                if (await SaveDataAsync())
                 {
-                    if (ActionIsInProgress)
-                        return;
-                    try
-                    {
-                        ActionIsInProgress = true;
-                        if (await SaveData())
-                        {
-                            CloseViewModel();
-                        }
-                    }
-                    catch (Exception except)
-                    {
-                        var userDialog = Resolver.Resolve<IUserDialogs>();
-                        await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
-                    }
-                    finally
-                    {
-                        ActionIsInProgress = false;
-
-                    }
-                });
+                    CloseViewModel();
+                }
+            }
+            catch (Exception except)
+            {
+                var userDialog = Resolver.Resolve<IUserDialogs>();
+                await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
         }
 
-        private async Task<bool> SaveData()
+        private async Task<bool> SaveDataAsync()
         {
             bool result = false;
             
             _trainingDay.BeginHour = DateTime.Now.Date.Add(BindingTrainingDay.BeginTime);
             _trainingDay.EndHour = DateTime.Now.Date.Add(BindingTrainingDay.EndTime);
             _trainingDay.TrainingDayId = 0; // force calculate id
-            var trainingDayCreated = await TrainingDayWebService.CreateTrainingDays(_trainingDay);
+            var trainingDayCreated = await TrainingDayWebService.CreateTrainingDaysAsync(_trainingDay);
             if(trainingDayCreated != null)
             {
                 _trainingDay.TrainingDayId = trainingDayCreated.TrainingDayId;
@@ -203,6 +182,26 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 _validateLabel = value;
                 OnPropertyChanged();
+            }
+        }
+
+        #endregion
+
+        #region Command
+
+        private ICommand _validateCommand = null;
+        public ICommand ValidateCommand
+        {
+            get
+            {
+                if (_validateCommand == null)
+                {
+                    _validateCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await ValidateActionAsync();
+                    });
+                }
+                return _validateCommand;
             }
         }
 

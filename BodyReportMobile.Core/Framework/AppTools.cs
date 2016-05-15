@@ -69,7 +69,7 @@ namespace BodyReportMobile.Core.Framework
             }
         }
 
-        public async Task CachingImage(int idImage, string urlImage, string localImagePath, CachingImageResultHandler cachingImageResultEvent)
+        public async Task CachingImageAsync(int idImage, string urlImage, string localImagePath, CachingImageResultHandler cachingImageResultEvent)
         {
             var cachingImageResult = new CachingImageResult() { IdImage = idImage, ImagePath = localImagePath };
 
@@ -82,7 +82,7 @@ namespace BodyReportMobile.Core.Framework
                         cachingImageResult.ImageLoaded = true;
                     else
                     {
-                        if (await HttpConnector.Instance.DownloadFile(urlImage, localImagePath, true))
+                        if (await HttpConnector.Instance.DownloadFileAsync(urlImage, localImagePath, true))
                             cachingImageResult.ImageLoaded = true;
                     }
                     cachingImageResultEvent?.Invoke(cachingImageResult);

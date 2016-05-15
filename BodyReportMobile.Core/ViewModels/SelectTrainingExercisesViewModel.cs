@@ -15,7 +15,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Xamarin.Forms;
 using XLabs.Ioc;
 
 namespace BodyReportMobile.Core.ViewModels
@@ -54,11 +53,13 @@ namespace BodyReportMobile.Core.ViewModels
             _userDialog = Resolver.Resolve<IUserDialogs>();
         }
 
-        protected override async void Show()
+        protected override async Task ShowAsync()
         {
-            base.Show();
+            await base.ShowAsync();
 
-            await SynchronizeData();
+            ActionIsInProgress = true;
+            await SynchronizeDataAsync();
+            ActionIsInProgress = false;
         }
 
         protected override void Closed(bool backPressed)
@@ -79,11 +80,11 @@ namespace BodyReportMobile.Core.ViewModels
             { }
         }
 
-        public static async Task<SelectTrainingExercisesViewModelResut> Show(BaseViewModel parent = null)
+        public static async Task<SelectTrainingExercisesViewModelResut> ShowAsync(BaseViewModel parent = null)
         {
             var selectTrainingExercisesViewModelResut = new SelectTrainingExercisesViewModelResut();
             var viewModel = new SelectTrainingExercisesViewModel();
-            if(await ShowModalViewModel(viewModel, parent))
+            if(await ShowModalViewModelAsync(viewModel, parent))
             {
                 selectTrainingExercisesViewModelResut.Result = true;
                 selectTrainingExercisesViewModelResut.BodyExerciseList = viewModel.SelectedBodyExerciseList;
@@ -103,13 +104,10 @@ namespace BodyReportMobile.Core.ViewModels
             ValidateLabel = Translation.Get(TRS.VALIDATE);
         }
 
-        private async Task SynchronizeData(bool byPassCurrentAction=false)
+        private async Task SynchronizeDataAsync(bool byPassCurrentAction=false)
         {
             try
             {
-                if(!byPassCurrentAction)
-                    ActionIsInProgress = true;
-
                 if(_muscularGroups == null)
                     _muscularGroups = _muscularGroupManager.FindMuscularGroups();
 
@@ -144,7 +142,7 @@ namespace BodyReportMobile.Core.ViewModels
                     
                     if (BindingBodyExercises.Count > 0)
                     {
-                        Task t = CachingImages(BindingBodyExercises);
+                        Task t = CachingImagesAsync(BindingBodyExercises);
                     }
                 }
                 OnPropertyChanged("BindingBodyExercises");
@@ -153,14 +151,9 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
-            finally
-            {
-                if (!byPassCurrentAction)
-                    ActionIsInProgress = false;
-            }
         }
 
-        public async Task CachingImages(List<BindingBodyExercise> bindingBodyExerciseList)
+        public async Task CachingImagesAsync(List<BindingBodyExercise> bindingBodyExerciseList)
         {
             lock (_locker)
             {
@@ -193,7 +186,7 @@ namespace BodyReportMobile.Core.ViewModels
                 {
                     urlImage = string.Format(urlImages, bindingBodyExercise.BodyExercise.ImageName);
                     localImagePath = Path.Combine(AppTools.BodyExercisesImagesDirectory, bindingBodyExercise.BodyExercise.ImageName);
-                    var t = AppTools.Instance.CachingImage(bindingBodyExercise.GetHashCode(), urlImage, localImagePath, (cachingImageResult) =>
+                    var t = AppTools.Instance.CachingImageAsync(bindingBodyExercise.GetHashCode(), urlImage, localImagePath, (cachingImageResult) =>
                     {
                         if (cachingImageResult != null)
                         {
@@ -217,180 +210,120 @@ namespace BodyReportMobile.Core.ViewModels
             }
             _cachingImageCancellationTokenSource = null;
         }
-        
-        public ICommand SelectMuscularGroupCommand
+
+        private async Task SelectMuscularGroupActionAsync()
         {
-            get
+            try
             {
-                return new Command(async () => {
-                    if (ActionIsInProgress)
-                        return;
-
-                    try
-                    {
-                        ActionIsInProgress = true;
-                        if (_muscularGroups != null && _muscularGroups.Count > 0)
-                        {
-                            _muscularGroups = _muscularGroups.OrderBy(m => m.Name).ToList();
-
-                            Message.GenericData data, currentData;
-                            currentData = null;
-                            var datas = new List<Message.GenericData>();
-                            foreach (var muscularGroup in _muscularGroups)
-                            {
-                                data = new Message.GenericData() { Tag = muscularGroup, Name = muscularGroup.Name };
-                                datas.Add(data);
-
-                                if (muscularGroup == MuscularGroup)
-                                    currentData = data;
-                            }
-
-                            var result = await ListViewModel.ShowGenericList(Translation.Get(TRS.MUSCULAR_GROUP), datas, currentData, this);
-
-                            if (result.Validated && result.SelectedData != null)
-                            {
-                                MuscularGroup = result.SelectedData.Tag as MuscularGroup;
-                                Muscle = null;
-                                await SynchronizeData(true);
-                                await SelectMuscle();
-                            }
-                        }
-                    }
-                    catch (Exception except)
-                    {
-                        ILogger.Instance.Error("Unable to select muscular group", except);
-                    }
-                    finally
-                    {
-                        ActionIsInProgress = false;
-                    }
-
-                });
-            }
-        }
-
-        public ICommand SelectMuscleCommand
-        {
-            get
-            {
-                return new Command(async () => {
-                    if (ActionIsInProgress)
-                        return;
-
-                    try
-                    {
-                        ActionIsInProgress = true;
-
-                        await SelectMuscle();
-                    }
-                    catch (Exception except)
-                    {
-                        ILogger.Instance.Error("Unable to select muscle", except);
-                    }
-                    finally
-                    {
-                        ActionIsInProgress = false;
-                    }
-
-                });
-            }
-        }
-
-        private async Task SelectMuscle()
-        {
-            if (MuscularGroup == null)
-            {
-                await _userDialog.AlertAsync("Select first one muscular group", Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
-            }
-            else
-            {
-                List<Muscle> muscleList = null;
-                if (_muscles != null)
-                    muscleList = _muscles.Where(m => m.MuscularGroupId == MuscularGroup.Id).OrderBy(m => m.Name).ToList();
-                if (muscleList != null && muscleList.Count > 0)
+                if (_muscularGroups != null && _muscularGroups.Count > 0)
                 {
+                    _muscularGroups = _muscularGroups.OrderBy(m => m.Name).ToList();
+
                     Message.GenericData data, currentData;
                     currentData = null;
                     var datas = new List<Message.GenericData>();
-                    foreach (var muscle in muscleList)
+                    foreach (var muscularGroup in _muscularGroups)
                     {
-                        data = new Message.GenericData() { Tag = muscle, Name = muscle.Name };
+                        data = new Message.GenericData() { Tag = muscularGroup, Name = muscularGroup.Name };
                         datas.Add(data);
 
-                        if (muscle == Muscle)
+                        if (muscularGroup == MuscularGroup)
                             currentData = data;
                     }
 
-                    var result = await ListViewModel.ShowGenericList(Translation.Get(TRS.MUSCLE), datas, currentData, this);
+                    var result = await ListViewModel.ShowGenericListAsync(Translation.Get(TRS.MUSCULAR_GROUP), datas, currentData, this);
 
                     if (result.Validated && result.SelectedData != null)
                     {
-                        Muscle = result.SelectedData.Tag as Muscle;
-                        await SynchronizeData(true);
+                        MuscularGroup = result.SelectedData.Tag as MuscularGroup;
+                        Muscle = null;
+                        await SynchronizeDataAsync();
+                        await SelectMuscleActionAsync();
                     }
                 }
             }
-        }
-
-        public ICommand SelectBodyExerciseCommand
-        {
-            get
+            catch (Exception except)
             {
-                return new Command((BindingBodyExerciseObject) => {
+                ILogger.Instance.Error("Unable to select muscular group", except);
+            }
+        }
+        
+        private async Task SelectMuscleActionAsync()
+        {
+            try
+            {
+                if (MuscularGroup == null)
+                {
+                    await _userDialog.AlertAsync("Select first one muscular group", Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+                }
+                else
+                {
+                    List<Muscle> muscleList = null;
+                    if (_muscles != null)
+                        muscleList = _muscles.Where(m => m.MuscularGroupId == MuscularGroup.Id).OrderBy(m => m.Name).ToList();
+                    if (muscleList != null && muscleList.Count > 0)
+                    {
+                        Message.GenericData data, currentData;
+                        currentData = null;
+                        var datas = new List<Message.GenericData>();
+                        foreach (var muscle in muscleList)
+                        {
+                            data = new Message.GenericData() { Tag = muscle, Name = muscle.Name };
+                            datas.Add(data);
 
-                    try
-                    {
-                        var BindingBodyExercise = BindingBodyExerciseObject as BindingBodyExercise;
-                        if (BindingBodyExercise != null)
-                            BindingBodyExercise.Selected = !BindingBodyExercise.Selected;
-                    }
-                    catch (Exception except)
-                    {
-                        ILogger.Instance.Error("Unable to select body exercise", except);
-                    }
-                    finally
-                    {
-                    }
+                            if (muscle == Muscle)
+                                currentData = data;
+                        }
 
-                });
+                        var result = await ListViewModel.ShowGenericListAsync(Translation.Get(TRS.MUSCLE), datas, currentData, this);
+
+                        if (result.Validated && result.SelectedData != null)
+                        {
+                            Muscle = result.SelectedData.Tag as Muscle;
+                            await SynchronizeDataAsync();
+                        }
+                    }
+                }
+            }
+            catch (Exception except)
+            {
+                ILogger.Instance.Error("Unable to select muscle", except);
             }
         }
 
-        public ICommand ValidateCommand
+        private void SelectBodyExerciseAction(BindingBodyExercise BindingBodyExercise)
         {
-            get
+            try
             {
-                return new Command(async () => {
-                    if (ActionIsInProgress)
-                        return;
+                if (BindingBodyExercise != null)
+                    BindingBodyExercise.Selected = !BindingBodyExercise.Selected;
+            }
+            catch (Exception except)
+            {
+                ILogger.Instance.Error("Unable to select body exercise", except);
+            }
+        }
 
-                    try
+        private async Task ValidateActionAsync()
+        {
+            try
+            {
+                if(BindingBodyExercises != null && BindingBodyExercises.Count > 0)
+                {
+                    var bodyExerciseSelectedList = BindingBodyExercises.Where(be => be.Selected).Select(be => be.BodyExercise).ToList();
+                    if(bodyExerciseSelectedList == null || bodyExerciseSelectedList.Count == 0)
+                        await _userDialog.AlertAsync("Select one or more body exercise", Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+                    else
                     {
-                        ActionIsInProgress = true;
-                        
-                        if(BindingBodyExercises != null && BindingBodyExercises.Count > 0)
-                        {
-                            var bodyExerciseSelectedList = BindingBodyExercises.Where(be => be.Selected).Select(be => be.BodyExercise).ToList();
-                            if(bodyExerciseSelectedList == null || bodyExerciseSelectedList.Count == 0)
-                                await _userDialog.AlertAsync("Select one or more body exercise", Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
-                            else
-                            {
-                                SelectedBodyExerciseList.Clear();
-                                SelectedBodyExerciseList.AddRange(bodyExerciseSelectedList);
-                                CloseViewModel();
-                            }
-                        }
+                        SelectedBodyExerciseList.Clear();
+                        SelectedBodyExerciseList.AddRange(bodyExerciseSelectedList);
+                        CloseViewModel();
                     }
-                    catch (Exception except)
-                    {
-                        await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
-                    }
-                    finally
-                    {
-                        ActionIsInProgress = false;
-                    }
-
-                });
+                }
+            }
+            catch (Exception except)
+            {
+                await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
         }
 
@@ -470,6 +403,79 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 _mucle = value;
                 OnPropertyChanged();
+            }
+        }
+
+        #endregion
+
+        #region Command
+
+        private ICommand _selectMuscularGroupCommand = null;
+        public ICommand SelectMuscularGroupCommand
+        {
+            get
+            {
+                if (_selectMuscularGroupCommand == null)
+                {
+                    _selectMuscularGroupCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await SelectMuscularGroupActionAsync();
+                    });
+                }
+
+                return _selectMuscularGroupCommand;
+            }
+        }
+
+        private ICommand _selectMuscleCommand = null;
+        public ICommand SelectMuscleCommand
+        {
+            get
+            {
+                if (_selectMuscleCommand == null)
+                {
+                    _selectMuscleCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await SelectMuscleActionAsync();
+                    });
+                }
+
+                return _selectMuscleCommand;
+            }
+        }
+
+        private ICommand _selectBodyExerciseCommand = null;
+        public ICommand SelectBodyExerciseCommand
+        {
+            get
+            {
+                if (_selectBodyExerciseCommand == null)
+                {
+                    _selectBodyExerciseCommand = new ViewModelCommand(this, (BindingBodyExerciseObject) =>
+                    {
+                        var bindingBodyExercise = BindingBodyExerciseObject as BindingBodyExercise;
+                        SelectBodyExerciseAction(bindingBodyExercise);
+                    });
+                }
+
+                return _selectMuscleCommand;
+            }
+        }
+
+        private ICommand _validateCommand = null;
+        public ICommand ValidateCommand
+        {
+            get
+            {
+                if (_validateCommand == null)
+                {
+                    _validateCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await ValidateActionAsync();
+                    });
+                }
+
+                return _validateCommand;
             }
         }
 

@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Xamarin.Forms;
 using XLabs.Ioc;
 
 namespace BodyReportMobile.Core.ViewModels
@@ -34,10 +33,10 @@ namespace BodyReportMobile.Core.ViewModels
             _userDialog = Resolver.Resolve<IUserDialogs>();
         }
 
-        public static async Task<bool> DisplayViewModel(BaseViewModel parent = null)
+        public static async Task<bool> DisplayViewModelAsync(BaseViewModel parent = null)
         {
             var viewModel = new RegisterAccountViewModel();
-            return await ShowModalViewModel(viewModel, parent);
+            return await ShowModalViewModelAsync(viewModel, parent);
         }
 
         protected override void InitTranslation()
@@ -52,22 +51,15 @@ namespace BodyReportMobile.Core.ViewModels
             RegisterLabel = Translation.Get(TRS.REGISTER);
         }
 
-        public ICommand RegisterAccountCommand
+        private async Task RegisterAccountActionAsync()
         {
-            get
+            if (await ValidateFieldsAsync() && await RegisterOnlineAccountAsync())
             {
-                return new Command(async () => {
-                    if (ActionIsInProgress)
-                        return;
-                    if (await ValidateFields() && await RegisterOnlineAccount())
-                    {
-                        CloseViewModel();
-                    }
-                });
+                CloseViewModel();
             }
         }
 
-        private async Task<bool> ValidateFields()
+        private async Task<bool> ValidateFieldsAsync()
         {
             bool result = false;
 
@@ -96,14 +88,13 @@ namespace BodyReportMobile.Core.ViewModels
             return await Task.FromResult(result);
         }
 
-        private async Task<bool> RegisterOnlineAccount()
+        private async Task<bool> RegisterOnlineAccountAsync()
         {
             bool result = false;
-            ActionIsInProgress = true;
 
             try
             {
-                if (await AccountWebService.RegisterAccount(_userName, _email, _password))
+                if (await AccountWebService.RegisterAccountAsync(_userName, _email, _password))
                     result = true;
             }
             catch (WebApiException except)
@@ -113,10 +104,6 @@ namespace BodyReportMobile.Core.ViewModels
             catch (Exception except)
             {
                 await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
-            }
-            finally
-            {
-                ActionIsInProgress = false;
             }
 
             return await Task.FromResult(result);
@@ -244,6 +231,27 @@ namespace BodyReportMobile.Core.ViewModels
         public int UserNameMaxLength { get; set; } = FieldsLength.UserName.Max;
         public int PasswordMaxLength { get; set; } = FieldsLength.Password.Max;
         public int EmailMaxLength { get; set; } = FieldsLength.Email.Max;
+
+        #endregion
+
+        #region Command
+
+        private ICommand _registerAccountCommand = null;
+        public ICommand RegisterAccountCommand
+        {
+            get
+            {
+                if (_registerAccountCommand == null)
+                {
+                    _registerAccountCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await RegisterAccountActionAsync();
+                    });
+                }
+
+                return _registerAccountCommand;
+            }
+        }
 
         #endregion
     }
