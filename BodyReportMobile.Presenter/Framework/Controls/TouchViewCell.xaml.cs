@@ -100,7 +100,7 @@ namespace BodyReportMobile.Presenter.Framework.Controls
 
         public static readonly BindableProperty DescriptionTextColorProperty = BindableProperty.Create("DescriptionTextColor", typeof(Color), typeof(TouchViewCell), Color.Default, BindingMode.TwoWay);
 
-        public Color TextColor
+        public Color DescriptionTextColor
         {
             get { return (Color)GetValue(DescriptionTextColorProperty); }
             set { SetValue(DescriptionTextColorProperty, value); }

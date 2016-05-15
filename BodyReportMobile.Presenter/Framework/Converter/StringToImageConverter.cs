@@ -24,14 +24,7 @@ namespace BodyReportMobile.Presenter.Framework.Converter
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string result = string.Empty;
-
-            if(value != null && value is ImageSource)
-            {
-                result = "";// (value as ImageSource).
-            }
-
-            return result;
+            throw new NotImplementedException();
         }
     }
 }

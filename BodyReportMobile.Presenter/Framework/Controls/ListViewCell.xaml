@@ -1,8 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ViewCell xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+          xmlns:converter="clr-namespace:BodyReportMobile.Presenter.Framework.Converter"
           x:Class="BodyReportMobile.Presenter.Framework.Controls.ListViewCell">
 	<StackLayout x:Name="stackLayout" BackgroundColor="White" Orientation="Horizontal" Padding="5">
-
+    <StackLayout.Resources>
+      <ResourceDictionary>
+        <converter:StringToImageConverter x:Key="stringToImageConverter" />
+      </ResourceDictionary>
+    </StackLayout.Resources>
 		 <StackLayout.Triggers>
 	        <DataTrigger TargetType="StackLayout"
 	                     Binding="{Binding Path=IsSelected}"
@@ -12,7 +17,7 @@
     	  </StackLayout.Triggers>
 
 
-		<Image x:Name="image" Source="{Binding Image}" WidthRequest="40" HeightRequest="40">
+		<Image x:Name="image" Source="{Binding Image, Converter={StaticResource stringToImageConverter}}" WidthRequest="40" HeightRequest="40">
 		 	<Image.Triggers>
 	        <DataTrigger TargetType="Image"
 	                     Binding="{Binding Path=Image}"

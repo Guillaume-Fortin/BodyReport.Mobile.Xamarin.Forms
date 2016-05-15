@@ -1,12 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converter="clr-namespace:BodyReportMobile.Presenter.Framework.Converter"
              xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages"
              xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
              x:Class="BodyReportMobile.Presenter.Pages.TrainingDayPage"
              x:Name="trainingDayPage"
              Title="{Binding TitleLabel}">
 
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <converter:StringToImageConverter x:Key="stringToImageConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+  
   <ContentPage.ToolbarItems>
     <ToolbarItem Name="CreateTrainingDayToolbarItem" Text="{Binding BindingContext.CreateTrainingLabel, Source={x:Reference trainingDayPage}}" Command="{Binding CreateTrainingDayCommand}" Order="Primary" Priority="0" />
     <!--ToolbarItem Name="TrainingModeToolbarItem" Text="{Binding TrainingModeLabel}" Command="{Binding TrainingModeCommand}" Order="Secondary" Priority="0" /-->
@@ -16,7 +23,7 @@
     <Grid>
       <AbsoluteLayout>
         <ActivityIndicator AbsoluteLayout.LayoutFlags="PositionProportional"
-                           AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1" IsRunning="{Binding ActionIsInProgress}" IsVisible="{Binding ActionIsInProgess}" Color="Red" />
+                           AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1" IsRunning="{Binding ActionIsInProgress}" IsVisible="{Binding ActionIsInProgress}" Color="Red" />
       </AbsoluteLayout>
       <ListView x:Name="listView" ItemsSource="{Binding GroupedTrainingExercises}"
                 GroupDisplayBinding="{Binding LongName}"
@@ -44,7 +51,8 @@
           <DataTemplate>
             <ViewCell>
               <StackLayout Orientation="Horizontal" Margin="4">
-                <Image Source="{Binding Image}" VerticalOptions="Center" HorizontalOptions="Start" Aspect="Fill" WidthRequest="100" HeightRequest="100"/>
+                <Image Source="{Binding Image, Converter={StaticResource stringToImageConverter}}"
+                       VerticalOptions="Center" HorizontalOptions="Start" Aspect="Fill" WidthRequest="100" HeightRequest="100"/>
                 <StackLayout Orientation="Vertical" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
                 
                   <Grid VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">

@@ -47,11 +47,11 @@
        IsVisible="{Binding Path=IsCheckedVisible, Mode=TwoWay, Source={x:Reference touchViewCell}}" />
     
     <Image x:Name="LogoImage" 
-           Source="{Binding Path=Image, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+           Source="{Binding Path=Image, Mode=OneWay, Source={x:Reference touchViewCell}, Converter={StaticResource stringToImageConverter}}"
            WidthRequest="{Binding Path=ImageWidthRequest, Mode=TwoWay, Source={x:Reference touchViewCell}}"
            HeightRequest="{Binding Path=ImageHeightRequest, Mode=TwoWay, Source={x:Reference touchViewCell}}"
-	     Grid.Row="0" Grid.Column="1" HorizontalOptions="Start" VerticalOptions="Center"
-	     IsVisible="True" />
+	         Grid.Row="0" Grid.Column="1" HorizontalOptions="Start" VerticalOptions="Center"
+	         IsVisible="True" />
 
     <Label x:Name="TitleLabel"
            Text="{Binding Path=Title, Mode=TwoWay, Source={x:Reference touchViewCell}}"
@@ -88,7 +88,7 @@
              HorizontalOptions="FillAndExpand" VerticalOptions="End" FontSize="12">
         <Label.Triggers>
           <DataTrigger TargetType="Label"
-                       Binding="{Binding Path=Text.Length}"
+                       Binding="{Binding Path=Text.Length, Source={x:Reference DescriptionLabel}}"
                        Value="0">
             <Setter Property="IsVisible" Value="False" />
             <Setter Property="WidthRequest" Value="0" />
