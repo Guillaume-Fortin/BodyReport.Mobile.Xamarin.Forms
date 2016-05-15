@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Threading;
+using System.Diagnostics;
 
 namespace BodyReportMobile.Core.Framework
 {
+    [DebuggerStepThrough]
     public class AppMessenger
     {
         private readonly object _recipientLocker = new object();
@@ -17,6 +19,7 @@ namespace BodyReportMobile.Core.Framework
             public int Token = 0;
         }
 
+        [DebuggerStepThrough]
         private class WeakFuntion<T, TResult> : WeakAction
         {
             public Func<T, TResult> Func = null;
@@ -44,6 +47,8 @@ namespace BodyReportMobile.Core.Framework
                     return default(TResult);
             }
         }
+
+        [DebuggerStepThrough]
         private class WeakAction<T> : WeakAction
         {
             public Action<T> Action = null;
