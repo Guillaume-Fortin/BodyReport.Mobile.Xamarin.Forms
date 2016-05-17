@@ -104,6 +104,30 @@ namespace BodyReport.iOS.Framework
             }
             return false;
         }
+
+        public bool CopyFile(string sourceFileName, string destFileName, bool overrideDestFile = true)
+        {
+            try
+            {
+                if (File.Exists(sourceFileName))
+                {
+                    if (File.Exists(destFileName))
+                    {
+                        if (!overrideDestFile)
+                            return false;
+
+                        File.Delete(destFileName);
+                    }
+                        
+                    File.Copy(sourceFileName, destFileName);
+                    return true;
+                }
+            }
+            catch
+            {
+            }
+            return false;
+        }
     }
 }
 

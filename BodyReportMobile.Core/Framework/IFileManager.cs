@@ -19,6 +19,7 @@ namespace BodyReportMobile.Core.Framework
         bool DeleteFile(string filePath);
         bool DirectoryExist(string path);
         bool CreateDirectory(string path);
+        bool CopyFile(string sourceFileName, string destFileName, bool overrideDestFile = true);
     }
 }
 

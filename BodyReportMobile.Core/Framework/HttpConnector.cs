@@ -287,6 +287,52 @@ namespace BodyReportMobile.Core.Framework
             return result;
         }
 
+        public async Task<string> UpLoadFileAsync(string relativeUrl, string filePath, string contentType)
+        {
+            try
+            {
+                var fileManager = Resolver.Resolve<IFileManager>();
+                MultipartFormDataContent form = new MultipartFormDataContent();
+                /*HttpContent content = new StringContent("fileToUpload");
+                form.Add(content, "imageFile");*/
+
+                using (var stream = fileManager.OpenFile(filePath))
+                {
+                    HttpContent content = new StreamContent(stream);
+                    content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+                    content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                    {
+                        Name = "imageFile",
+                        FileName = Path.GetFileName(filePath),
+                    };
+                    form.Add(content);
+
+                    var httpResponse = await _httpClient.PostAsync(relativeUrl, form);
+
+                    if (httpResponse != null)
+                    {
+                        if (httpResponse.StatusCode == HttpStatusCode.OK)
+                        {
+                            string resultRelativeUrl = httpResponse.Content.ReadAsStringAsync().Result;
+                            return resultRelativeUrl;
+                        }
+                        else
+                            throw new HttpException((int)httpResponse.StatusCode, "error");
+                    }
+                }
+
+            }
+            catch (TaskCanceledException timeoutException)
+            {
+                throw new HttpException("Timeout", timeoutException);
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
+            return null;
+        }
+
         public async Task<bool> DownloadFileAsync(string relativeUrl, string filePath, bool anonymousCalling=false)
         {
             bool result = false;

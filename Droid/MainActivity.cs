@@ -47,6 +47,7 @@ namespace BodyReport.Droid
             resolverContainer.Register<IFileManager, FileManager>();
             resolverContainer.Register<ISQLite, SQLite_Droid>();
             resolverContainer.Register<ILogger, Logger>();
+            resolverContainer.Register<IMedia, Media>();
             resolverContainer.Register(UserDialogs.Instance);
         }
         

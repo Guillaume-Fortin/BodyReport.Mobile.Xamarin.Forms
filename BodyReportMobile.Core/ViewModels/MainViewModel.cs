@@ -14,6 +14,8 @@ using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Data;
 using System.IO;
 using Acr.UserDialogs;
+using Plugin.Media;
+using Plugin.Media.Abstractions;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -31,11 +33,8 @@ namespace BodyReportMobile.Core.ViewModels
             get { return _userProfilImage; }
             set
             {
-                if (value != _userProfilImage)
-                {
-                    _userProfilImage = value;
-                    OnPropertyChanged();
-                }
+                _userProfilImage = value;
+                OnPropertyChanged();
             }
         }
 
@@ -55,12 +54,14 @@ namespace BodyReportMobile.Core.ViewModels
 
 		private SQLiteConnection _dbContext;
         private IFileManager _fileManager;
+        private IUserDialogs _userDialog;
         private string _userProfilLocalPath;
 
         public MainViewModel() : base()
         {
 			_dbContext = Resolver.Resolve<ISQLite> ().GetConnection ();
             _fileManager = Resolver.Resolve<IFileManager>();
+            _userDialog = Resolver.Resolve<IUserDialogs>();
             ShowDelayInMs = 0;
 
             _userProfilLocalPath = Path.Combine(_fileManager.GetDocumentPath(), "userprofil");
@@ -82,6 +83,7 @@ namespace BodyReportMobile.Core.ViewModels
 
                     LanguageViewModel.ReloadApplicationLanguage();
                     InitTranslation(); //Reload for language
+                    DisplayUserProfil();
                     
                     await ManageUserConnectionAsync();
 
@@ -98,8 +100,7 @@ namespace BodyReportMobile.Core.ViewModels
             }
             catch(Exception except)
             {
-                var userDialog = Resolver.Resolve<IUserDialogs>();
-                await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+                await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
         }
 
@@ -124,14 +125,20 @@ namespace BodyReportMobile.Core.ViewModels
 
         private string GetUserImageLocalPath()
         {
-            if (string.IsNullOrWhiteSpace(UserData.Instance.UserInfo.UserId))
+            if (UserData.Instance.UserInfo != null && !string.IsNullOrWhiteSpace(UserData.Instance.UserInfo.UserId) &&
+                string.IsNullOrWhiteSpace(UserData.Instance.UserInfo.UserId))
                 return null;
             return Path.Combine(_userProfilLocalPath, UserData.Instance.UserInfo.UserId + ".png");
         }
 
         private void DisplayUserProfil()
         {
-            UserProfilImage = GetUserImageLocalPath();
+            string imagePath = GetUserImageLocalPath();
+
+            if (!string.IsNullOrWhiteSpace(imagePath) && _fileManager.FileExist(imagePath))
+                UserProfilImage = imagePath;
+            else
+                UserProfilImage = "logo.png";
         }
 
         private async Task ManageUserConnectionAsync()
@@ -228,7 +235,67 @@ namespace BodyReportMobile.Core.ViewModels
             {
             }
 		}
-        
+
+        private async Task SelectUserPictureActionAsync()
+        {
+            try
+            {
+                string imagePath = GetUserImageLocalPath();
+
+                if (string.IsNullOrWhiteSpace(imagePath))
+                    return;
+
+                MediaFile mediaFile = null;
+                await CrossMedia.Current.Initialize();
+
+                if (await _userDialog.ConfirmAsync(Translation.Get(TRS.DO_YOU_WANT_TAKE_PHOTO_WITH_CAMERA_PI), Translation.Get(TRS.QUESTION), Translation.Get(TRS.YES), Translation.Get(TRS.NO)))
+                {
+                    // take a photo
+                    if (!CrossMedia.Current.IsCameraAvailable)
+                    {
+                        await _userDialog.AlertAsync(string.Format(Translation.Get(TRS.P0_ISNT_SUPPORTED_ON_THIS_DEVICE), Translation.Get(TRS.TAKE_PHOTO)), Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+                        return;
+                    }
+                    StoreCameraMediaOptions cameraOption = new StoreCameraMediaOptions()
+                    {
+                        Directory = "BodyReport",
+                        Name = "tempPhoto.jpg",
+                        SaveToAlbum = true
+                    };
+                    mediaFile = await CrossMedia.Current.TakePhotoAsync(cameraOption);
+                }
+                else
+                {
+                    if (!CrossMedia.Current.IsTakePhotoSupported)
+                    {
+                        await _userDialog.AlertAsync(string.Format(Translation.Get(TRS.P0_ISNT_SUPPORTED_ON_THIS_DEVICE), Translation.Get(TRS.SELECT_PICTURE)), Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+                        return;
+                    }
+                    mediaFile = await CrossMedia.Current.PickPhotoAsync();
+                }
+
+                if (mediaFile == null || string.IsNullOrWhiteSpace(mediaFile.Path))
+                    return;
+
+                BodyReportMobile.Core.Framework.IMedia.Instance.ResizeImage(mediaFile.Path, mediaFile.Path, 400);
+                
+                //Upload on server
+                string uploadedRelativeUrl = await UserProfileWebService.UploadUserProfilePictureAsync(mediaFile.Path);
+
+                if(string.IsNullOrWhiteSpace(mediaFile.Path))
+                    await _userDialog.AlertAsync(string.Format(Translation.Get(TRS.IMPOSSIBLE_TO_UPDATE_P0), Translation.Get(TRS.IMAGE)), Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+                else //Copy file on local
+                {
+                    _fileManager.CopyFile(mediaFile.Path, imagePath);
+                    DisplayUserProfil();
+                }
+            }
+            catch(Exception except)
+            {
+                ILogger.Instance.Error("Can't take user profile image", except);
+            }
+        }
+
         #region Command
 
         private ICommand _goToTrainingJournalCommand = null;
@@ -262,6 +329,23 @@ namespace BodyReportMobile.Core.ViewModels
                 }
 
                 return _goToChangeLanguageCommand;
+            }
+        }
+
+        private ICommand _selectUserPictureCommand = null;
+        public ICommand SelectUserPictureCommand
+        {
+            get
+            {
+                if (_selectUserPictureCommand == null)
+                {
+                    _selectUserPictureCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await SelectUserPictureActionAsync();
+                    });
+                }
+
+                return _selectUserPictureCommand;
             }
         }
 
