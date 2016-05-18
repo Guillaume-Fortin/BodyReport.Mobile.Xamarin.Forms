@@ -200,6 +200,8 @@ namespace BodyReportMobile.Core.Framework
             }
             catch (Exception exception)
             {
+                if (exception is HttpException || exception is WebApiException)
+                    throw exception;
                 throw new HttpException("Can't connect to server", exception);
             }
 
@@ -260,7 +262,9 @@ namespace BodyReportMobile.Core.Framework
             }
             catch (Exception exception)
             {
-                throw exception;
+                if (exception is HttpException || exception is WebApiException)
+                    throw exception;
+                throw new HttpException("Can't connect to server", exception);
             }
 
             return result;
@@ -328,7 +332,9 @@ namespace BodyReportMobile.Core.Framework
             }
             catch (Exception exception)
             {
-                throw exception;
+                if (exception is HttpException || exception is WebApiException)
+                    throw exception;
+                throw new HttpException("Can't connect to server", exception);
             }
             return null;
         }
