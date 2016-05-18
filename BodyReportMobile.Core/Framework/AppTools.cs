@@ -23,7 +23,12 @@ namespace BodyReportMobile.Core.Framework
         private static AppTools _instance = null;
 
         /// <summary>
-        /// ./bodyexercises/
+        /// ./temp/
+        /// </summary>
+        public static string TempDirectory { get; set; }
+
+        /// <summary>
+        /// ./images/
         /// </summary>
         public static string ImagesDirectory { get; set; }
 
@@ -54,6 +59,10 @@ namespace BodyReportMobile.Core.Framework
             {
                 var fileManager = Resolver.Resolve<IFileManager>();
                 string documentPath = fileManager.GetDocumentPath();
+
+                TempDirectory = Path.Combine(documentPath, "temp");
+                if (!fileManager.DirectoryExist(TempDirectory))
+                    fileManager.CreateDirectory(TempDirectory);
 
                 ImagesDirectory = Path.Combine(documentPath, "images");
                 if(!fileManager.DirectoryExist(ImagesDirectory))

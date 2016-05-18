@@ -22,5 +22,12 @@ namespace BodyReportMobile.Core.WebServices
             }
             return await HttpConnector.Instance.UpLoadFileAsync("/Api/UserProfile/UploadProfileImage", filePath, contentType);
         }
+
+        public static async Task<string> GetUserProfileImageRelativeUrlAsync(string userId)
+        {
+            Dictionary<string, string> datas = new Dictionary<string, string>();
+            datas.Add("userId", userId);
+            return await HttpConnector.Instance.GetAsync<string>("api/UserProfile/GetUserProfileImageRelativeUrl", datas);
+        }
     }
 }

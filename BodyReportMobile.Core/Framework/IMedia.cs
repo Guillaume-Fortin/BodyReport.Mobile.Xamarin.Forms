@@ -24,6 +24,6 @@ namespace BodyReportMobile.Core.Framework
             }
         }
 
-        public abstract void ResizeImage(string imagePath, string resizeImagePath, int maxSize);
+        public abstract void CompressImageAsPng(string imagePath, string compressedImagePath, int? maxSize);
     }
 }

@@ -45,6 +45,7 @@ namespace BodyReport.iOS
             resolverContainer.Register<IFileManager, FileManager>();
 			resolverContainer.Register<ILogger, Logger>();
             resolverContainer.Register<ISQLite, SQLite_iOS>();
+            resolverContainer.Register<IMedia, Media>();
             resolverContainer.Register(UserDialogs.Instance);
         }
     }

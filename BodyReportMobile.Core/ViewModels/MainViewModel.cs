@@ -16,6 +16,7 @@ using System.IO;
 using Acr.UserDialogs;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
+using Message.WebApi;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -167,9 +168,20 @@ namespace BodyReportMobile.Core.ViewModels
 			{
                 // download user image
                 string localUserImagePath = GetUserImageLocalPath();
-                string urlImage = string.Format("{0}images/userprofil/{1}.png", HttpConnector.Instance.BaseUrl, UserData.Instance.UserInfo.UserId);
-                if (await HttpConnector.Instance.DownloadFileAsync(urlImage, GetUserImageLocalPath()))
-                    DisplayUserProfil();
+                if (!string.IsNullOrWhiteSpace(localUserImagePath))
+                {
+                    string urlImage = await UserProfileWebService.GetUserProfileImageRelativeUrlAsync(UserData.Instance.UserInfo.UserId);
+                    if(string.IsNullOrEmpty(urlImage))
+                    {
+                        if (_fileManager.FileExist(localUserImagePath))
+                        {
+                            _fileManager.DeleteFile(localUserImagePath);
+                            DisplayUserProfil();
+                        }
+                    }
+                    else if (await HttpConnector.Instance.DownloadFileAsync(urlImage, GetUserImageLocalPath()))
+                        DisplayUserProfil();
+                }
                 
                 //Synchronise Web data to local database
                 var muscleList = await MuscleWebService.FindMusclesAsync();
@@ -277,16 +289,21 @@ namespace BodyReportMobile.Core.ViewModels
                 if (mediaFile == null || string.IsNullOrWhiteSpace(mediaFile.Path))
                     return;
 
-                BodyReportMobile.Core.Framework.IMedia.Instance.ResizeImage(mediaFile.Path, mediaFile.Path, 400);
+                string pngImagePath = Path.Combine(AppTools.TempDirectory, UserData.Instance.UserInfo.UserId.ToString() + ".png");
+                BodyReportMobile.Core.Framework.IMedia.Instance.CompressImageAsPng(mediaFile.Path, pngImagePath, 400);
                 
                 //Upload on server
-                string uploadedRelativeUrl = await UserProfileWebService.UploadUserProfilePictureAsync(mediaFile.Path);
+                string uploadedRelativeUrl = await UserProfileWebService.UploadUserProfilePictureAsync(pngImagePath);
 
-                if(string.IsNullOrWhiteSpace(mediaFile.Path))
+                if (string.IsNullOrWhiteSpace(uploadedRelativeUrl))
+                {
+                    _fileManager.DeleteFile(pngImagePath);
                     await _userDialog.AlertAsync(string.Format(Translation.Get(TRS.IMPOSSIBLE_TO_UPDATE_P0), Translation.Get(TRS.IMAGE)), Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+                }
                 else //Copy file on local
                 {
-                    _fileManager.CopyFile(mediaFile.Path, imagePath);
+                    _fileManager.CopyFile(pngImagePath, imagePath);
+                    _fileManager.DeleteFile(pngImagePath);
                     DisplayUserProfil();
                 }
             }
