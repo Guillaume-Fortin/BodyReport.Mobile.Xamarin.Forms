@@ -26,6 +26,13 @@ namespace BodyReportMobile.Presenter.Pages
             _viewModel = viewModel;
             BindingContext = viewModel;
             RegisterEvent();
+            CreateBinding();
+        }
+
+        protected virtual void CreateBinding()
+        {
+            if(_viewModel != null)
+                this.SetBinding(ContentPage.IsBusyProperty, new Binding(path: "ActionIsInProgress", source: _viewModel.ActionIsInProgress));
         }
 
         private void RegisterEvent()

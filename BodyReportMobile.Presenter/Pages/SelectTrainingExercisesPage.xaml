@@ -17,12 +17,6 @@
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="*"/>
       </Grid.RowDefinitions-->
-      <AbsoluteLayout>
-        <ActivityIndicator Grid.RowSpan="2"
-                           AbsoluteLayout.LayoutFlags="PositionProportional"
-                           AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1" IsRunning="{Binding ActionIsInProgress}"
-                           IsVisible="{Binding ActionIsInProgress}" Color="Red" />
-      </AbsoluteLayout>
       <TableView x:Name="tableView" Grid.Row="0" Intent="Settings" HasUnevenRows="True" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
         <TableView.Root>
           <TableSection x:Name="MuscleSection" Title="{Binding AddExercisesLabel}">
