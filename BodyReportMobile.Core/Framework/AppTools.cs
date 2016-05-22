@@ -37,6 +37,11 @@ namespace BodyReportMobile.Core.Framework
         /// </summary>
         public static string BodyExercisesImagesDirectory { get; set; }
 
+        /// <summary>
+        /// ./userprofil/
+        /// </summary>
+        public static string UserProfilLocalDirectory { get; set; }
+
         private AppTools()
         {
         }
@@ -71,11 +76,22 @@ namespace BodyReportMobile.Core.Framework
                 BodyExercisesImagesDirectory = Path.Combine(ImagesDirectory, "bodyexercises");
                 if (!fileManager.DirectoryExist(BodyExercisesImagesDirectory))
                     fileManager.CreateDirectory(BodyExercisesImagesDirectory);
+                
+                UserProfilLocalDirectory = Path.Combine(documentPath, "userprofil");
+                if (!fileManager.DirectoryExist(UserProfilLocalDirectory))
+                    fileManager.CreateDirectory(UserProfilLocalDirectory);
             }
             catch(Exception except)
             {
                 ILogger.Instance.Error("Unable to init AppTools", except);
             }
+        }
+
+        public string GetUserImageLocalPath(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return null;
+            return Path.Combine(UserProfilLocalDirectory, userId + ".png");
         }
 
         public async Task CachingImageAsync<T>(T bindingObject, string urlImage, string localImagePath, CachingImageResultHandler<T> cachingImageResultEvent) where T : class

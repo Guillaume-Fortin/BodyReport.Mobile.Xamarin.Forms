@@ -82,6 +82,7 @@
     <Compile Include="ServiceManagers\BodyExerciseManager.cs" />
     <Compile Include="ServiceManagers\MuscularGroupManager.cs" />
     <Compile Include="ServiceManagers\UserInfoManager.cs" />
+    <Compile Include="ViewModels\DataSyncViewModel.cs" />
     <Compile Include="ViewModels\SelectTrainingExercisesViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="Framework\ViewModelDataCollection.cs" />

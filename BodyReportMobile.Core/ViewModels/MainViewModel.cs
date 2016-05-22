@@ -56,7 +56,6 @@ namespace BodyReportMobile.Core.ViewModels
 		private SQLiteConnection _dbContext;
         private IFileManager _fileManager;
         private IUserDialogs _userDialog;
-        private string _userProfilLocalPath;
 
         public MainViewModel() : base()
         {
@@ -64,12 +63,14 @@ namespace BodyReportMobile.Core.ViewModels
             _fileManager = Resolver.Resolve<IFileManager>();
             _userDialog = Resolver.Resolve<IUserDialogs>();
             ShowDelayInMs = 0;
-
-            _userProfilLocalPath = Path.Combine(_fileManager.GetDocumentPath(), "userprofil");
-            if (!_fileManager.DirectoryExist(_userProfilLocalPath))
-                _fileManager.CreateDirectory(_userProfilLocalPath);
         }
-        
+
+        public static async Task<bool> ShowAsync(BaseViewModel parent = null)
+        {
+            var viewModel = new MainViewModel();
+            return await ShowModalViewModelAsync(viewModel, parent);
+        }
+
         protected override async Task ShowAsync()
         {
             try
@@ -80,15 +81,10 @@ namespace BodyReportMobile.Core.ViewModels
                 {
                     ActionIsInProgress = true;
 
-                    AppTools.Instance.Init();
+                    var dataSyncViewModel = new DataSyncViewModel();
+                    await DataSyncViewModel.ShowModalViewModelAsync(dataSyncViewModel, this);
 
-                    LanguageViewModel.ReloadApplicationLanguage();
-                    InitTranslation(); //Reload for language
                     DisplayUserProfil();
-                    
-                    await ManageUserConnectionAsync();
-
-                    await SynchronizeWebDataAsync();
                 }
                 catch(Exception except)
                 {
@@ -124,99 +120,15 @@ namespace BodyReportMobile.Core.ViewModels
 			return string.Format ("flag_{0}.png", Translation.GetLangExt (langType)).Replace('-', '_');
 		}
 
-        private string GetUserImageLocalPath()
-        {
-            if (UserData.Instance.UserInfo != null && !string.IsNullOrWhiteSpace(UserData.Instance.UserInfo.UserId) &&
-                string.IsNullOrWhiteSpace(UserData.Instance.UserInfo.UserId))
-                return null;
-            return Path.Combine(_userProfilLocalPath, UserData.Instance.UserInfo.UserId + ".png");
-        }
-
         private void DisplayUserProfil()
         {
-            string imagePath = GetUserImageLocalPath();
+            string imagePath = UserData.Instance.UserInfo == null ?  null : AppTools.Instance.GetUserImageLocalPath(UserData.Instance.UserInfo.UserId);
 
             if (!string.IsNullOrWhiteSpace(imagePath) && _fileManager.FileExist(imagePath))
                 UserProfilImage = imagePath;
             else
                 UserProfilImage = "logo.png";
         }
-
-        private async Task ManageUserConnectionAsync()
-        {
-            try
-            {
-                if (LoginManager.Instance.Init())
-                {
-                    DisplayUserProfil();
-                    await LoginManager.Instance.ConnectUserAsync(false); // no need treat response, just for connect user
-                }
-                else
-                {
-                    await LoginViewModel.DisplayViewModelAsync();
-                    InitTranslation(); // Security if user change language
-                }
-            }
-            catch //(Exception except)
-            {
-            }
-        }
-
-        private async Task SynchronizeWebDataAsync()
-		{
-            try
-			{
-                // download user image
-                string localUserImagePath = GetUserImageLocalPath();
-                if (!string.IsNullOrWhiteSpace(localUserImagePath))
-                {
-                    string urlImage = await UserProfileWebService.GetUserProfileImageRelativeUrlAsync(UserData.Instance.UserInfo.UserId);
-                    if(string.IsNullOrEmpty(urlImage))
-                    {
-                        if (_fileManager.FileExist(localUserImagePath))
-                        {
-                            _fileManager.DeleteFile(localUserImagePath);
-                            DisplayUserProfil();
-                        }
-                    }
-                    else if (await HttpConnector.Instance.DownloadFileAsync(urlImage, GetUserImageLocalPath()))
-                        DisplayUserProfil();
-                }
-                
-                //Synchronise Web data to local database
-                var muscleList = await MuscleWebService.FindMusclesAsync();
-                if(muscleList != null)
-                {
-				    var muscleManager = new MuscleManager(_dbContext);
-				    muscleManager.UpdateMuscleList(muscleList);
-                }
-
-                var muscularGroupList = await MuscularGroupWebService.FindMuscularGroupsAsync();
-                if (muscularGroupList != null)
-                {
-                    var muscularGroupManager = new MuscularGroupManager(_dbContext);
-                    muscularGroupManager.UpdateMuscularGroupList(muscularGroupList);
-                }
-
-                var bodyExerciseList = await BodyExerciseWebService.FindBodyExercisesAsync();
-                if (bodyExerciseList != null)
-                {
-                    var bodyExerciseManager = new BodyExerciseManager(_dbContext);
-                    bodyExerciseManager.UpdateBodyExerciseList(bodyExerciseList);
-                }
-
-                var translationList = await TranslationWebService.FindTranslationsAsync();
-                if (translationList != null)
-                {
-                    var translationManager = new TranslationManager(_dbContext);
-                    translationManager.UpdateTranslationList(translationList);
-                }
-			}
-			catch (Exception except)
-			{
-                ILogger.Instance.Error("Unable to synchronize web data for MainViewModel", except);
-            }
-		}
 
         private async Task GoToTrainingJournalActionAsync()
 		{
@@ -252,8 +164,8 @@ namespace BodyReportMobile.Core.ViewModels
         {
             try
             {
-                string imagePath = GetUserImageLocalPath();
-
+                string imagePath = UserData.Instance.UserInfo == null ? null : AppTools.Instance.GetUserImageLocalPath(UserData.Instance.UserInfo.UserId);
+                
                 if (string.IsNullOrWhiteSpace(imagePath))
                     return;
 

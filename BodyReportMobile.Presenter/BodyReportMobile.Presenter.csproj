@@ -65,6 +65,9 @@
     <Compile Include="Pages\CreateTrainingDayPage.xaml.cs">
       <DependentUpon>CreateTrainingDayPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\DataSync.xaml.cs">
+      <DependentUpon>DataSync.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\TrainingDayPage.xaml.cs">
       <DependentUpon>TrainingDayPage.xaml</DependentUpon>
     </Compile>
@@ -221,5 +224,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\DataSync.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
