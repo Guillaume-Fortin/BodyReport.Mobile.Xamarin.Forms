@@ -7,6 +7,7 @@ using Message;
 using SQLite.Net;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -107,7 +108,7 @@ namespace BodyReportMobile.Core.ViewModels
         private void SynchronizeProgress(double maxCount, double currentCount)
         {
             maxCount = Math.Max(maxCount, currentCount);
-            SynchronizationProgress = currentCount == 0 ? 0 : Math.Min(1, maxCount / currentCount);
+            SynchronizationProgress = currentCount == 0 ? 0 : Math.Min(1, currentCount / maxCount);
         }
 
         private async Task SynchronizeWebData()
@@ -165,7 +166,39 @@ namespace BodyReportMobile.Core.ViewModels
                 {
                     var bodyExerciseManager = new BodyExerciseManager(_dbContext);
                     bodyExerciseManager.UpdateBodyExerciseList(bodyExerciseList);
+
+                    //Synchronize body exercises images
+                    maxSynchronizeCount += bodyExerciseList.Count;
+                    SynchronizeProgress(maxSynchronizeCount, synchronizeCount);
+                    SynchronizationLabel = string.Format("{0} : {1}", Translation.Get(TRS.SYNCHRONIZE_DATAS), Translation.Get(TRS.IMAGE));
+                    List<Task> taskList = null;
+                    string urlImage, localImagePath;
+                    string urlImages = HttpConnector.Instance.BaseUrl + "images/bodyexercises/{0}";
+                    foreach (var bodyExercise in bodyExerciseList)
+                    {
+                        if (taskList == null)
+                            taskList = new List<Task>();
+                        
+                        if (string.IsNullOrWhiteSpace(bodyExercise.ImageName))
+                            bodyExercise.ImageName = bodyExercise.Id.ToString() + ".png";
+                        urlImage = string.Format(urlImages, bodyExercise.ImageName);
+                        localImagePath = Path.Combine(AppTools.BodyExercisesImagesDirectory, bodyExercise.ImageName);
+                        var t = AppTools.Instance.CachingImageAsync<BodyExercise>(bodyExercise, urlImage, localImagePath, null);
+                        if (t != null)
+                            taskList.Add(t);
+                    }
+
+                    if (taskList != null)
+                    {
+                        foreach (Task task in taskList)
+                        {
+                            await task;
+                            SynchronizeProgress(maxSynchronizeCount, synchronizeCount);
+                            synchronizeCount++;
+                        }
+                    }
                 }
+
 
                 //Synchronize Transalations
                 SynchronizationLabel = string.Format("{0} : {1}", Translation.Get(TRS.SYNCHRONIZE_DATAS), Translation.Get(TRS.TRANSLATIONS));
