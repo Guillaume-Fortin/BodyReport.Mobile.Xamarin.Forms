@@ -25,11 +25,11 @@
 	          <DataTemplate>
 	        	  <TextCell x:Name="textCell" Text="{Binding Week}" Detail="{Binding Date}" >
 	        	    <TextCell.ContextActions>
-		                <MenuItem Text="Copy"
+		                <MenuItem Text="{Binding CopyLabel}"
                           BindingContext="{Binding Source={x:Reference listView}, Path=BindingContext}"  
 		            		      Command="{Binding CopyCommand}"
                           CommandParameter="{Binding Source={x:Reference textCell}, Path=BindingContext}"/>
-		                <MenuItem Text="Delete" IsDestructive="True"
+		                <MenuItem Text="{Binding DeleteLabel}" IsDestructive="True"
                           BindingContext="{Binding Source={x:Reference listView}, Path=BindingContext}" 
 		            		      Command="{Binding DeleteCommand}"
                           CommandParameter="{Binding Source={x:Reference textCell}, Path=BindingContext}"/>

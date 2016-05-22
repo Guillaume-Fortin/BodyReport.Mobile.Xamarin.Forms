@@ -45,7 +45,18 @@
         </ListView.GroupHeaderTemplate>
         <ListView.ItemTemplate>
           <DataTemplate>
-            <ViewCell>
+            <ViewCell x:Name="viewCell">
+              <ViewCell.ContextActions>
+                <MenuItem Text="{Binding EditLabel}"
+                      BindingContext="{Binding Source={x:Reference listView}, Path=BindingContext}"
+                      Command="{Binding EditCommand}"
+                      CommandParameter="{Binding Source={x:Reference viewCell}, Path=BindingContext}"/>
+                <MenuItem Text="{Binding DeleteLabel}" IsDestructive="True"
+                      BindingContext="{Binding Source={x:Reference listView}, Path=BindingContext}"
+                      Command="{Binding DeleteCommand}"
+                      CommandParameter="{Binding Source={x:Reference viewCell}, Path=BindingContext}"/>
+              </ViewCell.ContextActions>
+              
               <StackLayout Orientation="Horizontal" Margin="4">
                 <Image Source="{Binding Image, Converter={StaticResource stringToImageConverter}}"
                        VerticalOptions="Center" HorizontalOptions="Start" Aspect="Fill" WidthRequest="100" HeightRequest="100"/>

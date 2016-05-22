@@ -242,9 +242,6 @@ namespace BodyReportMobile.Core.ViewModels
             get { return _actionIsInProgress; }
             set
             {
-                if (_actionIsInProgress == value)
-                    return;
-
                 _actionIsInProgress = value;
                 OnPropertyChanged();
             }

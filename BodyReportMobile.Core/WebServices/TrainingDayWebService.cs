@@ -41,5 +41,13 @@ namespace BodyReportMobile.Core.WebServices
             datas.Add("manageExercise", manageExercise.ToString());
             return await HttpConnector.Instance.GetAsync<TrainingDay>("Api/TrainingDays/Get", datas);
         }
+
+        internal static async Task<TrainingDay> UpdateTrainingDayAsync(TrainingDay trainingDay)
+        {
+            if (trainingDay == null)
+                return null;
+
+            return await HttpConnector.Instance.PostAsync<TrainingDay, TrainingDay>("Api/TrainingDays/Update", trainingDay);
+        }
     }
 }

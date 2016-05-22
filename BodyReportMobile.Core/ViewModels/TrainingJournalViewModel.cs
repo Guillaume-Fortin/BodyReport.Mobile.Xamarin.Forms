@@ -53,7 +53,9 @@ namespace BodyReportMobile.Core.ViewModels
 
 			TitleLabel = Translation.Get (TRS.TRAINING_JOURNAL);
 			CreateLabel = Translation.Get (TRS.CREATE);
-		}
+            CopyLabel = Translation.Get(TRS.COPY);
+            DeleteLabel = Translation.Get(TRS.DELETE);
+        }
 
         private void RetreiveLocalData()
         {
@@ -265,6 +267,27 @@ namespace BodyReportMobile.Core.ViewModels
 			}
 		}
 
+        private string _copyLabel;
+        public string CopyLabel
+        {
+            get { return _copyLabel; }
+            set
+            {
+                _copyLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _deleteLabel;
+        public string DeleteLabel
+        {
+            get { return _deleteLabel; }
+            set
+            {
+                _deleteLabel = value;
+                OnPropertyChanged();
+            }
+        }
 
         #endregion
 

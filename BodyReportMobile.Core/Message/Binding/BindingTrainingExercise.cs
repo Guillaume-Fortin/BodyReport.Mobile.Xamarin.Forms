@@ -10,6 +10,7 @@ namespace BodyReportMobile.Core.Message.Binding
 {
     public class BindingTrainingExercise : NotifyPropertyChanged
     {
+        public TrainingExercise TrainingExercise { get; set; }
         public int BodyExerciseId { get; set; }
 
         private string _image;

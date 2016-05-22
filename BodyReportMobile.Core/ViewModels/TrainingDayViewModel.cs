@@ -134,6 +134,8 @@ namespace BodyReportMobile.Core.ViewModels
 			CreateTrainingLabel = Translation.Get(TRS.CREATE);
             TrainingModeLabel = "Training Mode";
             AddExerciseLabel = Translation.Get(TRS.ADD_EXERCISES);
+            EditLabel = Translation.Get(TRS.EDIT);
+            DeleteLabel = Translation.Get(TRS.DELETE);
         }
 
         private void PopulateBindingTrainingDay(TrainingDay trainingDay)
@@ -179,6 +181,7 @@ namespace BodyReportMobile.Core.ViewModels
                     var bodyExercise = _bodyExerciseList.Where(m => m.Id == trainingExercise.BodyExerciseId).FirstOrDefault();
                     bindingTrainingExercise = new BindingTrainingExercise()
                     {
+                        TrainingExercise = trainingExercise,
                         BodyExerciseId = trainingExercise.BodyExerciseId,
                         RestTime = trainingExercise.RestTime
                     };
@@ -336,6 +339,7 @@ namespace BodyReportMobile.Core.ViewModels
                                 WeekOfYear = trainingDay.WeekOfYear,
                                 DayOfWeek = trainingDay.DayOfWeek,
                                 UserId = trainingDay.UserId,
+                                TrainingDayId = trainingDay.TrainingDayId,
                                 BodyExerciseId = bodyExercise.Id,
                                 Id = nextIdTrainingExercise
                             };
@@ -344,14 +348,61 @@ namespace BodyReportMobile.Core.ViewModels
                         }
                         //Binding trainingDay for refresh view
                         await SynchronizeDataAsync(); // KAKA
-                        //TODO synchronise with websevice
-                        //PopulateBindingTrainingDay(trainingDay);
+                        //synchronise with webservice
+                        await TrainingDayWebService.UpdateTrainingDayAsync(trainingDay);
+                        //Todo replace trainingDay by http response trainingDay (by security)
                     }
                 }
             }
             catch (Exception except)
             {
                 ILogger.Instance.Error("Unable to add exercise", except);
+                await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+            }
+        }
+
+        private async Task EditActionAsync(BindingTrainingExercise bindingTrainingExercise)
+        {
+           // if (bindingTrainingExercise == null)
+             //   return;
+            throw new NotImplementedException();
+        }
+
+        private async Task DeleteActionAsync(BindingTrainingExercise bindingTrainingExercise)
+        {
+            if (bindingTrainingExercise == null)
+                return;
+
+            try
+            {
+                if (await _userDialog.ConfirmAsync(string.Format(Translation.Get(TRS.ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI), Translation.Get(TRS.TRAINING_EXERCISE)),
+                                                   Translation.Get(TRS.QUESTION), Translation.Get(TRS.YES), Translation.Get(TRS.NO)))
+                {
+                    // Delete TrainingExercise on server
+                    await TrainingExerciseWebService.DeleteTrainingExerciseAsync(bindingTrainingExercise.TrainingExercise);
+
+                    // Delete TrainingExercise on local database (Futur use)
+                    var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
+                    trainingExerciseManager.DeleteTrainingExercise(bindingTrainingExercise.TrainingExercise);
+
+                    //Refresh binding
+                    if(GroupedTrainingExercises != null)
+                    {
+                        foreach(var gte in GroupedTrainingExercises)
+                        {
+                            if (gte.Contains(bindingTrainingExercise))
+                            {
+                                gte.Remove(bindingTrainingExercise);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception except)
+            {
+                ILogger.Instance.Error("Unable to add exercise", except);
+                await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
         }
 
@@ -390,6 +441,28 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
+        private string _editLabel;
+        public string EditLabel
+        {
+            get { return _editLabel; }
+            set
+            {
+                _editLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _deleteLabel;
+        public string DeleteLabel
+        {
+            get { return _deleteLabel; }
+            set
+            {
+                _deleteLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Command
@@ -423,6 +496,38 @@ namespace BodyReportMobile.Core.ViewModels
                     });
                 }
                 return _addExerciseCommand;
+            }
+        }
+
+        private ICommand _editCommand = null;
+        public ICommand EditCommand
+        {
+            get
+            {
+                if (_editCommand == null)
+                {
+                    _editCommand = new ViewModelCommandAsync(this, async (bindingTrainingExerciseObject) =>
+                    {
+                        await EditActionAsync(bindingTrainingExerciseObject as BindingTrainingExercise);
+                    });
+                }
+                return _editCommand;
+            }
+        }
+
+        private ICommand _deleteCommand = null;
+        public ICommand DeleteCommand
+        {
+            get
+            {
+                if (_deleteCommand == null)
+                {
+                    _deleteCommand = new ViewModelCommandAsync(this, async (bindingTrainingExerciseObject) =>
+                    {
+                        await DeleteActionAsync(bindingTrainingExerciseObject as BindingTrainingExercise);
+                    });
+                }
+                return _deleteCommand;
             }
         }
 
