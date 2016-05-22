@@ -5,7 +5,7 @@
              xmlns:converter="clr-namespace:BodyReportMobile.Presenter.Framework.Converter"
              xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
              x:Class="BodyReportMobile.Presenter.Pages.CopyTrainingWeekPage"
-             Title="{Binding TitleLabel}" IsBusy="{Binding ActionIsInProgress}">
+             Title="{Binding TitleLabel}">
 
   <ContentPage.Resources>
     <ResourceDictionary>
