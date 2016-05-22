@@ -92,6 +92,8 @@ namespace BodyReportMobile.Core.ViewModels
                     string langTypeStr = fileManager.ReadAllTextFile(temFile, Encoding.UTF8);
                     if (langTypeStr == LangType.fr_FR.ToString())
                         applicationLangType = LangType.fr_FR;
+                    else
+                        applicationLangType = LangType.en_US;
                 }
                 Translation.ChangeLang(applicationLangType);
             }
