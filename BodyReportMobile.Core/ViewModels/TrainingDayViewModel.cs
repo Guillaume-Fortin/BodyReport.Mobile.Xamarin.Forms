@@ -138,10 +138,10 @@ namespace BodyReportMobile.Core.ViewModels
             DeleteLabel = Translation.Get(TRS.DELETE);
         }
 
-        private void PopulateBindingTrainingDay(TrainingDay trainingDay)
+        private GenericGroupModelCollection<BindingTrainingExercise> PopulateBindingTrainingDay(TrainingDay trainingDay)
         {
             if (trainingDay == null)
-                return;
+                return null;
             
             string weightUnit = "kg", lengthUnit = "cm", unit = Translation.Get(TRS.METRIC);
 
@@ -157,16 +157,8 @@ namespace BodyReportMobile.Core.ViewModels
             string formatSetRep = "{0} x {1}";
             string beginHourStr, endHourStr;
             BindingTrainingExercise bindingTrainingExercise;
-            var localGroupedTrainingExercises = new ObservableCollection<GenericGroupModelCollection<BindingTrainingExercise>>();
-            GenericGroupModelCollection<BindingTrainingExercise> collection = null;
 
-            collection = localGroupedTrainingExercises.Where(lgte => lgte.ReferenceObject == trainingDay).FirstOrDefault();
-            if (collection == null)
-            {
-                collection = new GenericGroupModelCollection<BindingTrainingExercise>();
-                localGroupedTrainingExercises.Add(collection);
-            }
-
+            var collection = new GenericGroupModelCollection<BindingTrainingExercise>(); ;
             beginHourStr = trainingDay.BeginHour == null ? "00:00" : trainingDay.BeginHour.ToString("HH:mm");
             endHourStr = trainingDay.EndHour == null ? "00:00" : trainingDay.EndHour.ToString("HH:mm");
             collection.LongName = string.Format("{0} {1} {2} {3}", Translation.Get(TRS.FROM), beginHourStr, Translation.Get(TRS.TO), endHourStr);
@@ -202,22 +194,12 @@ namespace BodyReportMobile.Core.ViewModels
                     }
                     collection.Add(bindingTrainingExercise);
                 }
+            }
 
-                if (collection != null && collection.Count > 0)
-                {
-                    List<BindingTrainingExercise> bindingList = new List<BindingTrainingExercise>();
-                    bindingList.AddRange(collection);
-                    Task t = CachingImagesAsync(bindingList);
-                }
-            }
-            
-            foreach (var trainingExercise in localGroupedTrainingExercises)
-            {
-                GroupedTrainingExercises.Add(trainingExercise);
-            }
+            return collection;
         }
         
-        public async Task CachingImagesAsync(List<BindingTrainingExercise> bindingGenericTrainingExercises)
+        private async Task CachingImagesAsync(List<BindingTrainingExercise> bindingGenericTrainingExercises)
         {
             if (bindingGenericTrainingExercises == null)
                 return;
@@ -279,12 +261,38 @@ namespace BodyReportMobile.Core.ViewModels
                 if (_trainingDays != null)
                 {
                     foreach (var trainingDay in _trainingDays)
-                        PopulateBindingTrainingDay(trainingDay);
+                        CreateOrReplaceBindingTrainingDay(trainingDay);
                 }
             }
             catch (Exception except)
             {
                 await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+            }
+        }
+
+        private void CreateOrReplaceBindingTrainingDay(TrainingDay trainingDay)
+        {
+            var newGroupedTrainingExercises = PopulateBindingTrainingDay(trainingDay);
+            
+            var collection = GroupedTrainingExercises.Where(lgte => TrainingDayKey.IsEqualByKey((TrainingDay)lgte.ReferenceObject, trainingDay)).FirstOrDefault();
+            if (collection == null)
+            {
+                collection = new GenericGroupModelCollection<BindingTrainingExercise>();
+                GroupedTrainingExercises.Add(newGroupedTrainingExercises);
+            }
+            else
+            {
+                int indexOf = GroupedTrainingExercises.IndexOf(collection);
+                if (indexOf == -1)
+                    return;
+                GroupedTrainingExercises[indexOf] = newGroupedTrainingExercises;
+            }
+
+            if (newGroupedTrainingExercises != null && newGroupedTrainingExercises.Count > 0)
+            {
+                List<BindingTrainingExercise> bindingList = new List<BindingTrainingExercise>();
+                bindingList.AddRange(newGroupedTrainingExercises);
+                Task t = CachingImagesAsync(bindingList);
             }
         }
 
@@ -306,7 +314,7 @@ namespace BodyReportMobile.Core.ViewModels
                     {
                         _trainingDays.Add(newTrainingDay);
                         //Binding trainingDay for refresh view 
-                        PopulateBindingTrainingDay(newTrainingDay);
+                        CreateOrReplaceBindingTrainingDay(newTrainingDay);
                     }
                 }
             }
@@ -346,11 +354,10 @@ namespace BodyReportMobile.Core.ViewModels
                             trainingDay.TrainingExercises.Add(trainingExercise);
                             nextIdTrainingExercise++;
                         }
-                        //Binding trainingDay for refresh view
-                        await SynchronizeDataAsync(); // KAKA
                         //synchronise with webservice
-                        await TrainingDayWebService.UpdateTrainingDayAsync(trainingDay);
-                        //Todo replace trainingDay by http response trainingDay (by security)
+                        trainingDay = await TrainingDayWebService.UpdateTrainingDayAsync(trainingDay);
+                        //Binding trainingDay for refresh view
+                        CreateOrReplaceBindingTrainingDay(trainingDay);
                     }
                 }
             }
@@ -401,7 +408,7 @@ namespace BodyReportMobile.Core.ViewModels
             }
             catch (Exception except)
             {
-                ILogger.Instance.Error("Unable to add exercise", except);
+                ILogger.Instance.Error("Unable to delete training exercise", except);
                 await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
         }
