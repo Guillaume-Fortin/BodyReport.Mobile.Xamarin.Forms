@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ViewCell xmlns="http://xamarin.com/schemas/2014/forms"
+          xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+          xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
+          x:Name="textEntryCell"
+          x:Class="BodyReportMobile.Presenter.Framework.Controls.TextEntryCell">
+
+  <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" >
+    <Label x:Name="titleLabel" Text="{Binding Path=Label, Mode=TwoWay, Source={x:Reference textEntryCell}}"
+           WidthRequest="120" LineBreakMode="MiddleTruncation" HorizontalOptions="Start" VerticalOptions="Center"/>
+    <localcontrol:TextEntry x:Name="textEntry" HorizontalOptions="FillAndExpand" VerticalOptions="Center"
+          Text="{Binding Path=Text, Mode=TwoWay, Source={x:Reference textEntryCell}}"
+          MaxLength="{Binding Path=MaxLength, Mode=TwoWay, Source={x:Reference textEntryCell}}"/>
+  </StackLayout>
+</ViewCell>
