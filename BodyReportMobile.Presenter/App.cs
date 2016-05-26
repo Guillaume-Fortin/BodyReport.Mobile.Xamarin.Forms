@@ -48,6 +48,7 @@ namespace BodyReportMobile.Presenter
             presenterManager.AddViewDependency<TrainingWeekViewModel, TrainingWeekPage>();
             presenterManager.AddViewDependency<LoginViewModel, LoginPage>();
             presenterManager.AddViewDependency<RegisterAccountViewModel, RegisterAccountPage>();
+            presenterManager.AddViewDependency<EditUserProfileViewModel, EditUserProfilePage>();
             presenterManager.AddViewDependency<ListViewModel, ListPage>();
             presenterManager.AddViewDependency<CopyTrainingWeekViewModel, CopyTrainingWeekPage>();
             presenterManager.AddViewDependency<CreateTrainingDayViewModel, CreateTrainingDayPage>();

@@ -95,6 +95,8 @@ namespace BodyReportMobile.Core.Crud.Module
 						  Unit INTEGER,
                           ModificationDate TEXT,
 						  PRIMARY KEY (UserId, Year, WeekOfYear, DayOfWeek, TrainingDayId, TrainingExerciseId, Id))");
+            //Country table
+            dbContext.CreateTable<CountryRow>();
         }
 
         private static void MigrateTables(SQLiteConnection dbContext)
@@ -110,6 +112,7 @@ namespace BodyReportMobile.Core.Crud.Module
             //Migrate version 1 to version 2
             if(version == "1")
             {
+                dbContext.CreateTable<CountryRow>();
                 ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingWeek ADD COLUMN ModificationDate TEXT");
                 ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingDay ADD COLUMN ModificationDate TEXT");
                 ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN ModificationDate TEXT");

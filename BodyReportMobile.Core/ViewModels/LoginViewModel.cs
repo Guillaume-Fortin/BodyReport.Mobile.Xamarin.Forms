@@ -76,7 +76,9 @@ namespace BodyReportMobile.Core.ViewModels
         {
             if (await LogInUserAsync())
 			{
-				CloseViewModel();
+                //Display Edit UserInfos
+                await EditUserProfileViewModel.ShowAsync(UserData.Instance.UserInfo.UserId, true, this);
+                CloseViewModel();
 			}
 		}
 

@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages"
+             xmlns:converter="clr-namespace:BodyReportMobile.Presenter.Framework.Converter"
+             xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
+             x:Class="BodyReportMobile.Presenter.Pages.EditUserProfilePage"
+             x:Name="myPage"
+			       Title="{Binding TitleLabel}">
+
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <converter:TextToIntConverter x:Key="intConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+
+  <ContentPage.ToolbarItems>
+    <ToolbarItem Name="ValidateToolbarItem" Text="{Binding ValidateLabel}" Command="{Binding ValidateCommand}" Order="Primary" Priority="0" />
+  </ContentPage.ToolbarItems>
+  <ContentPage.Content>
+    <Grid>
+      <TableView x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+        <TableRoot>
+          <TableSection Title="{Binding EditLabel}">
+
+            <localcontrol:TouchViewCell x:Name="NameCell"
+              Title="{Binding NameLabel}" Value="{Binding BindingUserInfo.Name, Mode=TwoWay}"/>
+
+            <localcontrol:TouchViewCell x:Name="EmailCell"
+              Title="{Binding EmailLabel}" Value="{Binding BindingUserInfo.Email, Mode=TwoWay}"/>
+
+            <localcontrol:TouchViewCell x:Name="SexCell" Tapped="OnCellTapped"
+              Title="{Binding SexLabel}"
+              Value="{Binding BindingUserInfo.SexName, Mode=TwoWay}"
+              IsIndicatorVisible="true"/>
+
+            <localcontrol:TouchViewCell x:Name="UnitCell" Tapped="OnCellTapped"
+              Title="{Binding UnitLabel}"
+              Value="{Binding BindingUserInfo.Unit, Mode=TwoWay}"
+              Description="{Binding UnitDescriptionLabel}"
+              IsIndicatorVisible="true"/>
+
+            <localcontrol:NumericEntryCell x:Name="HeightCell" Label="{Binding HeightLabel}"
+                    Text="{Binding BindingUserInfo.Height, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="0" MaxValue="999"/>
+
+            <localcontrol:NumericEntryCell x:Name="WeightCell" Label="{Binding WeightLabel}"
+                    Text="{Binding BindingUserInfo.Weight, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="0" MaxValue="999"/>
+
+            <localcontrol:TextEntryCell Label="{Binding ZipCodeLabel}" Text="{Binding BindingUserInfo.ZipCode, Mode=TwoWay}"
+                    MaxLength="{Binding BindingUserInfo.ZipCodeMaxLength, Mode=TwoWay}"/>
+
+            <localcontrol:TouchViewCell x:Name="CountryCell" Tapped="OnCellTapped"
+               Title="{Binding CountryLabel}"
+               Value="{Binding BindingUserInfo.CountryName, Mode=TwoWay}"
+               IsIndicatorVisible="true"/>
+            
+          </TableSection>
+        </TableRoot>
+      </TableView>
+    </Grid>
+  </ContentPage.Content>
+  
+</local:BaseContentPage>

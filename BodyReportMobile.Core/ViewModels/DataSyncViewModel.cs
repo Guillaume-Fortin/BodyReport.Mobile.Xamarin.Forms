@@ -117,7 +117,7 @@ namespace BodyReportMobile.Core.ViewModels
         {
             try
             {
-                double maxSynchronizeCount = 5;
+                double maxSynchronizeCount = 6;
                 double synchronizeCount = 1;
                 // download user image
                 SynchronizationLabel = Translation.Get(TRS.USER);
@@ -138,6 +138,18 @@ namespace BodyReportMobile.Core.ViewModels
                 }
 
                 //Synchronise Web data to local database
+                //Synchronize Countries
+                SynchronizationLabel = Translation.Get(TRS.COUNTRY);
+                SynchronizeProgress(maxSynchronizeCount, synchronizeCount);
+                synchronizeCount++;
+                var countryList = await CountryWebService.FindCountriesAsync();
+                if (countryList != null)
+                {
+                    var countryManager = new CountryManager(_dbContext);
+                    countryManager.UpdateCountryList(countryList);
+                }
+
+                //Synchronize Muscles
                 SynchronizationLabel = Translation.Get(TRS.MUSCLES);
                 SynchronizeProgress(maxSynchronizeCount, synchronizeCount);
                 synchronizeCount++;

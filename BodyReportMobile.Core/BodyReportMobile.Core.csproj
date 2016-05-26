@@ -63,7 +63,9 @@
       <Link>Message\WebApi\WebApiException.cs</Link>
     </Compile>
     <Compile Include="Crud\Module\BodyExerciseModule.cs" />
+    <Compile Include="Crud\Module\CountryModule.cs" />
     <Compile Include="Crud\Module\MuscularGroupModule.cs" />
+    <Compile Include="Crud\Transformer\CountryTransformer.cs" />
     <Compile Include="Crud\Transformer\CriteriaTransformer.cs" />
     <Compile Include="Crud\Transformer\MuscularGroupTransformer.cs" />
     <Compile Include="Framework\AppMessenger.cs" />
@@ -75,15 +77,18 @@
     <Compile Include="Message\Binding\BindingBodyExercise.cs" />
     <Compile Include="Message\Binding\BindingTrainingExercise.cs" />
     <Compile Include="Message\Binding\BindingTrainingExerciseSet.cs" />
+    <Compile Include="Message\Binding\BindingUserInfo.cs" />
     <Compile Include="Message\Binding\BindingWeekTrainingDay.cs" />
     <Compile Include="Framework\IAndroidAPI.cs" />
     <Compile Include="Framework\IPresenterManager.cs" />
     <Compile Include="Message\Binding\BindingTrainingDay.cs" />
+    <Compile Include="Models\CountryRow.cs" />
     <Compile Include="Models\MuscularGroupRow.cs" />
     <Compile Include="MvxMessages\MvxMessagePageEvent.cs" />
     <Compile Include="MvxMessages\MvxMessageViewModelEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceManagers\BodyExerciseManager.cs" />
+    <Compile Include="ServiceManagers\CountryManager.cs" />
     <Compile Include="ServiceManagers\MuscularGroupManager.cs" />
     <Compile Include="ServiceManagers\UserInfoManager.cs" />
     <Compile Include="ViewModels\DataSyncViewModel.cs" />
@@ -175,8 +180,10 @@
     <Compile Include="Crud\Module\Crud.cs" />
     <Compile Include="Crud\Module\MuscleModule.cs" />
     <Compile Include="ViewModels\TrainingWeekViewModel.cs" />
+    <Compile Include="ViewModels\EditUserProfileViewModel.cs" />
     <Compile Include="WebServices\AccountWebService.cs" />
     <Compile Include="WebServices\BodyExerciseWebService.cs" />
+    <Compile Include="WebServices\CountryWebService.cs" />
     <Compile Include="WebServices\MuscleWebService.cs" />
     <Compile Include="WebServices\MuscularGroupWebService.cs" />
     <Compile Include="WebServices\TrainingDayWebService.cs" />
