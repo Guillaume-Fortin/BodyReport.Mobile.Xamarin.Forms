@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ViewCell xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 		xmlns:converter="clr-namespace:BodyReportMobile.Presenter.Framework.Converter"
-          x:Name="touchViewCell"	x:Class="BodyReportMobile.Presenter.Framework.Controls.TouchViewCell">
+          x:Name="touchViewCell" x:Class="BodyReportMobile.Presenter.Framework.Controls.TouchViewCell">
   <!--StackLayout BackgroundColor="Aqua" Orientation="Horizontal" HorizontalOptions="FillAndExpand" >
 	    <Label x:Name="TitleLabel" Text="{Binding Path=Title, Source={x:Reference touchViewCell}}"
 	    	WidthRequest="120" LineBreakMode="MiddleTruncation" HorizontalOptions="Start" VerticalOptions="Center"/>
@@ -63,7 +63,7 @@
            Text="{Binding Path=Title, Mode=TwoWay, Source={x:Reference touchViewCell}}"
         TextColor="{Binding Path=TitleTextColor, Mode=TwoWay, Source={x:Reference touchViewCell}}"
 	    	LineBreakMode="MiddleTruncation" HorizontalOptions="Center" VerticalOptions="Center"
-	    	Grid.Row="0" Grid.Column="2" IsVisible="true" WidthRequest="120">
+	    	Grid.Row="0" Grid.Column="2" IsVisible="true" HeightRequest="40" WidthRequest="120">
       <Label.Triggers>
         <Trigger TargetType="Label"
                      Property="Text"
