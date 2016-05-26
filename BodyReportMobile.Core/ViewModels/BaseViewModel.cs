@@ -159,7 +159,7 @@ namespace BodyReportMobile.Core.ViewModels
         {
         }
         
-        public static async Task<bool> ShowModalViewModelAsync(BaseViewModel viewModel, BaseViewModel parentViewModel, bool mainViewModel = false)
+        protected static async Task<bool> ShowModalViewModelAsync(BaseViewModel viewModel, BaseViewModel parentViewModel, bool mainViewModel = false, bool hideTitleBar = false)
         {
             if (string.IsNullOrWhiteSpace(viewModel.ViewModelGuid))
                 viewModel.ViewModelGuid = Guid.NewGuid().ToString();
@@ -172,7 +172,7 @@ namespace BodyReportMobile.Core.ViewModels
             var presenter = Resolver.Resolve<IPresenterManager>();
             if (presenter != null)
             {
-                result = await presenter.TryDisplayViewAsync(viewModel, parentViewModel);
+                result = await presenter.TryDisplayViewAsync(viewModel, parentViewModel, hideTitleBar);
             }
 
             if (mainViewModel && result)

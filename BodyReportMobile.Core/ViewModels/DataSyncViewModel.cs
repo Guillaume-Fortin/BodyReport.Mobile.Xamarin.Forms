@@ -33,7 +33,6 @@ namespace BodyReportMobile.Core.ViewModels
             base.InitTranslation();
 
             TitleLabel = Translation.Get(TRS.SYNCHRONIZATION);
-            SynchronizationLabel = Translation.Get(TRS.SYNCHRONIZE_DATAS);
         }
 
         protected override async Task ShowAsync()
@@ -43,6 +42,9 @@ namespace BodyReportMobile.Core.ViewModels
             try
             {
                 AppTools.Instance.Init();
+
+                //Migrate table
+                BodyReportMobile.Core.Crud.Module.Crud.MigrateTable(_dbContext);
 
                 LanguageViewModel.ReloadApplicationLanguage();
                 InitTranslation(); //Reload for language
@@ -63,7 +65,7 @@ namespace BodyReportMobile.Core.ViewModels
         public static async Task<bool> ShowAsync(BaseViewModel parent = null)
         {
             var viewModel = new DataSyncViewModel();
-            return await ShowModalViewModelAsync(viewModel, parent);
+            return await ShowModalViewModelAsync(viewModel, parent, false, true);
         }
 
         private async Task SynchronizeData()
@@ -118,7 +120,7 @@ namespace BodyReportMobile.Core.ViewModels
                 double maxSynchronizeCount = 5;
                 double synchronizeCount = 1;
                 // download user image
-                SynchronizationLabel = string.Format("{0} : {1}", Translation.Get(TRS.SYNCHRONIZE_DATAS), Translation.Get(TRS.IMAGE));
+                SynchronizationLabel = Translation.Get(TRS.USER);
                 SynchronizeProgress(maxSynchronizeCount, synchronizeCount);
                 synchronizeCount++;
                 string localUserImagePath = UserData.Instance.UserInfo == null ? null : AppTools.Instance.GetUserImageLocalPath(UserData.Instance.UserInfo.UserId);
@@ -136,7 +138,7 @@ namespace BodyReportMobile.Core.ViewModels
                 }
 
                 //Synchronise Web data to local database
-                SynchronizationLabel = string.Format("{0} : {1}", Translation.Get(TRS.SYNCHRONIZE_DATAS), Translation.Get(TRS.MUSCLES));
+                SynchronizationLabel = Translation.Get(TRS.MUSCLES);
                 SynchronizeProgress(maxSynchronizeCount, synchronizeCount);
                 synchronizeCount++;
                 var muscleList = await MuscleWebService.FindMusclesAsync();
@@ -147,7 +149,7 @@ namespace BodyReportMobile.Core.ViewModels
                 }
 
                 //Synchronize Muscular groups
-                SynchronizationLabel = string.Format("{0} : {1}", Translation.Get(TRS.SYNCHRONIZE_DATAS), Translation.Get(TRS.MUSCULAR_GROUP));
+                SynchronizationLabel = Translation.Get(TRS.MUSCULAR_GROUP);
                 SynchronizeProgress(maxSynchronizeCount, synchronizeCount);
                 synchronizeCount++;
                 var muscularGroupList = await MuscularGroupWebService.FindMuscularGroupsAsync();
@@ -158,7 +160,7 @@ namespace BodyReportMobile.Core.ViewModels
                 }
 
                 //Synchronize body exercises
-                SynchronizationLabel = string.Format("{0} : {1}", Translation.Get(TRS.SYNCHRONIZE_DATAS), Translation.Get(TRS.BODY_EXERCISES));
+                SynchronizationLabel = Translation.Get(TRS.BODY_EXERCISES);
                 SynchronizeProgress(maxSynchronizeCount, synchronizeCount);
                 synchronizeCount++;
                 var bodyExerciseList = await BodyExerciseWebService.FindBodyExercisesAsync();
@@ -170,7 +172,7 @@ namespace BodyReportMobile.Core.ViewModels
                     //Synchronize body exercises images
                     maxSynchronizeCount += bodyExerciseList.Count;
                     SynchronizeProgress(maxSynchronizeCount, synchronizeCount);
-                    SynchronizationLabel = string.Format("{0} : {1}", Translation.Get(TRS.SYNCHRONIZE_DATAS), Translation.Get(TRS.IMAGE));
+                    SynchronizationLabel = Translation.Get(TRS.IMAGE);
                     List<Task> taskList = null;
                     string urlImage, localImagePath;
                     string urlImages = HttpConnector.Instance.BaseUrl + "images/bodyexercises/{0}";
@@ -199,9 +201,8 @@ namespace BodyReportMobile.Core.ViewModels
                     }
                 }
 
-
-                //Synchronize Transalations
-                SynchronizationLabel = string.Format("{0} : {1}", Translation.Get(TRS.SYNCHRONIZE_DATAS), Translation.Get(TRS.TRANSLATIONS));
+                //Synchronize Translations
+                SynchronizationLabel = Translation.Get(TRS.TRANSLATIONS);
                 SynchronizeProgress(maxSynchronizeCount, synchronizeCount);
                 synchronizeCount++;
                 var translationList = await TranslationWebService.FindTranslationsAsync();
@@ -209,6 +210,120 @@ namespace BodyReportMobile.Core.ViewModels
                 {
                     var translationManager = new TranslationManager(_dbContext);
                     translationManager.UpdateTranslationList(translationList);
+                }
+
+                //Synchronize TrainingWeek with server (with trainingday and exercise)
+                SynchronizationLabel = Translation.Get(TRS.TRAINING_WEEK);
+                SynchronizeProgress(maxSynchronizeCount, synchronizeCount);
+                synchronizeCount++;
+                var criteria = new TrainingWeekCriteria();
+                criteria.UserId = new StringCriteria() { Equal = UserData.Instance.UserInfo.UserId };
+                TrainingWeekScenario trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
+                var trainingWeekManager = new TrainingWeekManager(_dbContext);
+                //retreive local data
+                var localTrainingWeekList = trainingWeekManager.FindTrainingWeek(criteria, trainingWeekScenario);
+                //retreive online data
+                var criteriaList = new CriteriaList<TrainingWeekCriteria>() { criteria };
+                var onlineTrainingWeekList = await TrainingWeekWebService.FindTrainingWeeksAsync(criteriaList, trainingWeekScenario);
+                bool found;
+                //Delete local data if not found on server
+                if (localTrainingWeekList != null)
+                {
+                    var deletedTrainingWeekList = new List<TrainingWeek>();
+                    foreach (var localTrainingWeek in localTrainingWeekList)
+                    {
+                        found = false;
+                        if (onlineTrainingWeekList != null)
+                        {
+                            foreach (var onlineTrainingWeek in onlineTrainingWeekList)
+                            {
+                                if (TrainingWeek.IsEqualByKey(onlineTrainingWeek, localTrainingWeek))
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!found)
+                            deletedTrainingWeekList.Add(localTrainingWeek);
+                    }
+                    if (deletedTrainingWeekList.Count > 0)
+                    {
+                        maxSynchronizeCount++;
+                        SynchronizationLabel = Translation.Get(TRS.DELETE) + " :" + Translation.Get(TRS.TRAINING_WEEK);
+                        SynchronizeProgress(maxSynchronizeCount, synchronizeCount);
+                        synchronizeCount++;
+                        foreach (var deleteTrainingWeek in deletedTrainingWeekList)
+                        {
+                            //Delete in local database
+                            trainingWeekManager.DeleteTrainingWeek(deleteTrainingWeek);
+                            localTrainingWeekList.Remove(deleteTrainingWeek);
+                        }
+                    }
+                }
+                //if modification date online != local, get full trainingWeek online data and save them on local database
+                var synchronizeTrainingWeekList = new List<TrainingWeek>();
+                if (onlineTrainingWeekList != null)
+                {
+                    foreach (var onlineTrainingWeek in onlineTrainingWeekList)
+                    {
+                        found = false;
+                        if (localTrainingWeekList != null)
+                        {
+                            foreach (var localTrainingWeek in localTrainingWeekList)
+                            {
+                                //Same trainingWeek
+                                if (TrainingWeek.IsEqualByKey(onlineTrainingWeek, localTrainingWeek))
+                                {
+                                    if (onlineTrainingWeek.ModificationDate != null && localTrainingWeek.ModificationDate != null &&
+                                        onlineTrainingWeek.ModificationDate.ToUniversalTime() != localTrainingWeek.ModificationDate.ToUniversalTime()) //ToUniversalTime for security...
+                                        synchronizeTrainingWeekList.Add(onlineTrainingWeek);
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!found)
+                            synchronizeTrainingWeekList.Add(onlineTrainingWeek);
+                    }
+                }
+                
+                //Synchronize all trainingWeek data
+                trainingWeekScenario = new TrainingWeekScenario()
+                {
+                    ManageTrainingDay = true,
+                    TrainingDayScenario = new TrainingDayScenario() { ManageExercise = true }
+                };
+                if (synchronizeTrainingWeekList.Count > 0)
+                {
+                    maxSynchronizeCount++;
+                    SynchronizationLabel = Translation.Get(TRS.SEARCH) + " : " + Translation.Get(TRS.TRAINING_WEEK);
+                    SynchronizeProgress(maxSynchronizeCount, synchronizeCount);
+                    synchronizeCount++;
+                    criteriaList.Clear();
+                    foreach (var trainingWeek in synchronizeTrainingWeekList)
+                    {
+                        criteria = new TrainingWeekCriteria();
+                        criteria.UserId = new StringCriteria() { Equal = trainingWeek.UserId };
+                        criteria.Year = new IntegerCriteria() { Equal = trainingWeek.Year };
+                        criteria.WeekOfYear = new IntegerCriteria() { Equal = trainingWeek.WeekOfYear };
+                        criteriaList.Add(criteria);
+                    }
+                    onlineTrainingWeekList = await TrainingWeekWebService.FindTrainingWeeksAsync(criteriaList, trainingWeekScenario);
+                    if(onlineTrainingWeekList != null && onlineTrainingWeekList.Count > 0)
+                    {
+                        maxSynchronizeCount+= onlineTrainingWeekList.Count;
+                        int count = 1;
+                        foreach (var trainingWeek in onlineTrainingWeekList)
+                        {
+                            SynchronizationLabel = string.Format("{0} : {1}/{2}", Translation.Get(TRS.TRAINING_WEEK), count, onlineTrainingWeekList.Count);
+                            SynchronizeProgress(maxSynchronizeCount, synchronizeCount);
+                            synchronizeCount++;
+                            count++;
+                            await Task.Delay(1); //Update UI
+                            trainingWeekManager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
+                        }
+                    }
                 }
             }
             catch (Exception except)

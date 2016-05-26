@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages"
              xmlns:converter="clr-namespace:BodyReportMobile.Presenter.Framework.Converter"
              xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
-             x:Class="BodyReportMobile.Presenter.Pages.DataSync"
+             x:Class="BodyReportMobile.Presenter.Pages.DataSyncPage"
              Title="{Binding TitleLabel}">
 
   <ContentPage.Content>
@@ -12,12 +12,14 @@
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
         <RowDefinition Height="*" />
       </Grid.RowDefinitions>
-      <Label Grid.Row="0" TextColor="Black" Text="{Binding SynchronizationLabel}" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center"/>
-      <ProgressBar Grid.Row="1" Progress="{Binding SynchronizationProgress}" HorizontalOptions="FillAndExpand" />
+      <Label Grid.Row="0" TextColor="Black" Text="{Binding TitleLabel}" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center"/>
+      <Label Grid.Row="1" TextColor="Black" Text="{Binding SynchronizationLabel}" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center"/>
+      <ProgressBar Grid.Row="2" Progress="{Binding SynchronizationProgress}" HorizontalOptions="FillAndExpand" />
 
-      <Image Grid.Row="2" Source="splash.png" HorizontalOptions="Center"/>
+      <Image Grid.Row="3" Source="splash.png" HorizontalOptions="Center"/>
     </Grid>
   </ContentPage.Content>
 </local:BaseContentPage>

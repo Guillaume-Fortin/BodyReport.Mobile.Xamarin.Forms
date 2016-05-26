@@ -68,7 +68,7 @@ namespace BodyReportMobile.Core.ViewModels
         public static async Task<bool> ShowAsync(BaseViewModel parent = null)
         {
             var viewModel = new MainViewModel();
-            return await ShowModalViewModelAsync(viewModel, parent);
+            return await ShowModalViewModelAsync(viewModel, parent, true);
         }
 
         protected override async Task ShowAsync()
@@ -80,9 +80,8 @@ namespace BodyReportMobile.Core.ViewModels
                 try
                 {
                     ActionIsInProgress = true;
-
-                    var dataSyncViewModel = new DataSyncViewModel();
-                    await DataSyncViewModel.ShowModalViewModelAsync(dataSyncViewModel, this);
+                    
+                    await DataSyncViewModel.ShowAsync(this);
 
                     DisplayUserProfil();
                 }

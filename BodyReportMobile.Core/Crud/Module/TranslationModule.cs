@@ -23,14 +23,6 @@ namespace BodyReportMobile.Core.Crud.Module
         {
         }
 
-		protected override void CreateTable()
-		{
-			_dbContext.Execute(@"CREATE TABLE IF NOT EXISTS Translation (CultureId INTEGER NOT NULL,
-						  Key VARCHAR(256) NOT NULL,
-						  Value VARCHAR(2000),
-						  PRIMARY KEY (CultureId, Key))");
-		}
-
         /// <summary>
         /// Create data in database
         /// </summary>
@@ -70,10 +62,11 @@ namespace BodyReportMobile.Core.Crud.Module
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<TranslationVal> Find()
+        public List<TranslationVal> Find(TranslationValCriteria translationValCriteria = null)
         {
             List<TranslationVal> resultList = null;
 			var rowList = _dbContext.Table<TranslationRow> ();
+            CriteriaTransformer.CompleteQuery(ref rowList, translationValCriteria);
 
             if (rowList != null && rowList.Count() > 0)
             {

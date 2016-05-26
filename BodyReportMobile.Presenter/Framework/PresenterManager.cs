@@ -57,11 +57,10 @@ namespace BodyReportMobile.Core.Framework
             return null;
         }
 
-        public async Task<bool> TryDisplayViewAsync(BaseViewModel viewModel, BaseViewModel parentViewModel)
+        public async Task<bool> TryDisplayViewAsync(BaseViewModel viewModel, BaseViewModel parentViewModel, bool hideTitleBar)
         {
             bool result = false;
-
-            //var parentView = GetView(parentViewModel);
+            
             var view = GetView(viewModel);
             if (view != null && view is Page)
             {
@@ -78,13 +77,9 @@ namespace BodyReportMobile.Core.Framework
                 {
                     try
                     {
-                        // calling this sync blocks UI and never navigates hence code continues regardless here
-                        /*if(parentView != null && parentView is Page)
-                        {
-                            (parentView as Page).Navigation.PushAsync(page);
-                        }
-                        else*/
-                            await MainNavigationPage.PushAsync(page);
+                        if(hideTitleBar)
+                            NavigationPage.SetHasNavigationBar(page, false);
+                        await MainNavigationPage.PushAsync(page);
                         result = true;
                     }
                     catch (Exception e)

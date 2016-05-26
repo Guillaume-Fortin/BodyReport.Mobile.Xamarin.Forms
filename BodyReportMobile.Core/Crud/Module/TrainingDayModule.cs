@@ -17,19 +17,6 @@ namespace BodyReportMobile.Core.Crud.Module
 		{
 		}
 
-		protected override void CreateTable()
-		{
-			_dbContext.Execute(@"CREATE TABLE IF NOT EXISTS TrainingDay (
-						  UserId VARCHAR(450) NOT NULL,
-						  Year INTEGER NOT NULL,
-						  WeekOfYear INTEGER NOT NULL,
-						  DayOfWeek INTEGER NOT NULL,
-						  TrainingDayId INTEGER NOT NULL,
-						  BeginHour NUMERIC,
-						  EndHour NUMERIC,
-						  PRIMARY KEY (UserId, Year, WeekOfYear, DayOfWeek, TrainingDayId))");
-		}
-
 		/// <summary>
 		/// Create data in database
 		/// </summary>
@@ -75,11 +62,11 @@ namespace BodyReportMobile.Core.Crud.Module
 		/// Find datas
 		/// </summary>
 		/// <returns></returns>
-		public List<TrainingDay> Find(CriteriaField criteriaField = null)
+		public List<TrainingDay> Find(TrainingDayCriteria trainingDayCriteria = null)
 		{
 			List<TrainingDay> resultList = null;
 			TableQuery<TrainingDayRow> rowList = _dbContext.Table<TrainingDayRow>();
-			//CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
+			CriteriaTransformer.CompleteQuery(ref rowList, trainingDayCriteria);
 			rowList = rowList.OrderBy(t => t.DayOfWeek).OrderBy(t => t.BeginHour);
 
 			if (rowList != null && rowList.Count() > 0)

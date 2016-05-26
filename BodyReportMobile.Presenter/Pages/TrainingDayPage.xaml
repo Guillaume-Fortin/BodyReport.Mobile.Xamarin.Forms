@@ -30,10 +30,24 @@
           <DataTemplate>
             <ViewCell x:Name="groupViewCell">
               <ViewCell.View>
-                <StackLayout Orientation="Horizontal" Padding="10" >
-                  <Label Text="{Binding LongName}"/>
+                <StackLayout Orientation="Vertical" >
+                  <StackLayout Orientation="Horizontal" Padding="10" >
+                    <Label Text="{Binding LongName}"/>
+                    <Label TextColor="#3366BB"
+                      Text="{Binding Path=BindingContext.EditTrainingDayLabel, Source={x:Reference trainingDayPage}}">
+                      <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding BindingContext.EditTrainingDayCommand, Source={x:Reference trainingDayPage}}" CommandParameter="{Binding BindingContext.ReferenceObject, Source={x:Reference groupViewCell}}"/>
+                      </Label.GestureRecognizers>
+                    </Label>
+                    <Label TextColor="#3366BB"
+                      Text="{Binding Path=BindingContext.DeleteTrainingDayLabel, Source={x:Reference trainingDayPage}}">
+                      <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding BindingContext.DeleteTrainingDayCommand, Source={x:Reference trainingDayPage}}" CommandParameter="{Binding BindingContext.ReferenceObject, Source={x:Reference groupViewCell}}"/>
+                      </Label.GestureRecognizers>
+                    </Label>
+                  </StackLayout>
                   <Label TextColor="#3366BB"
-                    Text="{Binding Path=BindingContext.AddExerciseLabel, Source={x:Reference trainingDayPage}}">
+                      Text="{Binding Path=BindingContext.AddExerciseLabel, Source={x:Reference trainingDayPage}}">
                     <Label.GestureRecognizers>
                       <TapGestureRecognizer Command="{Binding BindingContext.AddExerciseCommand, Source={x:Reference trainingDayPage}}" CommandParameter="{Binding BindingContext.ReferenceObject, Source={x:Reference groupViewCell}}"/>
                     </Label.GestureRecognizers>

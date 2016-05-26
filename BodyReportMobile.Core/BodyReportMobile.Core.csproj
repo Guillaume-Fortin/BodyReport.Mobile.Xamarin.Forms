@@ -50,6 +50,9 @@
     <Compile Include="..\..\BodyReport\src\Message\WebApi\MultipleParameters\TrainingDayFinder.cs">
       <Link>Message\WebApi\MultipleParameters\TrainingDayFinder.cs</Link>
     </Compile>
+    <Compile Include="..\..\BodyReport\src\Message\WebApi\MultipleParameters\TrainingDayWithScenario.cs">
+      <Link>Message\WebApi\MultipleParameters\TrainingDayWithScenario.cs</Link>
+    </Compile>
     <Compile Include="..\..\BodyReport\src\Message\WebApi\MultipleParameters\TrainingWeekFinder.cs">
       <Link>Message\WebApi\MultipleParameters\TrainingWeekFinder.cs</Link>
     </Compile>
@@ -61,6 +64,7 @@
     </Compile>
     <Compile Include="Crud\Module\BodyExerciseModule.cs" />
     <Compile Include="Crud\Module\MuscularGroupModule.cs" />
+    <Compile Include="Crud\Transformer\CriteriaTransformer.cs" />
     <Compile Include="Crud\Transformer\MuscularGroupTransformer.cs" />
     <Compile Include="Framework\AppMessenger.cs" />
     <Compile Include="Framework\AppTools.cs" />

@@ -20,6 +20,7 @@ namespace BodyReportMobile.Core.ViewModels
         private SQLiteConnection _dbContext;
         private TrainingWeekManager _trainingWeekManager;
         private IUserDialogs _userDialog;
+        private TEditMode _editMode;
 
         private TrainingDay _trainingDay;
 
@@ -38,10 +39,11 @@ namespace BodyReportMobile.Core.ViewModels
             await SynchronizeDataAsync();
         }
 
-        public static async Task<bool> ShowAsync(TrainingDay trainingDay, BaseViewModel parent = null)
+        public static async Task<bool> ShowAsync(TrainingDay trainingDay, TEditMode editMode, BaseViewModel parent = null)
         {
             var viewModel = new CreateTrainingDayViewModel();
             viewModel._trainingDay = trainingDay;
+            viewModel._editMode = editMode;
             return await ShowModalViewModelAsync(viewModel, parent);
         }
 
@@ -49,7 +51,7 @@ namespace BodyReportMobile.Core.ViewModels
         {
             base.InitTranslation();
             TitleLabel = Translation.Get(TRS.TRAINING_DAY);
-            CreateTitle = Translation.Get(TRS.CREATE);
+            CreateTitle = _editMode == TEditMode.Create ? Translation.Get(TRS.CREATE) : Translation.Get(TRS.EDIT);
             YearLabel = Translation.Get(TRS.YEAR);
             WeekOfYearLabel = Translation.Get(TRS.WEEK_NUMBER);
             DayLabel = Translation.Get(TRS.DAY_OF_WEEK);
@@ -102,11 +104,22 @@ namespace BodyReportMobile.Core.ViewModels
             _trainingDay.BeginHour = DateTime.Now.Date.Add(BindingTrainingDay.BeginTime);
             _trainingDay.EndHour = DateTime.Now.Date.Add(BindingTrainingDay.EndTime);
             _trainingDay.TrainingDayId = 0; // force calculate id
-            var trainingDayCreated = await TrainingDayWebService.CreateTrainingDaysAsync(_trainingDay);
-            if(trainingDayCreated != null)
+
+            if (_editMode == TEditMode.Create)
             {
-                _trainingDay.TrainingDayId = trainingDayCreated.TrainingDayId;
-                result = true; 
+                var trainingDayCreated = await TrainingDayWebService.CreateTrainingDaysAsync(_trainingDay);
+                if (trainingDayCreated != null)
+                {
+                    _trainingDay.TrainingDayId = trainingDayCreated.TrainingDayId;
+                    result = true;
+                }
+            }
+            else if (_editMode == TEditMode.Edit)
+            {
+                var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
+                var trainingDayUpdated = await TrainingDayWebService.UpdateTrainingDayAsync(_trainingDay, trainingDayScenario);
+                if (trainingDayUpdated != null)
+                    result = true;
             }
 
             return result;

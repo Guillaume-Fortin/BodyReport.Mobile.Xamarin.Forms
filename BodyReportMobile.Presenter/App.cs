@@ -24,8 +24,7 @@ namespace BodyReportMobile.Presenter
             var resolverContainer = Resolver.Resolve<IDependencyContainer>();
             RegisterViewModelViewDependencies(resolverContainer);
 
-            var mainViewModel = new MainViewModel();
-            bool result = await BaseViewModel.ShowModalViewModelAsync(mainViewModel, null, true);
+            bool result = await MainViewModel.ShowAsync(null);
 
             if(result)
             {
@@ -42,7 +41,7 @@ namespace BodyReportMobile.Presenter
         {
             var presenterManager = new PresenterManager();
 
-            presenterManager.AddViewDependency<DataSyncViewModel, DataSync>();
+            presenterManager.AddViewDependency<DataSyncViewModel, DataSyncPage>();
             presenterManager.AddViewDependency<MainViewModel, MainPage>();
             presenterManager.AddViewDependency<TrainingJournalViewModel, TrainingJournalPage>();
             presenterManager.AddViewDependency<EditTrainingWeekViewModel, EditTrainingWeekPage>();

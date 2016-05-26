@@ -10,13 +10,13 @@ namespace BodyReportMobile.Core.WebServices
 {
 	public static class TrainingWeekWebService
 	{
-		public static async Task<List<TrainingWeek>> FindTrainingWeeksAsync (TrainingWeekCriteria trainingWeekCriteria, TrainingWeekScenario trainingWeekScenario)
+		public static async Task<List<TrainingWeek>> FindTrainingWeeksAsync (CriteriaList<TrainingWeekCriteria> trainingWeekCriteriaList, TrainingWeekScenario trainingWeekScenario)
 		{
-            if (trainingWeekCriteria == null)
+            if (trainingWeekCriteriaList == null)
                 return null;
             
             var trainingWeekFinder = new TrainingWeekFinder();
-            trainingWeekFinder.TrainingWeekCriteria = trainingWeekCriteria;
+            trainingWeekFinder.TrainingWeekCriteriaList = trainingWeekCriteriaList;
             trainingWeekFinder.TrainingWeekScenario = trainingWeekScenario;
             return await HttpConnector.Instance.PostAsync<TrainingWeekFinder, List<TrainingWeek>> ("Api/TrainingWeeks/Find", trainingWeekFinder);
 		}

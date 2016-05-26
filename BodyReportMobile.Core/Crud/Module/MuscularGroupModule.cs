@@ -19,12 +19,7 @@ namespace BodyReportMobile.Core.Crud.Module
 		public MuscularGroupModule(SQLiteConnection dbContext) : base(dbContext)
 		{
         }
-
-        protected override void CreateTable()
-        {
-            _dbContext.CreateTable<MuscularGroupRow>();
-        }
-
+        
         /// <summary>
         /// Create data in database
         /// </summary>
@@ -63,10 +58,12 @@ namespace BodyReportMobile.Core.Crud.Module
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<MuscularGroup> Find()
+        public List<MuscularGroup> Find(MuscularGroupCriteria muscularGroupCriteria = null)
         {
             List<MuscularGroup> resultList = null;
             TableQuery<MuscularGroupRow> muscularGroupRowList = _dbContext.Table<MuscularGroupRow>();
+            CriteriaTransformer.CompleteQuery(ref muscularGroupRowList, muscularGroupCriteria);
+
             if (muscularGroupRowList != null && muscularGroupRowList.Count() > 0)
             {
                 resultList = new List<MuscularGroup>();

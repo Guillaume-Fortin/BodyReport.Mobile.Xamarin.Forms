@@ -19,9 +19,9 @@ namespace BodyReportMobile.Core.ServiceManagers
             _module = new MuscularGroupModule(_dbContext);
         }
 
-        public List<MuscularGroup> FindMuscularGroups()
+        public List<MuscularGroup> FindMuscularGroups(MuscularGroupCriteria muscularGroupCriteria = null)
         {
-            var muscularGroupList = _module.Find();
+            var muscularGroupList = _module.Find(muscularGroupCriteria);
             if (muscularGroupList != null)
             {
                 foreach (var muscularGroup in muscularGroupList)

@@ -44,12 +44,12 @@ namespace BodyReportMobile.Core.ServiceManagers
 				{
 					var setList = _trainingExerciseSetManager.FindTrainingExerciseSet(new TrainingExerciseSetCriteria()
 						{
-							UserId = new StringCriteria() { EqualList = new List<string>() { trainingExercise.UserId } },
-							Year = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.Year } },
-							WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.WeekOfYear } },
-							DayOfWeek = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.DayOfWeek } },
-							TrainingDayId = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.TrainingDayId } },
-							TrainingExerciseId = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.Id } }
+							UserId = new StringCriteria() { Equal = trainingExercise.UserId },
+							Year = new IntegerCriteria() { Equal = trainingExercise.Year },
+							WeekOfYear = new IntegerCriteria() { Equal = trainingExercise.WeekOfYear },
+							DayOfWeek = new IntegerCriteria() { Equal = trainingExercise.DayOfWeek },
+							TrainingDayId = new IntegerCriteria() { Equal = trainingExercise.TrainingDayId },
+							TrainingExerciseId = new IntegerCriteria() { Equal = trainingExercise.Id }
 						});
 
 					if(setList != null && setList.Count > 0)
@@ -77,12 +77,12 @@ namespace BodyReportMobile.Core.ServiceManagers
 			{
 				var criteria = new TrainingExerciseSetCriteria()
 				{
-					UserId = new StringCriteria() { EqualList = new List<string>() { trainingExercise.UserId } },
-					Year = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.Year } },
-					WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.WeekOfYear } },
-					DayOfWeek = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.DayOfWeek } },
-					TrainingDayId = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.TrainingDayId } },
-					TrainingExerciseId = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.Id } }
+					UserId = new StringCriteria() { Equal = trainingExercise.UserId },
+					Year = new IntegerCriteria() { Equal = trainingExercise.Year },
+					WeekOfYear = new IntegerCriteria() { Equal = trainingExercise.WeekOfYear },
+					DayOfWeek = new IntegerCriteria() { Equal = trainingExercise.DayOfWeek },
+					TrainingDayId = new IntegerCriteria() { Equal = trainingExercise.TrainingDayId },
+					TrainingExerciseId = new IntegerCriteria() { Equal = trainingExercise.Id }
 				};
 				trainingExercise.TrainingExerciseSets = _trainingExerciseSetManager.FindTrainingExerciseSet(criteria);
 			}
@@ -100,9 +100,9 @@ namespace BodyReportMobile.Core.ServiceManagers
 			return trainingExercise;
 		}
 
-		public List<TrainingExercise> FindTrainingExercise(CriteriaField criteriaField)
+		public List<TrainingExercise> FindTrainingExercise(TrainingExerciseCriteria trainingExerciseCriteria)
 		{
-			var trainingExercises = _trainingDayExerciseModule.Find(criteriaField);
+			var trainingExercises = _trainingDayExerciseModule.Find(trainingExerciseCriteria);
 
 			if (trainingExercises != null)
 			{

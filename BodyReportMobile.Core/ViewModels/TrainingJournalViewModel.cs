@@ -24,7 +24,8 @@ namespace BodyReportMobile.Core.ViewModels
 	{
 		List<TrainingWeek> _trainingWeekList = null;
 		public ObservableCollection<GenericGroupModelCollection<BindingTrainingWeek>> GroupedTrainingWeeks { get; set; } = new ObservableCollection<GenericGroupModelCollection<BindingTrainingWeek>>();
-        
+
+        IUserDialogs _userDialog;
         private SQLiteConnection _dbContext;
 		private TrainingWeekManager _trainingWeekManager;
 
@@ -32,7 +33,8 @@ namespace BodyReportMobile.Core.ViewModels
 
 		public TrainingJournalViewModel () : base()
         {
-			_dbContext = Resolver.Resolve<ISQLite> ().GetConnection ();
+            _userDialog = Resolver.Resolve<IUserDialogs>();
+            _dbContext = Resolver.Resolve<ISQLite> ().GetConnection ();
 			_trainingWeekManager = new TrainingWeekManager (_dbContext);
 		}
 
@@ -59,7 +61,8 @@ namespace BodyReportMobile.Core.ViewModels
 
         private void RetreiveLocalData()
         {
-            _trainingWeekList = _trainingWeekManager.FindTrainingWeek(null, false);
+            var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
+            _trainingWeekList = _trainingWeekManager.FindTrainingWeek(null, trainingWeekScenario);
         }
 
         private async Task<bool> RetreiveAndSaveOnlineDataAsync ()
@@ -69,21 +72,35 @@ namespace BodyReportMobile.Core.ViewModels
 			{
                 DataIsRefreshing = true;
                 var criteria = new TrainingWeekCriteria();
-                criteria.UserId = new StringCriteria() { EqualList = new List<string>() { UserData.Instance.UserInfo.UserId } };
-                var scenario = new TrainingWeekScenario() { ManageTrainingDay = false };
-				var onlineTrainingWeekList = await TrainingWeekWebService.FindTrainingWeeksAsync (criteria, scenario);
+                criteria.UserId = new StringCriteria() { Equal = UserData.Instance.UserInfo.UserId };
+                var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
+                var criteriaList = new CriteriaList<TrainingWeekCriteria>() { criteria };
+				var onlineTrainingWeekList = await TrainingWeekWebService.FindTrainingWeeksAsync (criteriaList, trainingWeekScenario);
 				if (onlineTrainingWeekList != null)
 				{
-					var list = _trainingWeekManager.FindTrainingWeek (null, true);
-					if (list != null)
+                    var localTrainingWeekList = _trainingWeekManager.FindTrainingWeek (criteria, trainingWeekScenario);
+					if (localTrainingWeekList != null)
 					{
-						foreach (var trainingWeek in list)
-							_trainingWeekManager.DeleteTrainingWeek (trainingWeek);
+                        //Delete delete local trainingWeek if it doesn't find in server
+                        bool found;
+                        foreach (var localTrainingWeek in localTrainingWeekList)
+                        {
+                            found = false;
+                            foreach (var olineTrainingWeek in onlineTrainingWeekList)
+                            {
+                                if(TrainingWeek.IsEqualByKey(olineTrainingWeek, localTrainingWeek))
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if(!found)
+                                _trainingWeekManager.DeleteTrainingWeek(localTrainingWeek);
+                        }
 					}
-
-					_trainingWeekList = new List<TrainingWeek> ();
+                    _trainingWeekList = new List<TrainingWeek> ();
 					foreach (var trainingWeek in onlineTrainingWeekList)
-                        _trainingWeekList.Add (_trainingWeekManager.UpdateTrainingWeek (trainingWeek));
+                        _trainingWeekList.Add (_trainingWeekManager.UpdateTrainingWeek (trainingWeek, trainingWeekScenario));
 				}
                 DataIsRefreshing = false;
                 result = true;
@@ -91,8 +108,7 @@ namespace BodyReportMobile.Core.ViewModels
 			catch (Exception except)
 			{
                 DataIsRefreshing = false;
-                var userDialog = Resolver.Resolve<IUserDialogs>();
-                await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+                ILogger.Instance.Info("Can't retreive training journal in server", except);
             }
             return result;
 
@@ -178,8 +194,7 @@ namespace BodyReportMobile.Core.ViewModels
             }
             catch(Exception except)
             {
-                var userDialog = Resolver.Resolve<IUserDialogs>();
-                await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+                await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
 		}
 
@@ -199,8 +214,7 @@ namespace BodyReportMobile.Core.ViewModels
             }
             catch (Exception except)
             {
-                var userDialog = Resolver.Resolve<IUserDialogs>();
-                await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+                await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
 		}
 
@@ -228,8 +242,7 @@ namespace BodyReportMobile.Core.ViewModels
             }
             catch(Exception except)
             {
-                var userDialog = Resolver.Resolve<IUserDialogs>();
-                await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+                await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
 		}
         
@@ -237,21 +250,48 @@ namespace BodyReportMobile.Core.ViewModels
         {
             try
             {
-                if (bindingTrainingWeek != null)
+                if (bindingTrainingWeek != null && bindingTrainingWeek.TrainingWeek != null)
                 {
-                    var trainingWeek = bindingTrainingWeek.TrainingWeek;
-                    if (trainingWeek != null && await TrainingWeekViewModel.ShowAsync(trainingWeek, this))
+                    var trainingWeekKey = bindingTrainingWeek.TrainingWeek;
+                    TrainingWeek trainingWeek = null;
+                    var trainingWeekManager = new TrainingWeekManager(_dbContext);
+                    var trainingWeekScenario = new TrainingWeekScenario()
                     {
-                        //Refresh data
-                        RetreiveLocalData();
-                        SynchronizeData();
+                        ManageTrainingDay = true,
+                        TrainingDayScenario = new TrainingDayScenario() { ManageExercise = true }
+                    };
+                    try
+                    {
+                        //load server data
+                        trainingWeek = await TrainingWeekWebService.GetTrainingWeekAsync(trainingWeekKey, true);
+                        if (trainingWeek != null)
+                        {
+                            //Save data on local database
+                            trainingWeekManager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
+                        }
+                    }
+                    catch
+                    {
+                        // Unable to retreive local data
+                        ILogger.Instance.Info("Unable to retreive TrainingWeek on server");
+                        //load local data
+                        trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
+                    }
+                    if (trainingWeek != null)
+                    {
+                        //Display view model
+                        if (await TrainingWeekViewModel.ShowAsync(trainingWeek, this))
+                        {
+                            //Refresh data
+                            RetreiveLocalData();
+                            SynchronizeData();
+                        }
                     }
                 }
             }
             catch (Exception except)
             {
-                var userDialog = Resolver.Resolve<IUserDialogs>();
-                await userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+                await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
         }
 

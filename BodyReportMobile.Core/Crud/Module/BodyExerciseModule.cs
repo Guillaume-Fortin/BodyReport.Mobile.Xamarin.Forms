@@ -20,11 +20,6 @@ namespace BodyReportMobile.Core.Crud.Module
 		{
         }
 
-        protected override void CreateTable()
-        {
-            _dbContext.CreateTable<BodyExerciseRow>();
-        }
-
         /// <summary>
         /// Create data in database
         /// </summary>
@@ -66,11 +61,11 @@ namespace BodyReportMobile.Core.Crud.Module
         /// Find body exercises
         /// </summary>
         /// <returns></returns>
-        public List<BodyExercise> Find(CriteriaField criteriaField = null)
+        public List<BodyExercise> Find(BodyExerciseCriteria bodyExerciseCriteria = null)
         {
             List<BodyExercise> resultList = null;
             TableQuery<BodyExerciseRow> muscularGroupRowList = _dbContext.Table<BodyExerciseRow>();
-            //CriteriaTransformer.CompleteQuery(ref muscularGroupRowList, criteriaField);
+            CriteriaTransformer.CompleteQuery(ref muscularGroupRowList, bodyExerciseCriteria);
 
             if (muscularGroupRowList != null && muscularGroupRowList.Count() > 0)
             {

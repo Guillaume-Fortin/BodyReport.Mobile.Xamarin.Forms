@@ -22,6 +22,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
             row.Id = bean.Id;
             row.BodyExerciseId = bean.BodyExerciseId;
             row.RestTime = bean.RestTime;
+            row.ModificationDate = bean.ModificationDate;
         }
 
         internal static TrainingExercise ToBean(TrainingExerciseRow row)
@@ -38,6 +39,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
             bean.Id = row.Id;
             bean.BodyExerciseId = row.BodyExerciseId;
             bean.RestTime = row.RestTime;
+            bean.ModificationDate = row.ModificationDate;
             return bean;
         }
     }

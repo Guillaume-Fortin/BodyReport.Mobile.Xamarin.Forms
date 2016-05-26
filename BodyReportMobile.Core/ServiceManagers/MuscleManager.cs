@@ -16,9 +16,9 @@ namespace BodyReportMobile.Core.ServiceManagers
 			_module = new MuscleModule(_dbContext);
 		}
 
-		public List<Muscle> FindMuscles(MuscleCriteria criteria = null)
+		public List<Muscle> FindMuscles(MuscleCriteria muscleCriteria = null)
 		{
-			var muscleList = _module.Find(criteria);
+			var muscleList = _module.Find(muscleCriteria);
             if (muscleList != null)
             {
                 foreach(var muscle in muscleList)

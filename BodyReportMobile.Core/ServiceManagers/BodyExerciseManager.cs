@@ -28,9 +28,9 @@ namespace BodyReportMobile.Core.ServiceManagers
             return bodyExercise;
         }
 
-        public List<BodyExercise> FindBodyExercises(CriteriaField criteriaField = null)
+        public List<BodyExercise> FindBodyExercises(BodyExerciseCriteria bodyExerciseCriteria = null)
         {
-            var bodyExerciseList = _module.Find(criteriaField);
+            var bodyExerciseList = _module.Find(bodyExerciseCriteria);
             if (bodyExerciseList != null)
             {
                 foreach (var bodyExercise in bodyExerciseList)

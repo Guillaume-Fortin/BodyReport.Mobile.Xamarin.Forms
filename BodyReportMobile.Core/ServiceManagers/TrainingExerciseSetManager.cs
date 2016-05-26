@@ -30,9 +30,9 @@ namespace BodyReportMobile.Core.ServiceManagers
 			return _trainingExerciseSetModule.Get(key);
 		}
 
-		public List<TrainingExerciseSet> FindTrainingExerciseSet(CriteriaField criteriaField)
+		public List<TrainingExerciseSet> FindTrainingExerciseSet(TrainingExerciseSetCriteria trainingExerciseSetCriteria)
 		{
-			return _trainingExerciseSetModule.Find(criteriaField);
+			return _trainingExerciseSetModule.Find(trainingExerciseSetCriteria);
 		}
 
 		public void DeleteTrainingExerciseSet(TrainingExerciseSet trainingExerciseSet)

@@ -27,9 +27,9 @@ namespace BodyReportMobile.Core.WebServices
             return await HttpConnector.Instance.PostAsync<TrainingDay, TrainingDay>("Api/TrainingDays/Create", trainingDay);
         }
 
-        public static async Task<TrainingDay> GetTrainingDayAsync(TrainingDayKey key, bool manageExercise = false)
+        public static async Task<TrainingDay> GetTrainingDayAsync(TrainingDayKey key, TrainingDayScenario trainingDayScenario)
         {
-            if (key == null)
+            if (key == null || trainingDayScenario == null)
                 return null;
 
             Dictionary<string, string> datas = new Dictionary<string, string>();
@@ -38,16 +38,21 @@ namespace BodyReportMobile.Core.WebServices
             datas.Add("WeekOfYear", key.WeekOfYear.ToString());
             datas.Add("DayOfWeek", key.DayOfWeek.ToString());
             datas.Add("TrainingDayId", key.TrainingDayId.ToString());
-            datas.Add("manageExercise", manageExercise.ToString());
+            datas.Add("ManageExercise", trainingDayScenario.ManageExercise.ToString());
             return await HttpConnector.Instance.GetAsync<TrainingDay>("Api/TrainingDays/Get", datas);
         }
 
-        internal static async Task<TrainingDay> UpdateTrainingDayAsync(TrainingDay trainingDay)
+        internal static async Task<TrainingDay> UpdateTrainingDayAsync(TrainingDay trainingDay, TrainingDayScenario trainingDayScenario)
         {
             if (trainingDay == null)
                 return null;
 
-            return await HttpConnector.Instance.PostAsync<TrainingDay, TrainingDay>("Api/TrainingDays/Update", trainingDay);
+            var trainingDayWithScenario = new TrainingDayWithScenario()
+            {
+                TrainingDay = trainingDay,
+                TrainingDayScenario = trainingDayScenario
+            };
+            return await HttpConnector.Instance.PostAsync<TrainingDayWithScenario, TrainingDay>("Api/TrainingDays/Update", trainingDayWithScenario);
         }
     }
 }

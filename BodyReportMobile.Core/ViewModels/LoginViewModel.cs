@@ -48,7 +48,7 @@ namespace BodyReportMobile.Core.ViewModels
         public static async Task<bool> DisplayViewModelAsync(BaseViewModel parent = null)
         {
             var viewModel = new LoginViewModel();
-            return await ShowModalViewModelAsync(viewModel, parent);
+            return await ShowModalViewModelAsync(viewModel, parent, false, true);
         }
         
         private string GeLanguageFlagImageSource(LangType langType)

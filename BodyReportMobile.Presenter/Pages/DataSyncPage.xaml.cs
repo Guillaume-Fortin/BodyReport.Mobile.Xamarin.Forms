@@ -11,9 +11,9 @@ using Xamarin.Forms.Xaml;
 namespace BodyReportMobile.Presenter.Pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class DataSync : BaseContentPage
+    public partial class DataSyncPage : BaseContentPage
     {
-        public DataSync(DataSyncViewModel viewModel) : base(viewModel)
+        public DataSyncPage(DataSyncViewModel viewModel) : base(viewModel)
         {
             InitializeComponent();
         }

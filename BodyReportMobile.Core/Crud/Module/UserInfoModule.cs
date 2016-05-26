@@ -19,11 +19,6 @@ namespace BodyReportMobile.Core.Crud.Module
         {
         }
 
-        protected override void CreateTable()
-        {
-            _dbContext.CreateTable<UserInfoRow>();
-        }
-
         /// <summary>
         /// Create data in database
         /// </summary>
@@ -62,11 +57,11 @@ namespace BodyReportMobile.Core.Crud.Module
         /// Find data in database
         /// </summary>
         /// <returns></returns>
-        public List<UserInfo> Find(CriteriaField criteriaField = null)
+        public List<UserInfo> Find(UserInfoCriteria userInfoCriteria = null)
         {
             List<UserInfo> resultList = null;
 			TableQuery<UserInfoRow> rowList = _dbContext.Table<UserInfoRow>();
-            //CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
+            CriteriaTransformer.CompleteQuery(ref rowList, userInfoCriteria);
 
             if (rowList != null && rowList.Count() > 0)
             {

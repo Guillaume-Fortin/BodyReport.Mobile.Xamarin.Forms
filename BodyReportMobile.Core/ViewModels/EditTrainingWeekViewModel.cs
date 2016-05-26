@@ -228,7 +228,8 @@ namespace BodyReportMobile.Core.ViewModels
                 trainingWeek = await TrainingWeekWebService.UpdateTrainingWeekAsync(TrainingWeek);
                 if (trainingWeek != null)
                 {
-                    _trainingWeekManager.UpdateTrainingWeek(trainingWeek);
+                    var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
+                    _trainingWeekManager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
                 }
             }
 

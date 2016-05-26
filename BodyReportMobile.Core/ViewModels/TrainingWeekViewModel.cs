@@ -21,7 +21,6 @@ namespace BodyReportMobile.Core.ViewModels
     public class TrainingWeekViewModel : BaseViewModel
     {
         private SQLiteConnection _dbContext;
-        private TrainingWeekManager _trainingWeekManager;
         private IUserDialogs _userDialog;
         
         public TrainingWeek TrainingWeek { get; set; }
@@ -30,7 +29,6 @@ namespace BodyReportMobile.Core.ViewModels
         {
             ShowDelayInMs = 0;
             _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
-            _trainingWeekManager = new TrainingWeekManager(_dbContext);
             _userDialog = Resolver.Resolve<IUserDialogs>();
             
             for (int i=0; i < BindingWeekTrainingDays.Length; i++)
@@ -81,21 +79,16 @@ namespace BodyReportMobile.Core.ViewModels
             OnPropertyChanged(null);
         }
 
-        public static async Task<bool> ShowAsync(TrainingWeekKey trainingWeekKey, BaseViewModel parent = null)
+        public static async Task<bool> ShowAsync(TrainingWeek trainingWeek, BaseViewModel parent = null)
         {
             bool result = false;
-            if (trainingWeekKey != null)
+            if (trainingWeek != null)
             {
-                var trainingWeek = await TrainingWeekWebService.GetTrainingWeekAsync(trainingWeekKey, true);
-                if (trainingWeek != null)
-                {
-                    var viewModel = new TrainingWeekViewModel();
-                    viewModel.TrainingWeek = trainingWeek;
-                    result = await ShowModalViewModelAsync(viewModel, parent);
-                }
+                var viewModel = new TrainingWeekViewModel();
+                viewModel.TrainingWeek = trainingWeek;
+                result = await ShowModalViewModelAsync(viewModel, parent);
             }
-
-            return await Task.FromResult<bool>(result);
+            return result;
         }
 
         private void FillWeekOfYearDescription(TrainingWeek trainingWeek)
@@ -165,7 +158,7 @@ namespace BodyReportMobile.Core.ViewModels
                         TrainingDayId = 0,
                         UserId = UserData.Instance.UserInfo.UserId
                     };
-                    if(await CreateTrainingDayViewModel.ShowAsync(newTrainingDay, this))
+                    if(await CreateTrainingDayViewModel.ShowAsync(newTrainingDay, TEditMode.Create, this))
                     {
                         TrainingWeek.TrainingDays.Add(newTrainingDay);
                         trainingDays.Add(newTrainingDay);

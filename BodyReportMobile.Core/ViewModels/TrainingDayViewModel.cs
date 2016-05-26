@@ -133,6 +133,8 @@ namespace BodyReportMobile.Core.ViewModels
             TitleLabel = Translation.Get(TRS.TRAINING_DAY);
 			CreateTrainingLabel = Translation.Get(TRS.CREATE);
             TrainingModeLabel = "Training Mode";
+            EditTrainingDayLabel = Translation.Get(TRS.EDIT);
+            DeleteTrainingDayLabel = Translation.Get(TRS.DELETE);
             AddExerciseLabel = Translation.Get(TRS.ADD_EXERCISES);
             EditLabel = Translation.Get(TRS.EDIT);
             DeleteLabel = Translation.Get(TRS.DELETE);
@@ -310,7 +312,7 @@ namespace BodyReportMobile.Core.ViewModels
                         TrainingDayId = 0,
                         UserId = UserId
                     };
-                    if (await CreateTrainingDayViewModel.ShowAsync(newTrainingDay, this))
+                    if (await CreateTrainingDayViewModel.ShowAsync(newTrainingDay, TEditMode.Create, this))
                     {
                         _trainingDays.Add(newTrainingDay);
                         //Binding trainingDay for refresh view 
@@ -321,6 +323,39 @@ namespace BodyReportMobile.Core.ViewModels
             catch (Exception except)
             {
                 ILogger.Instance.Error("Unable to create training day", except);
+            }
+        }
+
+        private async Task EditTrainingDayActionAsync(TrainingDay trainingDay)
+        {
+            if (trainingDay == null)
+                return;
+            try
+            {
+                if (await CreateTrainingDayViewModel.ShowAsync(trainingDay, TEditMode.Edit, this))
+                {
+                    //Binding trainingDay for refresh view 
+                    CreateOrReplaceBindingTrainingDay(trainingDay);
+                }
+            }
+            catch (Exception except)
+            {
+                ILogger.Instance.Error("Unable to edite training day", except);
+                await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+            }
+        }
+
+        private async Task DeleteTrainingDayActionAsync(TrainingDay trainingDay)
+        {
+            if (trainingDay == null)
+                return;
+            try
+            {
+            }
+            catch (Exception except)
+            {
+                ILogger.Instance.Error("Unable to delete training day", except);
+                await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
         }
 
@@ -355,7 +390,13 @@ namespace BodyReportMobile.Core.ViewModels
                             nextIdTrainingExercise++;
                         }
                         //synchronise with webservice
-                        trainingDay = await TrainingDayWebService.UpdateTrainingDayAsync(trainingDay);
+                        var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
+                        trainingDay = await TrainingDayWebService.UpdateTrainingDayAsync(trainingDay, trainingDayScenario);
+                        /*
+                        //local update (FUTUR USE)
+                        TrainingDayManager trainingDayManager = new TrainingDayManager(_dbContext);
+                        trainingDayManager.UpdateTrainingDay(trainingDay, trainingDayScenario);
+                        */
                         //Binding trainingDay for refresh view
                         CreateOrReplaceBindingTrainingDay(trainingDay);
                     }
@@ -388,9 +429,11 @@ namespace BodyReportMobile.Core.ViewModels
                     // Delete TrainingExercise on server
                     await TrainingExerciseWebService.DeleteTrainingExerciseAsync(bindingTrainingExercise.TrainingExercise);
 
+                    /*
                     // Delete TrainingExercise on local database (Futur use)
                     var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
                     trainingExerciseManager.DeleteTrainingExercise(bindingTrainingExercise.TrainingExercise);
+                    */
 
                     //Refresh binding
                     if(GroupedTrainingExercises != null)
@@ -422,6 +465,28 @@ namespace BodyReportMobile.Core.ViewModels
             set
             {
                 _createTrainingLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _editTrainingDayLabel;
+        public string EditTrainingDayLabel
+        {
+            get { return _editTrainingDayLabel; }
+            set
+            {
+                _editTrainingDayLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _deleteTrainingDayLabel;
+        public string DeleteTrainingDayLabel
+        {
+            get { return _deleteTrainingDayLabel; }
+            set
+            {
+                _deleteTrainingDayLabel = value;
                 OnPropertyChanged();
             }
         }
@@ -489,7 +554,39 @@ namespace BodyReportMobile.Core.ViewModels
                 return _createTrainingDayCommand;
             }
         }
-        
+
+        private ICommand _editTrainingDayCommand = null;
+        public ICommand EditTrainingDayCommand
+        {
+            get
+            {
+                if (_editTrainingDayCommand == null)
+                {
+                    _editTrainingDayCommand = new ViewModelCommandAsync(this, async (trainingDayObject) =>
+                    {
+                        await EditTrainingDayActionAsync(trainingDayObject as TrainingDay);
+                    });
+                }
+                return _editTrainingDayCommand;
+            }
+        }
+
+        private ICommand _deleteTrainingDayCommand = null;
+        public ICommand DeleteTrainingDayCommand
+        {
+            get
+            {
+                if (_deleteTrainingDayCommand == null)
+                {
+                    _deleteTrainingDayCommand = new ViewModelCommandAsync(this, async (trainingDayObject) =>
+                    {
+                        await DeleteTrainingDayActionAsync(trainingDayObject as TrainingDay);
+                    });
+                }
+                return _deleteTrainingDayCommand;
+            }
+        }
+
         private ICommand _addExerciseCommand = null;
         public ICommand AddExerciseCommand
         {

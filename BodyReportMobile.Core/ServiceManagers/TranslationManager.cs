@@ -20,9 +20,9 @@ namespace BodyReportMobile.Core.ServiceManagers
 			return _module.Get(key);
 		}
 
-		public List<TranslationVal> FindTranslation()
+		public List<TranslationVal> FindTranslation(TranslationValCriteria translationValCriteria = null)
 		{
-			return _module.Find();
+			return _module.Find(translationValCriteria);
 		}
 
 		internal TranslationVal UpdateTranslation(TranslationVal translation)

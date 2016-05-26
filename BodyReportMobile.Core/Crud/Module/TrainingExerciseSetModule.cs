@@ -17,23 +17,6 @@ namespace BodyReportMobile.Core.Crud.Module
 		{
 		}
 
-		protected override void CreateTable()
-		{
-			_dbContext.Execute(@"CREATE TABLE IF NOT EXISTS TrainingExerciseSet (
-						  UserId VARCHAR(450) NOT NULL,
-						  Year INTEGER NOT NULL,
-						  WeekOfYear INTEGER NOT NULL,
-						  DayOfWeek INTEGER NOT NULL,
-						  TrainingDayId INTEGER NOT NULL,
-						  TrainingExerciseId INTEGER NOT NULL,
-						  Id INTEGER NOT NULL,
-						  NumberOfSets INTEGER,
-						  NumberOfReps INTEGER,
-						  Weight INTEGER,
-						  Unit INTEGER,
-						  PRIMARY KEY (UserId, Year, WeekOfYear, DayOfWeek, TrainingDayId, TrainingExerciseId, Id))");
-		}
-
 		/// <summary>
 		/// Create data in database
 		/// </summary>
@@ -79,11 +62,11 @@ namespace BodyReportMobile.Core.Crud.Module
 		/// Find datas
 		/// </summary>
 		/// <returns></returns>
-		public List<TrainingExerciseSet> Find(CriteriaField criteriaField = null)
+		public List<TrainingExerciseSet> Find(TrainingExerciseSetCriteria trainingExerciseSetCriteria = null)
 		{
 			List<TrainingExerciseSet> resultList = null;
 			TableQuery<TrainingExerciseSetRow> rowList = _dbContext.Table<TrainingExerciseSetRow>();
-			//CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
+			CriteriaTransformer.CompleteQuery(ref rowList, trainingExerciseSetCriteria);
 			rowList = rowList.OrderBy(t => t.TrainingExerciseId);
 
 			if (rowList != null && rowList.Count() > 0)

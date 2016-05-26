@@ -17,18 +17,6 @@ namespace BodyReportMobile.Core.Crud.Module
 		{
 		}
 
-		protected override void CreateTable()
-		{
-			_dbContext.Execute(@"CREATE TABLE IF NOT EXISTS TrainingWeek (
-						  UserId VARCHAR(450) NOT NULL,
-						  Year INTEGER NOT NULL,
-						  WeekOfYear INTEGER NOT NULL,
-						  UserHeight REAL,
-						  UserWeight REAL,
-						  Unit INTEGER,
-						  PRIMARY KEY (UserId, Year, WeekOfYear))");
-		}
-
 		/// <summary>
 		/// Create data in database
 		/// </summary>
@@ -70,11 +58,11 @@ namespace BodyReportMobile.Core.Crud.Module
 		/// Find datas
 		/// </summary>
 		/// <returns></returns>
-		public List<TrainingWeek> Find(CriteriaField criteriaField = null)
+		public List<TrainingWeek> Find(TrainingWeekCriteria trainingWeekCriteria = null)
 		{
 			List<TrainingWeek> resultList = null;
 			TableQuery<TrainingWeekRow> rowList = _dbContext.Table<TrainingWeekRow>();
-			//CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
+			CriteriaTransformer.CompleteQuery(ref rowList, trainingWeekCriteria);
 			rowList = rowList.OrderBy(t => t.UserId).OrderByDescending(t => t.Year).ThenByDescending(t => t.WeekOfYear);
 
 			if (rowList != null && rowList.Count() > 0)
