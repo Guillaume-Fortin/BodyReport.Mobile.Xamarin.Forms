@@ -81,6 +81,14 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 var countryManager = new CountryManager(_dbContext);
                 _countries = countryManager.FindCountries();
+                if (_countries == null || _countries.Count == 0)
+                {
+                    //find country in server if not present in database (this viewModel can be display directly after user login)
+                    _countries = await CountryWebService.FindCountriesAsync();
+                    //populate country in local database
+                    if (_countries != null && _countries.Count > 0)
+                        countryManager.UpdateCountryList(_countries);
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(_userId))
