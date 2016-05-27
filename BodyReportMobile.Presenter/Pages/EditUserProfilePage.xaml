@@ -34,7 +34,7 @@
               Value="{Binding BindingUserInfo.SexName, Mode=TwoWay}"
               IsIndicatorVisible="true"/>
 
-            <localcontrol:TouchViewCell x:Name="UnitCell" Tapped="OnCellTapped"
+            <localcontrol:TouchViewCell x:Name="UnitCell" Tapped="OnCellTapped" Height="80"
               Title="{Binding UnitLabel}"
               Value="{Binding BindingUserInfo.Unit, Mode=TwoWay}"
               Description="{Binding UnitDescriptionLabel}"

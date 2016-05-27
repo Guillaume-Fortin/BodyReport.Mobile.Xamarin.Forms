@@ -72,7 +72,7 @@ namespace BodyReportMobile.Core.ViewModels
             var viewModel = new EditUserProfileViewModel();
             viewModel._userId = userId;
             viewModel._allowCancelViewModel = allowCancelViewModel;
-            return await ShowModalViewModelAsync(viewModel, parent, false, !allowCancelViewModel);
+            return await ShowModalViewModelAsync(viewModel, parent, false);
         }
 
         private async Task SynchronizeDataAsync()
