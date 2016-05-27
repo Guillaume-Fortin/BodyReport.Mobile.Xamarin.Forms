@@ -10,6 +10,10 @@
                 iOS="#6DBEE3"/>
   </ContentPage.BackgroundColor>
 
+  <ContentPage.ToolbarItems>
+    <ToolbarItem Name="MenuToolbarItem" Icon="menu_icon.png" Command="{Binding MenuCommand}" Order="Primary" Priority="0" />
+  </ContentPage.ToolbarItems>
+    
   <ContentPage.Content>
     <Grid>
       <Grid.RowDefinitions>
@@ -29,16 +33,9 @@
       </StackLayout>
         <TableView  Grid.Row="1" x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
         <TableRoot>
-          <TableSection Title="{Binding MenuLabel}">
+          <TableSection>
             <localcontrol:TouchViewCell x:Name="TrainingJournalCell" Tapped="OnCellTapped"
               Value="{Binding TrainingJournalLabel}"
-              IsIndicatorVisible="true" />
-          </TableSection>
-          <TableSection Title="{Binding ConfigurationLabel}">
-            <localcontrol:TouchViewCell x:Name="ChangeLanguageCell" Tapped="OnCellTapped"
-              Value="{Binding ChangeLanguageLabel}"
-              Image="{Binding LanguageFlagImageSource}"
-              IsImageVisible="true"
               IsIndicatorVisible="true" />
           </TableSection>
         </TableRoot>

@@ -43,6 +43,7 @@ namespace BodyReportMobile.Presenter
 
             presenterManager.AddViewDependency<DataSyncViewModel, DataSyncPage>();
             presenterManager.AddViewDependency<MainViewModel, MainPage>();
+            presenterManager.AddViewDependency<MenuViewModel, MenuPage>();
             presenterManager.AddViewDependency<TrainingJournalViewModel, TrainingJournalPage>();
             presenterManager.AddViewDependency<EditTrainingWeekViewModel, EditTrainingWeekPage>();
             presenterManager.AddViewDependency<TrainingWeekViewModel, TrainingWeekPage>();

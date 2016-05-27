@@ -23,11 +23,8 @@ namespace BodyReportMobile.Core.ViewModels
 	public class MainViewModel : BaseViewModel
 	{
 		public string MenuLabel { get; set;}
-		public string ConfigurationLabel { get; set;}
-		public string TrainingJournalLabel { get; set;}
-		public string ChangeLanguageLabel { get; set;}
+        public string TrainingJournalLabel { get; set;}
         public string _userProfilImage { get; set; }
-
 
         public string UserProfilImage
         {
@@ -38,20 +35,6 @@ namespace BodyReportMobile.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
-        private string _languageFlagImageSource;
-
-		public string LanguageFlagImageSource
-		{
-			get { return _languageFlagImageSource; }
-			set 
-			{
-				if (value != _languageFlagImageSource) {
-					_languageFlagImageSource = value;
-                    OnPropertyChanged();
-				}
-			}
-		}
 
 		private SQLiteConnection _dbContext;
         private IFileManager _fileManager;
@@ -106,10 +89,7 @@ namespace BodyReportMobile.Core.ViewModels
 
 			TitleLabel = "BodyReport";
 			MenuLabel = Translation.Get (TRS.MENU);
-			ConfigurationLabel = Translation.Get (TRS.CONFIGURATION);
-			TrainingJournalLabel = Translation.Get (TRS.TRAINING_JOURNAL);
-			ChangeLanguageLabel = Translation.Get (TRS.LANGUAGE);
-			LanguageFlagImageSource = LanguageViewModel.GeLanguageFlagImageSource (Translation.CurrentLang);
+            TrainingJournalLabel = Translation.Get (TRS.TRAINING_JOURNAL);
 
             OnPropertyChanged(null);
         }
@@ -141,24 +121,14 @@ namespace BodyReportMobile.Core.ViewModels
             }
 		}
 
-        /// <summary>
-        /// Change language with user choice list view
-        /// </summary>
-		private async Task GoToChangeLanguageActionAsync()
-		{
-            try
-            {
-                if (await LanguageViewModel.DisplayChooseLanguageAsync(this))
-                {
-                    InitTranslation();
-                    LanguageViewModel.SaveApplicationLanguage();
-                }
-            }
-            catch
-            {
-            }
-		}
-
+        private async Task MenuActionAsync()
+        {
+            var oldLang = Translation.CurrentLang;
+            await MenuViewModel.ShowAsync(this);
+            if (oldLang != Translation.CurrentLang)
+                InitTranslation();
+        }
+        
         private async Task SelectUserPictureActionAsync()
         {
             try
@@ -243,23 +213,6 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
-        private ICommand _goToChangeLanguageCommand = null;
-        public ICommand GoToChangeLanguageCommand
-        {
-            get
-            {
-                if (_goToChangeLanguageCommand == null)
-                {
-                    _goToChangeLanguageCommand = new ViewModelCommandAsync(this, async () =>
-                    {
-                        await GoToChangeLanguageActionAsync();
-                    });
-                }
-
-                return _goToChangeLanguageCommand;
-            }
-        }
-
         private ICommand _selectUserPictureCommand = null;
         public ICommand SelectUserPictureCommand
         {
@@ -274,6 +227,23 @@ namespace BodyReportMobile.Core.ViewModels
                 }
 
                 return _selectUserPictureCommand;
+            }
+        }
+
+        private ICommand _menuCommand = null;
+        public ICommand MenuCommand
+        {
+            get
+            {
+                if (_menuCommand == null)
+                {
+                    _menuCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await MenuActionAsync();
+                    });
+                }
+
+                return _menuCommand;
             }
         }
 

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages"
+             xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
+             Title="{Binding TitleLabel}"
+             x:Class="BodyReportMobile.Presenter.Pages.MenuPage">
+
+  <ContentPage.Content>
+    <TableView x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+      <TableRoot>
+        <TableSection Title="{Binding UserLabel}">
+          <localcontrol:TouchViewCell x:Name="EditUserProfileCell" Tapped="OnCellTapped"
+            Value="{Binding EditUserProfileLabel}"
+            IsIndicatorVisible="true" />
+        </TableSection>
+        <TableSection Title="{Binding ConfigurationLabel}">
+          <localcontrol:TouchViewCell x:Name="ChangeLanguageCell" Tapped="OnCellTapped"
+            Value="{Binding ChangeLanguageLabel}"
+            Image="{Binding LanguageFlagImageSource}"
+            IsImageVisible="true"
+            IsIndicatorVisible="true" />
+        </TableSection>
+      </TableRoot>
+    </TableView>
+  </ContentPage.Content>
+</local:BaseContentPage>

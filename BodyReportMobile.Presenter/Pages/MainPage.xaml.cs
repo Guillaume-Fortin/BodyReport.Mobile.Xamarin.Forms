@@ -20,8 +20,6 @@ namespace BodyReportMobile.Presenter.Pages
             var viewModel = BindingContext as MainViewModel;
 			if (sender == TrainingJournalCell)
 				viewModel.GoToTrainingJournalCommand.Execute (null);
-			else if (sender == ChangeLanguageCell)
-				viewModel.GoToChangeLanguageCommand.Execute (null);
 		}
 	}
 }

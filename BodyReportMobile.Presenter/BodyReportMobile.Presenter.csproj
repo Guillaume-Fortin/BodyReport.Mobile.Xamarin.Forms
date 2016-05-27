@@ -50,7 +50,7 @@
     <Compile Include="Framework\Controls\TextEntry.xaml.cs">
       <DependentUpon>TextEntry.xaml</DependentUpon>
     </Compile>
-	<Compile Include="Framework\Controls\TextEntryCell.xaml.cs">
+    <Compile Include="Framework\Controls\TextEntryCell.xaml.cs">
       <DependentUpon>TextEntryCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Framework\Controls\TimeViewCell.xaml.cs">
@@ -73,6 +73,9 @@
     </Compile>
     <Compile Include="Pages\EditUserProfilePage.xaml.cs">
       <DependentUpon>EditUserProfilePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MenuPage.xaml.cs">
+      <DependentUpon>MenuPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\TrainingDayPage.xaml.cs">
       <DependentUpon>TrainingDayPage.xaml</DependentUpon>
@@ -242,6 +245,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\EditUserProfilePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\MenuPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
