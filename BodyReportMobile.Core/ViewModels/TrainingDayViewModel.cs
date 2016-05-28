@@ -161,8 +161,8 @@ namespace BodyReportMobile.Core.ViewModels
             BindingTrainingExercise bindingTrainingExercise;
 
             var collection = new GenericGroupModelCollection<BindingTrainingExercise>(); ;
-            beginHourStr = trainingDay.BeginHour == null ? "00:00" : trainingDay.BeginHour.ToString("HH:mm");
-            endHourStr = trainingDay.EndHour == null ? "00:00" : trainingDay.EndHour.ToString("HH:mm");
+            beginHourStr = trainingDay.BeginHour == null ? "00:00" : trainingDay.BeginHour.ToLocalTime().ToString("HH:mm");
+            endHourStr = trainingDay.EndHour == null ? "00:00" : trainingDay.EndHour.ToLocalTime().ToString("HH:mm");
             collection.LongName = string.Format("{0} {1} {2} {3}", Translation.Get(TRS.FROM), beginHourStr, Translation.Get(TRS.TO), endHourStr);
             collection.ShortName = collection.LongName;
             collection.ReferenceObject = trainingDay;

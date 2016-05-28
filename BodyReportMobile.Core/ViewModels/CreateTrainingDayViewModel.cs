@@ -70,10 +70,18 @@ namespace BodyReportMobile.Core.ViewModels
                     Day = _trainingDay.DayOfWeek,
                     DayLabel = Translation.Get(((DayOfWeek)_trainingDay.DayOfWeek).ToString().ToUpper()),
                     BeginTimeLabel = Translation.Get(TRS.BEGIN_HOUR),
-                    BeginTime = new TimeSpan(12, 0, 0),
                     EndTimeLabel = Translation.Get(TRS.END_HOUR),
-                    EndTime = new TimeSpan(12, 0, 0)
                 };
+
+                if (_trainingDay.BeginHour == null)
+                    BindingTrainingDay.BeginTime = new TimeSpan(12, 0, 0);
+                else
+                    BindingTrainingDay.BeginTime = _trainingDay.BeginHour.ToLocalTime().TimeOfDay;
+
+                if (_trainingDay.EndHour == null)
+                    BindingTrainingDay.EndTime = new TimeSpan(12, 0, 0);
+                else
+                    BindingTrainingDay.EndTime = _trainingDay.EndHour.ToLocalTime().TimeOfDay;
             }
             catch (Exception except)
             {
@@ -101,12 +109,12 @@ namespace BodyReportMobile.Core.ViewModels
         {
             bool result = false;
             
-            _trainingDay.BeginHour = DateTime.Now.Date.Add(BindingTrainingDay.BeginTime);
-            _trainingDay.EndHour = DateTime.Now.Date.Add(BindingTrainingDay.EndTime);
-            _trainingDay.TrainingDayId = 0; // force calculate id
-
+            _trainingDay.BeginHour = DateTime.Now.Date.Add(BindingTrainingDay.BeginTime).ToUniversalTime();
+            _trainingDay.EndHour = DateTime.Now.Date.Add(BindingTrainingDay.EndTime).ToUniversalTime();
+            
             if (_editMode == TEditMode.Create)
             {
+                _trainingDay.TrainingDayId = 0; // force calculate id
                 var trainingDayCreated = await TrainingDayWebService.CreateTrainingDaysAsync(_trainingDay);
                 if (trainingDayCreated != null)
                 {
