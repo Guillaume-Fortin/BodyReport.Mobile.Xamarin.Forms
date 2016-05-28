@@ -74,5 +74,15 @@ namespace BodyReportMobile.Core.Models
             get;
             set;
         }
+
+        /// <summary>
+        /// Olson timezone name
+        /// </summary>
+        [MaxLength(100)]
+        public string TimeZoneName
+        {
+            get;
+            set;
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Acr.UserDialogs;
+using BodyReportMobile.Core.Data;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Message;
 using BodyReportMobile.Core.Message.Binding;
@@ -224,10 +225,17 @@ namespace BodyReportMobile.Core.ViewModels
                 Height = BindingUserInfo.Height,
                 Weight = BindingUserInfo.Weight,
                 ZipCode = BindingUserInfo.ZipCode,
-                CountryId = BindingUserInfo.CoutryId
+                CountryId = BindingUserInfo.CoutryId,
+                TimeZoneName = _userInfo.TimeZoneName //not for mobile but need to transfer
             };
 
             userInfo = await UserInfoWebService.UpdateUserInfoAsync(userInfo);
+
+            if(userInfo != null && userInfo.UserId == UserData.Instance.UserInfo.UserId)
+            {
+                var userInfoManager = new UserInfoManager(_dbContext);
+                userInfoManager.UpdateUserInfo(userInfo);
+            }
             return userInfo != null;
         }
 

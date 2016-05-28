@@ -21,6 +21,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
             row.Sex = (int)bean.Sex;
             row.ZipCode = bean.ZipCode;
             row.CountryId = bean.CountryId;
+            row.TimeZoneName = bean.TimeZoneName;
         }
 
         internal static UserInfo ToBean(UserInfoRow row)
@@ -36,6 +37,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
             bean.Sex = (TSexType)row.Sex;
             bean.ZipCode = row.ZipCode;
             bean.CountryId = row.CountryId;
+            bean.TimeZoneName = row.TimeZoneName;
             return bean;
         }
     }
