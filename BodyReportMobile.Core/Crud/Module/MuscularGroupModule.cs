@@ -93,6 +93,8 @@ namespace BodyReportMobile.Core.Crud.Module
             else
             { //Modify Data in database
                 MuscularGroupTransformer.ToRow(muscularGroup, muscularGroupRow);
+                _dbContext.Delete(muscularGroupRow); //Update don't work... need delete and insert
+                _dbContext.Insert(muscularGroupRow);
                 return MuscularGroupTransformer.ToBean(muscularGroupRow);
             }
         }

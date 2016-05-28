@@ -107,7 +107,9 @@ namespace BodyReportMobile.Core.Crud.Module
 			else
 			{ //Modify Data in database
 				TrainingExerciseSetTransformer.ToRow(trainingExerciseSet, row);
-				return TrainingExerciseSetTransformer.ToBean(row);
+                _dbContext.Delete(row); //Update don't work... need delete and insert
+                _dbContext.Insert(row);
+                return TrainingExerciseSetTransformer.ToBean(row);
 			}
 		}
 

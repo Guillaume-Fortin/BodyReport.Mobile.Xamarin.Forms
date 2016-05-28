@@ -96,6 +96,8 @@ namespace BodyReportMobile.Core.Crud.Module
             else
             { //Modify Data in database
                 BodyExerciseTransformer.ToRow(bodyExercise, bodyExerciseRow);
+                _dbContext.Delete(bodyExerciseRow); //Update don't work... need delete and insert
+                _dbContext.Insert(bodyExerciseRow);
                 return BodyExerciseTransformer.ToBean(bodyExerciseRow);
             }
         }

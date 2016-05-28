@@ -79,24 +79,26 @@ namespace BodyReportMobile.Core.Crud.Module
 		/// <summary>
 		/// Update data in database
 		/// </summary>
-		/// <param name="trainingJournal">data</param>
+		/// <param name="trainingWeek">data</param>
 		/// <returns>updated data</returns>
-		public TrainingWeek Update(TrainingWeek trainingJournal)
+		public TrainingWeek Update(TrainingWeek trainingWeek)
 		{
-			if (trainingJournal == null || string.IsNullOrWhiteSpace(trainingJournal.UserId) ||
-				trainingJournal.Year == 0 || trainingJournal.WeekOfYear == 0)
+			if (trainingWeek == null || string.IsNullOrWhiteSpace(trainingWeek.UserId) ||
+				trainingWeek.Year == 0 || trainingWeek.WeekOfYear == 0)
 				return null;
 
-			var trainingJournalRow = _dbContext.Table<TrainingWeekRow>().Where(t => t.UserId == trainingJournal.UserId && t.Year == trainingJournal.Year &&
-				t.WeekOfYear == trainingJournal.WeekOfYear).FirstOrDefault();
-			if (trainingJournalRow == null)
+			var trainingWeekRow = _dbContext.Table<TrainingWeekRow>().Where(t => t.UserId == trainingWeek.UserId && t.Year == trainingWeek.Year &&
+				t.WeekOfYear == trainingWeek.WeekOfYear).FirstOrDefault();
+			if (trainingWeekRow == null)
 			{ // No data in database
-				return Create(trainingJournal);
+				return Create(trainingWeek);
 			}
 			else
 			{ //Modify Data in database
-				TrainingWeekTransformer.ToRow(trainingJournal, trainingJournalRow);
-				return TrainingWeekTransformer.ToBean(trainingJournalRow);
+				TrainingWeekTransformer.ToRow(trainingWeek, trainingWeekRow);
+                _dbContext.Delete(trainingWeekRow); //Update don't work... need delete and insert
+                _dbContext.Insert(trainingWeekRow);
+                return TrainingWeekTransformer.ToBean(trainingWeekRow);
 			}
 		}
 

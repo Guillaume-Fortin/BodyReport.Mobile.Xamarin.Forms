@@ -55,7 +55,7 @@ namespace BodyReportMobile.Core.Crud.Module
 						  UserHeight REAL,
 						  UserWeight REAL,
 						  Unit INTEGER,
-                          ModificationDate TEXT,
+                          ModificationDate NUMERIC,
 						  PRIMARY KEY (UserId, Year, WeekOfYear))");
             //TrainingDay table
             dbContext.Execute(@"CREATE TABLE IF NOT EXISTS TrainingDay (
@@ -66,7 +66,7 @@ namespace BodyReportMobile.Core.Crud.Module
 						  TrainingDayId INTEGER NOT NULL,
 						  BeginHour NUMERIC,
 						  EndHour NUMERIC,
-                          ModificationDate TEXT,
+                          ModificationDate NUMERIC,
 						  PRIMARY KEY (UserId, Year, WeekOfYear, DayOfWeek, TrainingDayId))");
             //TrainingExercise table
             dbContext.Execute(@"CREATE TABLE IF NOT EXISTS TrainingExercise (
@@ -78,7 +78,7 @@ namespace BodyReportMobile.Core.Crud.Module
 						  Id INTEGER NOT NULL,
 						  BodyExerciseId INTEGER,
 						  RestTime INTEGER,
-                          ModificationDate TEXT,
+                          ModificationDate NUMERIC,
 						  PRIMARY KEY (UserId, Year, WeekOfYear, DayOfWeek, TrainingDayId, Id))");
             //TrainingExerciseSet table
             dbContext.Execute(@"CREATE TABLE IF NOT EXISTS TrainingExerciseSet (
@@ -93,7 +93,7 @@ namespace BodyReportMobile.Core.Crud.Module
 						  NumberOfReps INTEGER,
 						  Weight INTEGER,
 						  Unit INTEGER,
-                          ModificationDate TEXT,
+                          ModificationDate NUMERIC,
 						  PRIMARY KEY (UserId, Year, WeekOfYear, DayOfWeek, TrainingDayId, TrainingExerciseId, Id))");
             //Country table
             dbContext.CreateTable<CountryRow>();

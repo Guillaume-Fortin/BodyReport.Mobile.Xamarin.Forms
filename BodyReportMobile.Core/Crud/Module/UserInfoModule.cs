@@ -92,6 +92,8 @@ namespace BodyReportMobile.Core.Crud.Module
             else
             { //Modify Data in database
                 UserInfoTransformer.ToRow(userInfo, row);
+                _dbContext.Delete(row); //Update don't work... need delete and insert
+                _dbContext.Insert(row);
                 return UserInfoTransformer.ToBean(row);
             }
         }
