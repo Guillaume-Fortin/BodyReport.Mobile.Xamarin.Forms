@@ -5,8 +5,8 @@ using BodyReportMobile.Core.Framework;
 
 namespace BodyReportMobile.Core.Crud.Module
 {
-	public class Crud
-	{
+    public class Crud
+    {
         private static object MigrationLocker = new object();
         private static bool MigrationTableDone = false;
         /// <summary>
@@ -14,13 +14,13 @@ namespace BodyReportMobile.Core.Crud.Module
         /// </summary>
         protected SQLiteConnection _dbContext = null;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="dbContext">db context</param>
-		public Crud(SQLiteConnection dbContext)
-		{
-			_dbContext = dbContext;
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="dbContext">db context</param>
+        public Crud(SQLiteConnection dbContext)
+        {
+            _dbContext = dbContext;
             MigrateTable(_dbContext);
         }
 
@@ -36,8 +36,17 @@ namespace BodyReportMobile.Core.Crud.Module
             }
         }
 
-		private static void CreateTables(SQLiteConnection dbContext)
-		{
+        public static void EmptyUserTables(SQLiteConnection dbContext)
+        {
+            dbContext.DeleteAll<UserInfoRow>();
+            dbContext.DeleteAll<TrainingWeekRow>();
+            dbContext.DeleteAll<TrainingDayRow>();
+            dbContext.DeleteAll<TrainingExerciseRow>();
+            dbContext.DeleteAll<TrainingExerciseSetRow>();
+        }
+
+        private static void CreateTables(SQLiteConnection dbContext)
+        {
             dbContext.CreateTable<UserInfoRow>();
             dbContext.CreateTable<BodyExerciseRow>();
             dbContext.CreateTable<MuscleRow>();
@@ -110,7 +119,7 @@ namespace BodyReportMobile.Core.Crud.Module
                 SetDatabaseVerion(dbContext, version);
             }
             //Migrate version 1 to version 2
-            if(version == "1")
+            if (version == "1")
             {
                 dbContext.CreateTable<CountryRow>();
                 ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingWeek ADD COLUMN ModificationDate TEXT");
@@ -128,7 +137,7 @@ namespace BodyReportMobile.Core.Crud.Module
             {
                 dbContext.Execute(query);
             }
-            catch(Exception except)
+            catch (Exception except)
             {
                 ILogger.Instance.Error("Unable to execute migrate table query", except);
             }

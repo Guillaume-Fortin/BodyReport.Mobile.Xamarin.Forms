@@ -7,6 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using XLabs.Ioc;
+using SQLite.Net;
+using BodyReportMobile.Core.Manager;
+using Acr.UserDialogs;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -25,6 +29,7 @@ namespace BodyReportMobile.Core.ViewModels
             ChangeLanguageLabel = Translation.Get(TRS.LANGUAGE);
             UserLabel = Translation.Get(TRS.USER);
             EditUserProfileLabel = Translation.Get(TRS.ACCOUNT_INFORMATION);
+            LogoffLabel = Translation.Get(TRS.LOG_OFF);
             LanguageFlagImageSource = LanguageViewModel.GeLanguageFlagImageSource(Translation.CurrentLang);
         }
 
@@ -43,6 +48,23 @@ namespace BodyReportMobile.Core.ViewModels
             catch(Exception except)
             {
                 ILogger.Instance.Error("Unable to edit user profile", except);
+            }
+        }
+
+        private async Task LogOffActionAsync()
+        {
+            try
+            {
+                var userDialog = Resolver.Resolve<IUserDialogs>();
+                if (await userDialog.ConfirmAsync(Translation.Get(TRS.ARE_YOU_SURE_YOU_WANT_TO_LOG_OFF_PI), Translation.Get(TRS.CONFIRMATION), Translation.Get(TRS.YES), Translation.Get(TRS.NO)))
+                {
+                    LoginManager.Instance.LogOff();
+                    CloseViewModel();
+                }
+            }
+            catch (Exception except)
+            {
+                ILogger.Instance.Error("Unable to log out user", except);
             }
         }
 
@@ -111,6 +133,17 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
+        private string _logoffLabel;
+        public string LogoffLabel
+        {
+            get { return _logoffLabel; }
+            set
+            {
+                _logoffLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
         private string _languageFlagImageSource;
         public string LanguageFlagImageSource
         {
@@ -143,6 +176,23 @@ namespace BodyReportMobile.Core.ViewModels
                 }
 
                 return _editUserProfileCommand;
+            }
+        }
+
+        private ICommand _logOffCommand = null;
+        public ICommand LogOffCommand
+        {
+            get
+            {
+                if (_logOffCommand == null)
+                {
+                    _logOffCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await LogOffActionAsync();
+                    });
+                }
+
+                return _logOffCommand;
             }
         }
 

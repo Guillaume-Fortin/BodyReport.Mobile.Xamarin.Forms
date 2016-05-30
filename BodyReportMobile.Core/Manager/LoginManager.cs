@@ -114,6 +114,20 @@ namespace BodyReportMobile.Core.Manager
             return result;
         }
 
+        public void LogOff()
+        {
+            try
+            {
+                _security.RemoveUserInfo();
+                UserData.Instance.UserInfo = new UserInfo();
+                var dbContext = Resolver.Resolve<ISQLite>().GetConnection();
+                Crud.Module.Crud.EmptyUserTables(dbContext);
+            }
+            catch
+            {
+            }
+        }
+
         public async Task<bool> ConnectUserAsync(bool autoPromptLogin)
         {
             return await ConnectUserAsync(_userName, _password, autoPromptLogin);

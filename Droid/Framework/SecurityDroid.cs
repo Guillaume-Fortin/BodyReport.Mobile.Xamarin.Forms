@@ -14,7 +14,15 @@ namespace BodyReport.Droid
     /// </summary>
 	public class SecurityDroid : ISecurity
 	{
-		public void SaveUserInfo (string userId, string userName, string password)
+        public void RemoveUserInfo()
+        {
+            CreateStore();
+
+            Dictionary<string, string> values = new Dictionary<string, string>();
+            Save(values, "BodyReport");
+        }
+
+        public void SaveUserInfo (string userId, string userName, string password)
 		{
             CreateStore();
 

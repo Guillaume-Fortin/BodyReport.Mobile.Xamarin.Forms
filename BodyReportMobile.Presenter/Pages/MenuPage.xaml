@@ -13,6 +13,9 @@
           <localcontrol:TouchViewCell x:Name="EditUserProfileCell" Tapped="OnCellTapped"
             Value="{Binding EditUserProfileLabel}"
             IsIndicatorVisible="true" />
+          <localcontrol:TouchViewCell x:Name="LogOffCell" Tapped="OnCellTapped"
+            Value="{Binding LogoffLabel}"
+            IsIndicatorVisible="true" />
         </TableSection>
         <TableSection Title="{Binding ConfigurationLabel}">
           <localcontrol:TouchViewCell x:Name="ChangeLanguageCell" Tapped="OnCellTapped"

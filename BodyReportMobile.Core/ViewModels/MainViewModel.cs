@@ -60,26 +60,30 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 await base.ShowAsync();
 
-                try
-                {
-                    ActionIsInProgress = true;
-                    
-                    await DataSyncViewModel.ShowAsync(this);
-
-                    DisplayUserProfil();
-                }
-                catch(Exception except)
-                {
-                    ILogger.Instance.Error("Unable to Show MainViewModel", except);
-                }
-                finally
-                {
-                    ActionIsInProgress = false;
-                }
+                ActionIsInProgress = true;
+                await InitUserConnectionAsync();
             }
             catch(Exception except)
             {
                 await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+            }
+            finally
+            {
+                ActionIsInProgress = false;
+            }
+        }
+
+        private async Task InitUserConnectionAsync()
+        {
+            try
+            {
+                await DataSyncViewModel.ShowAsync(this);
+
+                DisplayUserProfil();
+            }
+            catch(Exception except)
+            {
+                ILogger.Instance.Error("Unable to Show DataSyncViewModel", except);
             }
         }
 
@@ -127,6 +131,11 @@ namespace BodyReportMobile.Core.ViewModels
             await MenuViewModel.ShowAsync(this);
             if (oldLang != Translation.CurrentLang)
                 InitTranslation();
+            if(string.IsNullOrWhiteSpace(UserData.Instance.UserInfo.UserId))
+            {
+                //user deconnection detected
+                await InitUserConnectionAsync();
+            }
         }
         
         private async Task SelectUserPictureActionAsync()

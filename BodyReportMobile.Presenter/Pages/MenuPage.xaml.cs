@@ -6,9 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace BodyReportMobile.Presenter.Pages
 {
+    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MenuPage : BaseContentPage
     {
         public MenuPage(MenuViewModel menuViewModel) : base(menuViewModel)
@@ -21,6 +23,8 @@ namespace BodyReportMobile.Presenter.Pages
             var viewModel = BindingContext as MenuViewModel;
             if (sender == EditUserProfileCell)
                 viewModel.EditUserProfileCommand.Execute(null);
+            else if (sender == LogOffCell)
+                viewModel.LogOffCommand.Execute(null);
             else if (sender == ChangeLanguageCell)
                 viewModel.ChangeLanguageCommand.Execute(null);
         }

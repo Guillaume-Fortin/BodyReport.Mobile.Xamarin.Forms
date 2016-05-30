@@ -7,7 +7,20 @@ namespace BodyReport.iOS.Framework
 {
 	public class SecurityIOS : ISecurity
 	{
-		public void SaveUserInfo (string userId, string userName, string password)
+        public void RemoveUserInfo()
+        {
+            var rec = new SecRecord(SecKind.GenericPassword)
+            {
+                Generic = NSData.FromString("password")
+            };
+
+            SecStatusCode res;
+            var match = SecKeyChain.QueryAsRecord(rec, out res);
+            if (res == SecStatusCode.Success)
+                res = SecKeyChain.Remove(rec);
+        }
+
+        public void SaveUserInfo (string userId, string userName, string password)
 		{
 			var rec = new SecRecord (SecKind.GenericPassword){
 				Generic = NSData.FromString ("password")
