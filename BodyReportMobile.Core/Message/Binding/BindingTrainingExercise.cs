@@ -93,6 +93,28 @@ namespace BodyReportMobile.Core.Message.Binding
             }
         }
 
+        private bool _upOrderVisible;
+        public bool UpOrderVisible
+        {
+            get { return _upOrderVisible; }
+            set
+            {
+                _upOrderVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _downOrderVisible;
+        public bool DownOrderVisible
+        {
+            get { return _downOrderVisible; }
+            set
+            {
+                _downOrderVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
         //public ObservableCollection<BindingTrainingExerciseSet> TrainingExerciseSets { get; set; } = new ObservableCollection<BindingTrainingExerciseSet>();
     }
 }

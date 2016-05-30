@@ -96,15 +96,32 @@
                     <Grid.ColumnDefinitions>
                       <ColumnDefinition Width="*"/>
                       <ColumnDefinition Width="*"/>
+                      <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackLayout Grid.Row="0" Grid.Column="0">
-                      <Label Grid.Row="0" Grid.Column="0" Text="{Binding SetRepsTitle}" />
+                      <Label Text="{Binding SetRepsTitle}" />
                     </StackLayout>
                     <StackLayout Grid.Row="0" Grid.Column="1">
                       <Label Text="{Binding SetRepWeightsTitle}" />
                     </StackLayout>
                     <Label Grid.Row="1" Grid.Column="0" Text="{Binding SetReps}"/>
                     <Label Grid.Row="1" Grid.Column="1" Text="{Binding SetRepWeights}"/>
+                    <StackLayout Spacing="10" Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Orientation="Vertical" HorizontalOptions="Center">
+                      <Image Source="btn_up.png" IsVisible="{Binding UpOrderVisible}" WidthRequest="25" HeightRequest="25">
+                        <Image.GestureRecognizers>
+                          <TapGestureRecognizer 
+                            Command="{Binding BindingContext.UpTrainingDayOrderCommand, Source={x:Reference trainingDayPage}}"
+                            CommandParameter="{Binding Source={x:Reference viewCell}, Path=BindingContext}" NumberOfTapsRequired="1" />
+                        </Image.GestureRecognizers>
+                      </Image>
+                      <Image Source="btn_down.png" IsVisible="{Binding DownOrderVisible}" WidthRequest="25" HeightRequest="25">
+                        <Image.GestureRecognizers>
+                          <TapGestureRecognizer
+                            Command="{Binding BindingContext.DownTrainingDayOrderCommand, Source={x:Reference trainingDayPage}}"
+                            CommandParameter="{Binding Source={x:Reference viewCell}, Path=BindingContext}" NumberOfTapsRequired="1" />
+                        </Image.GestureRecognizers>
+                      </Image>
+                    </StackLayout>
                   </Grid>
                 </StackLayout>
               </StackLayout>

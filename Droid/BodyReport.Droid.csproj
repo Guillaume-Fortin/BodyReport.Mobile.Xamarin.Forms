@@ -276,6 +276,14 @@
       <Link>Resources\drawable\menu_icon.png</Link>
     </AndroidResource>
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="..\images\btn_down.png">
+      <Link>Resources\drawable\btn_down.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\images\btn_up.png">
+      <Link>Resources\drawable\btn_up.png</Link>
+    </AndroidResource>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

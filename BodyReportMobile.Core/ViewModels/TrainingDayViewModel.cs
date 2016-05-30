@@ -170,14 +170,19 @@ namespace BodyReportMobile.Core.ViewModels
 
             if (trainingDay.TrainingExercises != null)
             {
-                foreach (var trainingExercise in trainingDay.TrainingExercises)
+                BodyExercise bodyExercise;
+                TrainingExercise trainingExercise;
+                for (int i = 0; i < trainingDay.TrainingExercises.Count; i++)
                 {
-                    var bodyExercise = _bodyExerciseList.Where(m => m.Id == trainingExercise.BodyExerciseId).FirstOrDefault();
+                    trainingExercise = trainingDay.TrainingExercises[i];
+                    bodyExercise = _bodyExerciseList.Where(m => m.Id == trainingExercise.BodyExerciseId).FirstOrDefault();
                     bindingTrainingExercise = new BindingTrainingExercise()
                     {
                         TrainingExercise = trainingExercise,
                         BodyExerciseId = trainingExercise.BodyExerciseId,
-                        RestTime = trainingExercise.RestTime
+                        RestTime = trainingExercise.RestTime,
+                        UpOrderVisible = i != 0,
+                        DownOrderVisible = i != (trainingDay.TrainingExercises.Count -1)
                     };
                     bindingTrainingExercise.BodyExerciseName = bodyExercise != null ? bodyExercise.Name : Translation.Get(TRS.UNKNOWN);
                     if (trainingExercise.TrainingExerciseSets != null)
@@ -392,11 +397,11 @@ namespace BodyReportMobile.Core.ViewModels
                         //synchronise with webservice
                         var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
                         trainingDay = await TrainingDayWebService.UpdateTrainingDayAsync(trainingDay, trainingDayScenario);
-                        /*
-                        //local update (FUTUR USE)
+                        
+                        //local update
                         TrainingDayManager trainingDayManager = new TrainingDayManager(_dbContext);
                         trainingDayManager.UpdateTrainingDay(trainingDay, trainingDayScenario);
-                        */
+                        
                         //Binding trainingDay for refresh view
                         CreateOrReplaceBindingTrainingDay(trainingDay);
                     }
@@ -428,12 +433,10 @@ namespace BodyReportMobile.Core.ViewModels
                 {
                     // Delete TrainingExercise on server
                     await TrainingExerciseWebService.DeleteTrainingExerciseAsync(bindingTrainingExercise.TrainingExercise);
-
-                    /*
-                    // Delete TrainingExercise on local database (Futur use)
+                    
+                    // Delete TrainingExercise on local database
                     var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
                     trainingExerciseManager.DeleteTrainingExercise(bindingTrainingExercise.TrainingExercise);
-                    */
 
                     //Refresh binding
                     if(GroupedTrainingExercises != null)
@@ -452,6 +455,55 @@ namespace BodyReportMobile.Core.ViewModels
             catch (Exception except)
             {
                 ILogger.Instance.Error("Unable to delete training exercise", except);
+                await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+            }
+        }
+
+        private async Task TrainingDayOrderActionAsync(BindingTrainingExercise bindingTrainingExercise, bool up)
+        {
+            if (bindingTrainingExercise == null || bindingTrainingExercise.TrainingExercise == null)
+                return;
+
+            try
+            {
+                var trainingExercise = bindingTrainingExercise.TrainingExercise;
+                var trainingDayKey = new TrainingDayKey()
+                {
+                    UserId = trainingExercise.UserId,
+                    Year = trainingExercise.Year,
+                    WeekOfYear = trainingExercise.WeekOfYear,
+                    DayOfWeek = trainingExercise.DayOfWeek,
+                    TrainingDayId = trainingExercise.TrainingDayId
+                };
+                var trainingDay = _trainingDays.Where(t => TrainingDayKey.IsEqualByKey(t, trainingDayKey)).FirstOrDefault();
+
+                if (trainingDay != null)
+                {
+                    var indexOf = trainingDay.TrainingExercises.IndexOf(trainingExercise);
+                    if (up && indexOf > 0)
+                    { //up
+                        trainingDay.TrainingExercises.Remove(trainingExercise);
+                        trainingDay.TrainingExercises.Insert(indexOf - 1, trainingExercise);
+                    }
+                    if (!up && indexOf < (trainingDay.TrainingExercises.Count - 1))
+                    { //down
+                        trainingDay.TrainingExercises.Remove(trainingExercise);
+                        trainingDay.TrainingExercises.Insert(indexOf + 1, trainingExercise);
+                    }
+
+                    indexOf = 0;
+                    foreach (var trainingExerciseTmp in trainingDay.TrainingExercises)
+                    {
+                        trainingExerciseTmp.Id = indexOf;
+                        indexOf++;
+                    }
+
+                    CreateOrReplaceBindingTrainingDay(trainingDay);
+                }
+            }
+            catch (Exception except)
+            {
+                ILogger.Instance.Error("Unable to order exercise", except);
                 await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
         }
@@ -632,6 +684,38 @@ namespace BodyReportMobile.Core.ViewModels
                     });
                 }
                 return _deleteCommand;
+            }
+        }
+
+        private ICommand _upTrainingDayOrderCommand = null;
+        public ICommand UpTrainingDayOrderCommand
+        {
+            get
+            {
+                if (_upTrainingDayOrderCommand == null)
+                {
+                    _upTrainingDayOrderCommand = new ViewModelCommandAsync(this, async (bindingTrainingExerciseObject) =>
+                    {
+                        await TrainingDayOrderActionAsync(bindingTrainingExerciseObject as BindingTrainingExercise, true);
+                    });
+                }
+                return _upTrainingDayOrderCommand;
+            }
+        }
+
+        private ICommand _downTrainingDayOrderCommand = null;
+        public ICommand DownTrainingDayOrderCommand
+        {
+            get
+            {
+                if (_downTrainingDayOrderCommand == null)
+                {
+                    _downTrainingDayOrderCommand = new ViewModelCommandAsync(this, async (bindingTrainingExerciseObject) =>
+                    {
+                        await TrainingDayOrderActionAsync(bindingTrainingExerciseObject as BindingTrainingExercise, false);
+                    });
+                }
+                return _downTrainingDayOrderCommand;
             }
         }
 
