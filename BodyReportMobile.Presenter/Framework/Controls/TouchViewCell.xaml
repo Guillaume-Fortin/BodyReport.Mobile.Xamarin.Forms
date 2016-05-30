@@ -60,9 +60,10 @@
     </Image>
 
     <Label x:Name="TitleLabel"
-           Text="{Binding Path=Title, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+        Text="{Binding Path=Title, Mode=TwoWay, Source={x:Reference touchViewCell}}"
         TextColor="{Binding Path=TitleTextColor, Mode=TwoWay, Source={x:Reference touchViewCell}}"
-	    	LineBreakMode="MiddleTruncation" HorizontalOptions="Center" VerticalOptions="Center"
+	    	LineBreakMode="MiddleTruncation" HorizontalTextAlignment="Start" VerticalTextAlignment="Center"
+        HorizontalOptions="Center" VerticalOptions="Center"
 	    	Grid.Row="0" Grid.Column="2" IsVisible="true" HeightRequest="40" WidthRequest="120">
       <Label.Triggers>
         <Trigger TargetType="Label"
