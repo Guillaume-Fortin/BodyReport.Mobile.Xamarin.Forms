@@ -2,7 +2,7 @@
 using BodyReportMobile.Core.ViewModels;
 using BodyReportMobile.Presenter.Framework.Controls;
 using BodyReportMobile.Presenter.Framework.Converter;
-using Message;
+using BodyReport.Message;
 using System;
 using System.Collections.Generic;
 using System.Linq;

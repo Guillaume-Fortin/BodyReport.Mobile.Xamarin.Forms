@@ -6,7 +6,7 @@ using BodyReportMobile.Core.Message.Binding;
 using BodyReportMobile.Core.ServiceManagers;
 using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Core.WebServices;
-using Message;
+using BodyReport.Message;
 using SQLite.Net;
 using System;
 using System.Collections.Generic;

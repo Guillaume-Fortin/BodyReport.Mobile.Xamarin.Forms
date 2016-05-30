@@ -1,5 +1,5 @@
 ﻿using System;
-using Message;
+using BodyReport.Message;
 
 namespace BodyReportMobile.Core.Message.Binding
 {

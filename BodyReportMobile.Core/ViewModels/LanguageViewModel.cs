@@ -1,7 +1,7 @@
 ﻿using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Message;
 using BodyReportMobile.Core.ViewModels.Generic;
-using Message;
+using BodyReport.Message;
 using System;
 using System.Collections.Generic;
 using System.IO;

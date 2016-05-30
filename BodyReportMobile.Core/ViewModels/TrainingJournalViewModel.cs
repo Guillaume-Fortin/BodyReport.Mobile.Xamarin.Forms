@@ -1,6 +1,6 @@
 ﻿using System;
 using BodyReportMobile.Core.ViewModels;
-using Message;
+using BodyReport.Message;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using BodyReportMobile.Core.ServiceManagers;
 using SQLite.Net;
 using BodyReportMobile.Core.Message.Binding;
-using Framework;
+using BodyReport.Framework;
 using XLabs.Ioc;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Framework.Binding;

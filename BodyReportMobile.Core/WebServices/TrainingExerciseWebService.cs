@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Message;
+using BodyReport.Message;
 using BodyReportMobile.Core.Framework;
 
 namespace BodyReportMobile.Core.WebServices

@@ -1,7 +1,7 @@
 ﻿using System;
 using BodyReportMobile.Core.ViewModels;
 using System.Windows.Input;
-using Message;
+using BodyReport.Message;
 using BodyReportMobile.Core.Framework;
 using System.Threading.Tasks;
 using BodyReportMobile.Core.Manager;

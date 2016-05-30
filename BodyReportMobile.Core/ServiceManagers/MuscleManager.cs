@@ -1,7 +1,7 @@
 ﻿using System;
 using BodyReportMobile.Core.Crud.Module;
 using System.Collections.Generic;
-using Message;
+using BodyReport.Message;
 using BodyReportMobile.Core.Crud.Transformer;
 using SQLite.Net;
 using BodyReportMobile.Core.Framework;

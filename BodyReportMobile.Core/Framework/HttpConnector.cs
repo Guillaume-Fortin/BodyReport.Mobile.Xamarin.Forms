@@ -8,9 +8,9 @@ using System.Net.Http.Headers;
 using System.Text;
 using XLabs.Ioc;
 using BodyReportMobile.Core.MvxMessages;
-using Message.WebApi;
+using BodyReport.Message.WebApi;
 using System.IO;
-using Message;
+using BodyReport.Message;
 
 namespace BodyReportMobile.Core.Framework
 {

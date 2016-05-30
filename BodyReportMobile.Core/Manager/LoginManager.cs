@@ -1,6 +1,6 @@
 ﻿using System;
 using Acr.UserDialogs;
-using Message;
+using BodyReport.Message;
 using System.Threading.Tasks;
 using XLabs.Ioc;
 using BodyReportMobile.Core.Framework;

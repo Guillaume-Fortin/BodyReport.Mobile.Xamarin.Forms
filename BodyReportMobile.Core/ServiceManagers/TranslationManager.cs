@@ -1,6 +1,6 @@
 ﻿using System;
 using BodyReportMobile.Core.Crud.Module;
-using Message;
+using BodyReport.Message;
 using System.Collections.Generic;
 using SQLite.Net;
 

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Message;
+using BodyReport.Message;
 using BodyReportMobile.Core.Framework;
 using System.Collections.Generic;
 

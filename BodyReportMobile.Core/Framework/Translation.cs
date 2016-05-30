@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Message;
+using BodyReport.Message;
 using System.IO;
 using Newtonsoft.Json;
 using XLabs.Ioc;

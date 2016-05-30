@@ -1,6 +1,6 @@
 ﻿using BodyReportMobile.Core.Models;
-using Framework;
-using Message;
+using BodyReport.Framework;
+using BodyReport.Message;
 using System;
 using System.Collections.Generic;
 using System.Linq;

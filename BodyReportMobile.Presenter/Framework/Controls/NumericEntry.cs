@@ -1,7 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 using System.Globalization;
-using Framework;
+using BodyReport.Framework;
 
 namespace BodyReportMobile.Presenter.Framework.Controls
 {

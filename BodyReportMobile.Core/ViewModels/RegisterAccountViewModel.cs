@@ -1,8 +1,8 @@
 ﻿using Acr.UserDialogs;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.WebServices;
-using Message;
-using Message.WebApi;
+using BodyReport.Message;
+using BodyReport.Message.WebApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;

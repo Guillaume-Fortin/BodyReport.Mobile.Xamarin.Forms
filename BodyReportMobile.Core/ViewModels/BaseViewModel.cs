@@ -5,7 +5,7 @@ using BodyReportMobile.Core.MvxMessages;
 using XLabs.Ioc;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Message;
+using BodyReport.Message;
 using System.Windows.Input;
 
 namespace BodyReportMobile.Core.ViewModels

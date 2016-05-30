@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Message;
+using BodyReport.Message;
 using BodyReportMobile.Core.Framework;
-using Message.WebApi;
-using Message.WebApi.MultipleParameters;
+using BodyReport.Message.WebApi;
+using BodyReport.Message.WebApi.MultipleParameters;
 
 namespace BodyReportMobile.Core.WebServices
 {

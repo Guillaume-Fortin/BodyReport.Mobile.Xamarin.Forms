@@ -1,9 +1,9 @@
 ﻿using System;
-using Message;
+using BodyReport.Message;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Collections.Generic;
-using Framework;
+using BodyReport.Framework;
 using Acr.UserDialogs;
 using XLabs.Ioc;
 using BodyReportMobile.Core.ViewModels.Generic;

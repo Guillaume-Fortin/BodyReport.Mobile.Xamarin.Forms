@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Message;
+using BodyReport.Message;
 using BodyReportMobile.Core.Framework;
 
 namespace BodyReportMobile.Core.WebServices

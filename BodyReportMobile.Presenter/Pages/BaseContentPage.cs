@@ -1,7 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 using BodyReportMobile.Core.ViewModels;
-using Message;
+using BodyReport.Message;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.MvxMessages;
 using System.Threading.Tasks;

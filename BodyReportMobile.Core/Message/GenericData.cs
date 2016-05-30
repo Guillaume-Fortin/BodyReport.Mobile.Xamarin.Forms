@@ -1,4 +1,4 @@
-﻿using Message;
+﻿using BodyReport.Message;
 using System;
 
 using System.ComponentModel;

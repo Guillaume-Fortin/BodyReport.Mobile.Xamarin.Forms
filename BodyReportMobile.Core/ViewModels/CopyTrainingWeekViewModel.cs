@@ -2,8 +2,8 @@
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.ServiceManagers;
 using BodyReportMobile.Core.WebServices;
-using Message;
-using Message.WebApi;
+using BodyReport.Message;
+using BodyReport.Message.WebApi;
 using SQLite.Net;
 using System;
 using System.Collections.Generic;

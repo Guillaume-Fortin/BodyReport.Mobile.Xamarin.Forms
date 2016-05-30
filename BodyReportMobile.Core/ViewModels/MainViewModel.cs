@@ -3,7 +3,7 @@ using System.Windows.Input;
 using System.Threading.Tasks;
 using BodyReportMobile.Core.Message;
 using System.Collections.Generic;
-using Message;
+using BodyReport.Message;
 using BodyReportMobile.Core.ServiceManagers;
 using SQLite.Net;
 using XLabs.Ioc;
@@ -16,7 +16,7 @@ using System.IO;
 using Acr.UserDialogs;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
-using Message.WebApi;
+using BodyReport.Message.WebApi;
 
 namespace BodyReportMobile.Core.ViewModels
 {

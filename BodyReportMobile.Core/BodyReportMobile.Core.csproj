@@ -35,31 +35,31 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\BodyReport\src\Message\FieldsLength.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\FieldsLength.cs">
       <Link>Message\FieldsLength.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\NotifyPropertyChanged.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\NotifyPropertyChanged.cs">
       <Link>Message\NotifyPropertyChanged.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\WebApi\CopyTrainingWeek.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\WebApi\CopyTrainingWeek.cs">
       <Link>Message\WebApi\CopyTrainingWeek.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\WebApi\HttpException.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\WebApi\HttpException.cs">
       <Link>Message\WebApi\HttpException.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\WebApi\MultipleParameters\TrainingDayFinder.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\WebApi\MultipleParameters\TrainingDayFinder.cs">
       <Link>Message\WebApi\MultipleParameters\TrainingDayFinder.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\WebApi\MultipleParameters\TrainingDayWithScenario.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\WebApi\MultipleParameters\TrainingDayWithScenario.cs">
       <Link>Message\WebApi\MultipleParameters\TrainingDayWithScenario.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\WebApi\MultipleParameters\TrainingWeekFinder.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\WebApi\MultipleParameters\TrainingWeekFinder.cs">
       <Link>Message\WebApi\MultipleParameters\TrainingWeekFinder.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\WebApi\RegisterAccount.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\WebApi\RegisterAccount.cs">
       <Link>Message\WebApi\RegisterAccount.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\WebApi\WebApiException.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\WebApi\WebApiException.cs">
       <Link>Message\WebApi\WebApiException.cs</Link>
     </Compile>
     <Compile Include="Crud\Module\BodyExerciseModule.cs" />
@@ -104,58 +104,58 @@
     <Compile Include="ViewModels\TrainingDayViewModel.cs" />
     <Compile Include="ViewModels\TrainingJournalViewModel.cs" />
     <Compile Include="Framework\Binding\GenericGroupModelCollection.cs" />
-    <Compile Include="..\..\BodyReport\src\Message\TrainingWeek.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\TrainingWeek.cs">
       <Link>Message\TrainingWeek.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\BodyExercise.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\BodyExercise.cs">
       <Link>Message\BodyExercise.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\City.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\City.cs">
       <Link>Message\City.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\Country.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\Country.cs">
       <Link>Message\Country.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\Criteria.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\Criteria.cs">
       <Link>Message\Criteria.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\Enums.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\Enums.cs">
       <Link>Message\Enums.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\Muscle.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\Muscle.cs">
       <Link>Message\Muscle.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\MuscularGroup.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\MuscularGroup.cs">
       <Link>Message\MuscularGroup.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\Role.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\Role.cs">
       <Link>Message\Role.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\TrainingDay.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\TrainingDay.cs">
       <Link>Message\TrainingDay.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\TrainingExercise.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\TrainingExercise.cs">
       <Link>Message\TrainingExercise.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\TrainingExerciseSet.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\TrainingExerciseSet.cs">
       <Link>Message\TrainingExerciseSet.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\TranslationAttribute.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\TranslationAttribute.cs">
       <Link>Message\TranslationAttribute.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\TranslationKeyVal.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\TranslationKeyVal.cs">
       <Link>Message\TranslationKeyVal.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\TranslationVal.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\TranslationVal.cs">
       <Link>Message\TranslationVal.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\User.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\User.cs">
       <Link>Message\User.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\UserInfo.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\UserInfo.cs">
       <Link>Message\UserInfo.cs</Link>
     </Compile>
-    <Compile Include="..\..\BodyReport\src\Message\UserRole.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\UserRole.cs">
       <Link>Message\UserRole.cs</Link>
     </Compile>
     <Compile Include="ViewModels\EditTrainingWeekViewModel.cs" />
@@ -164,11 +164,11 @@
     <Compile Include="ViewModels\Generics\ListViewModel.cs" />
     <Compile Include="Message\GenericData.cs" />
     <Compile Include="Framework\Translation.cs" />
-    <Compile Include="..\..\BodyReport\src\Framework\Utils.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Framework\Utils.cs">
       <Link>Framework\Utils.cs</Link>
     </Compile>
     <Compile Include="Data\UserData.cs" />
-    <Compile Include="..\..\BodyReport\src\Message\TRS.cs">
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\TRS.cs">
       <Link>Message\TRS.cs</Link>
     </Compile>
     <Compile Include="Framework\HttpConnector.cs" />
