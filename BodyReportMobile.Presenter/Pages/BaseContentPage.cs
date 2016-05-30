@@ -31,8 +31,8 @@ namespace BodyReportMobile.Presenter.Pages
 
         protected virtual void CreateBinding()
         {
-            if(_viewModel != null)
-                this.SetBinding(ContentPage.IsBusyProperty, new Binding(path: "ActionIsInProgress", source: _viewModel.ActionIsInProgress));
+            if (_viewModel != null && _viewModel is BaseViewModel)
+                this.SetBinding(ContentPage.IsBusyProperty, (BaseViewModel source) => source.ActionIsInProgress);
         }
 
         private void RegisterEvent()
@@ -77,7 +77,7 @@ namespace BodyReportMobile.Presenter.Pages
             if (Device.OS == TargetPlatform.Android && this.Navigation.NavigationStack.Count <= 1)
                 Resolver.Resolve<IAndroidAPI>().CloseApp();
 
-            AllowClosingPageAsync(true);
+            var t = AllowClosingPageAsync(true); // var for supress warning
 
             // If you want to stop the back button
             return true;
