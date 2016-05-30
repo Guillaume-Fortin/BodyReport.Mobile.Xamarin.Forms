@@ -3,7 +3,7 @@
 					   xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages"
              xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
              x:Class="BodyReportMobile.Presenter.Pages.MainPage"
-					   Title="{Binding TitleLabel}" IsBusy="{Binding ActionIsInProgress}">
+					   Title="{Binding TitleLabel}">
 
   <ContentPage.BackgroundColor>
     <OnPlatform x:TypeArguments="Color"
