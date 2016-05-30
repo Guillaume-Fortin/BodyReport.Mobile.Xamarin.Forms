@@ -56,7 +56,8 @@ namespace BodyReportMobile.Core.ViewModels
             YearLabel = Translation.Get(TRS.YEAR);
             WeekNumberLabel = Translation.Get(TRS.WEEK_NUMBER);
             TrainingDayLabel = Translation.Get(TRS.TRAINING_DAY);
-            
+            EditTrainingWeekLabel = Translation.Get(TRS.EDIT);
+
             foreach (var bindingWeekTrainingDay in BindingWeekTrainingDays)
             {
                 bindingWeekTrainingDay.Label = Translation.Get(bindingWeekTrainingDay.DayOfWeek.ToString().ToUpper());
@@ -137,6 +138,17 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
+        private async Task EditTrainingWeekActionAsync()
+        {
+            try
+            {
+                await EditTrainingWeekViewModel.ShowAsync(TrainingWeek, TEditMode.Edit, this);
+            }
+            catch
+            {
+            }
+        }
+
         private async Task ViewTrainingDayActionAsync(DayOfWeek dayOfWeek)
         {
             try
@@ -192,13 +204,13 @@ namespace BodyReportMobile.Core.ViewModels
         public string WeightLabel { get; set; }
         public string HeightLabel { get; set; }
         public string TrainingDayLabel { get; set; }
+        public string EditTrainingWeekLabel { get; set; }
         public BindingWeekTrainingDay[] BindingWeekTrainingDays { get; set; } = new BindingWeekTrainingDay[7];
 
         #endregion
 
         #region Command
         
-
         private ICommand _viewTrainingDayCommand = null;
         public ICommand ViewTrainingDayCommand
         {
@@ -216,6 +228,22 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
+        private ICommand _editTrainingWeekCommand = null;
+        public ICommand EditTrainingWeekCommand
+        {
+            get
+            {
+                if (_editTrainingWeekCommand == null)
+                {
+                    _editTrainingWeekCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await EditTrainingWeekActionAsync();
+                    });
+                }
+                return _editTrainingWeekCommand;
+            }
+        }
+        
         #endregion
     }
 }

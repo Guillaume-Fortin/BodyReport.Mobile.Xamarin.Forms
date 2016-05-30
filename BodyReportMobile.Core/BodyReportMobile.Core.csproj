@@ -56,6 +56,9 @@
     <Compile Include="..\..\BodyReport\src\BodyReport.Message\WebApi\MultipleParameters\TrainingWeekFinder.cs">
       <Link>Message\WebApi\MultipleParameters\TrainingWeekFinder.cs</Link>
     </Compile>
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\WebApi\MultipleParameters\TrainingWeekWithScenario.cs">
+      <Link>Message\WebApi\MultipleParameters\TrainingWeekWithScenario.cs</Link>
+    </Compile>
     <Compile Include="..\..\BodyReport\src\BodyReport.Message\WebApi\RegisterAccount.cs">
       <Link>Message\WebApi\RegisterAccount.cs</Link>
     </Compile>

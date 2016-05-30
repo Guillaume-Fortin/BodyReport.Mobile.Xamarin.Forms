@@ -26,9 +26,14 @@ namespace BodyReportMobile.Core.WebServices
             return await HttpConnector.Instance.PostAsync<TrainingWeek, TrainingWeek>("Api/TrainingWeeks/Create", trainingWeek);
         }
 
-        public static async Task<TrainingWeek> UpdateTrainingWeekAsync (TrainingWeek trainingWeek)
+        public static async Task<TrainingWeek> UpdateTrainingWeekAsync (TrainingWeek trainingWeek, TrainingWeekScenario trainingWeekScenario)
 		{
-			return await HttpConnector.Instance.PostAsync<TrainingWeek, TrainingWeek> ("Api/TrainingWeeks/Update", trainingWeek);
+            var trainingWeekWithScenario = new TrainingWeekWithScenario()
+            {
+                TrainingWeek = trainingWeek,
+                TrainingWeekScenario = trainingWeekScenario
+            };
+            return await HttpConnector.Instance.PostAsync<TrainingWeekWithScenario, TrainingWeek> ("Api/TrainingWeeks/Update", trainingWeekWithScenario);
 		}
 
         public static async Task DeleteTrainingWeekByKeyAsync(TrainingWeekKey trainingWeekKey)

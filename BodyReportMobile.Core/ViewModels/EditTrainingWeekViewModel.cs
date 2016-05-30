@@ -186,7 +186,7 @@ namespace BodyReportMobile.Core.ViewModels
 		private async Task<bool> ValidateFieldsAsync()
 		{
 			if(TrainingWeek != null && TrainingWeek.Year > 0 && TrainingWeek.WeekOfYear > 0 &&
-			TrainingWeek.UserHeight > 0 && TrainingWeek.UserWeight > 0 && !string.IsNullOrWhiteSpace(TrainingWeek.UserId))
+			   TrainingWeek.UserHeight > 0 && TrainingWeek.UserWeight > 0 && !string.IsNullOrWhiteSpace(TrainingWeek.UserId))
             {
                 var onlineTrainingWeek = await TrainingWeekWebService.GetTrainingWeekAsync(TrainingWeek);
                 if (EditMode == TEditMode.Create)
@@ -198,13 +198,9 @@ namespace BodyReportMobile.Core.ViewModels
                 }
                 else
                 {
-                    if (onlineTrainingWeek != null)
-                    {
-                        //verify training week exist
-                        if (onlineTrainingWeek == null)
-                            throw new Exception(string.Format(Translation.Get(TRS.P0_NOT_EXIST), Translation.Get(TRS.TRAINING_WEEK)));
-                        return true; 
-                    }
+                    //verify training week exist
+                    if (onlineTrainingWeek == null)
+                        throw new Exception(string.Format(Translation.Get(TRS.P0_NOT_EXIST), Translation.Get(TRS.TRAINING_WEEK)));
                     return true;
                 }
             }
@@ -225,12 +221,10 @@ namespace BodyReportMobile.Core.ViewModels
             }
             else
             {
-                trainingWeek = await TrainingWeekWebService.UpdateTrainingWeekAsync(TrainingWeek);
+                var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
+                trainingWeek = await TrainingWeekWebService.UpdateTrainingWeekAsync(TrainingWeek, trainingWeekScenario);
                 if (trainingWeek != null)
-                {
-                    var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
                     _trainingWeekManager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
-                }
             }
 
             return trainingWeek != null;
