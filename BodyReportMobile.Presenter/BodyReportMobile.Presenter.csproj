@@ -71,6 +71,9 @@
     <Compile Include="Pages\DataSyncPage.xaml.cs">
       <DependentUpon>DataSyncPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\EditTrainingExercisePage.xaml.cs">
+      <DependentUpon>EditTrainingExercisePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\EditUserProfilePage.xaml.cs">
       <DependentUpon>EditUserProfilePage.xaml</DependentUpon>
     </Compile>
@@ -251,6 +254,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\MenuPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\EditTrainingExercisePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

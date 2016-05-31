@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages"
+      xmlns:converter="clr-namespace:BodyReportMobile.Presenter.Framework.Converter"
+      xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
+      x:Class="BodyReportMobile.Presenter.Pages.EditTrainingExercisePage"
+      x:Name="myPage"
+		  Title="{Binding TitleLabel}">
+
+  <ContentPage.ToolbarItems>
+    <ToolbarItem Text="{Binding ValidateLabel}" Command="{Binding ValidateCommand}" Order="Primary" Priority="0" />
+  </ContentPage.ToolbarItems>
+
+  <ContentPage.Content>
+    <Grid Padding="4">
+      <Grid.Resources>
+        <ResourceDictionary>
+          <converter:StringToImageConverter x:Key="stringToImageConverter" />
+          <converter:TextToIntConverter x:Key="intConverter" />
+        </ResourceDictionary>
+      </Grid.Resources>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+
+      <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
+              Source="{Binding ExerciseImageSource, Converter={StaticResource stringToImageConverter}}"
+             Aspect="Fill" WidthRequest="100" HeightRequest="140" HorizontalOptions="Center" VerticalOptions="Start" />
+
+      <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding ExerciseTitle}"/>
+      
+      <Label Grid.Row="1" Grid.Column="1" 
+             Text="{Binding RestTimeLabel}"
+             LineBreakMode="MiddleTruncation" HorizontalOptions="StartAndExpand" VerticalOptions="FillAndExpand"
+             VerticalTextAlignment="Center" />
+
+      <localcontrol:NumericEntry x:Name="RestTimeEntry" Grid.Row="1" Grid.Column="2" VerticalOptions="StartAndExpand"
+                                 Text="{Binding RestTime, Converter={StaticResource intConverter}}"
+                                 MinValue="0" MaxValue="300"
+                                 IsInteger="True"/>
+
+      <ListView Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" x:Name="ExerciseSetsListView"
+                ItemsSource="{Binding BindingTrainingExerciseSetReps}"
+                ItemTapped="ListViewItemTapped"
+                HasUnevenRows="True" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ViewCell x:Name="setRepViewCell">
+              <Grid>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto"/>
+                  <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="25" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0"
+                        x:Name="repsLabel"
+                       Text="{Binding RepsLabel}"
+	    	               LineBreakMode="WordWrap" HorizontalOptions="Start" VerticalOptions="Center">
+                  <Label.Triggers>
+                    <DataTrigger TargetType="Label"
+                                 Binding="{Binding Path=Text.Length, Source={x:Reference repsLabel}}"
+                                 Value="0">
+                      <Setter Property="IsVisible" Value="False" />
+                    </DataTrigger>
+                  </Label.Triggers>
+                </Label>
+
+                <Label Grid.Row="0" Grid.Column="1"
+                       x:Name="weightsLabel"
+                       Text="{Binding WeightsLabel}"
+	    	               LineBreakMode="MiddleTruncation" HorizontalOptions="Start" VerticalOptions="Center">
+                  <Label.Triggers>
+                    <DataTrigger TargetType="Label"
+                                 Binding="{Binding Path=Text.Length, Source={x:Reference weightsLabel}}"
+                                 Value="0">
+                      <Setter Property="IsVisible" Value="False" />
+                    </DataTrigger>
+                  </Label.Triggers>
+                </Label>
+
+                <localcontrol:NumericEntry Grid.Row="1" Grid.Column="0" VerticalOptions="End"
+                                       Text="{Binding Reps, Converter={StaticResource intConverter}}"
+                                       MinValue="0" MaxValue="300"
+                                       IsInteger="True" />
+
+                <localcontrol:NumericEntry Grid.Row="1" Grid.Column="1" VerticalOptions="End"
+                                       Text="{Binding Weights, Converter={StaticResource intConverter}}"
+                                       MinValue="0" MaxValue="300"
+                                       IsInteger="False" />
+
+                <StackLayout Orientation="Vertical" Grid.Row="1" Grid.Column="2" VerticalOptions="Center">
+                  <Image Source="btn_delete.png" IsVisible="False"
+                         WidthRequest="25" HeightRequest="25">
+                    <Image.Triggers>
+                      <DataTrigger TargetType="Image"
+                                   Binding="{Binding Path=Text.Length, Source={x:Reference repsLabel}}"
+                                   Value="0">
+                        <Setter Property="IsVisible" Value="True" />
+                      </DataTrigger>
+                    </Image.Triggers>
+                    <Image.GestureRecognizers>
+                      <TapGestureRecognizer
+                        Command="{Binding BindingContext.DeleteRepCommand, Source={x:Reference myPage}}"
+                        CommandParameter="{Binding Source={x:Reference setRepViewCell}, Path=BindingContext}" NumberOfTapsRequired="1" />
+                    </Image.GestureRecognizers>
+                  </Image>
+                <Image Source="btn_plus.png" IsVisible="{Binding BtnPlusVisible}"
+                         WidthRequest="25" HeightRequest="25">
+                    <Image.GestureRecognizers>
+                      <TapGestureRecognizer
+                        Command="{Binding BindingContext.AddRepCommand, Source={x:Reference myPage}}" NumberOfTapsRequired="1" />
+                    </Image.GestureRecognizers>
+                  </Image>
+                </StackLayout>
+              </Grid>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </Grid>
+  </ContentPage.Content>
+</local:BaseContentPage>

@@ -73,6 +73,7 @@
     <Compile Include="Crud\Transformer\MuscularGroupTransformer.cs" />
     <Compile Include="Framework\AppMessenger.cs" />
     <Compile Include="Framework\AppTools.cs" />
+    <Compile Include="Framework\Binding\GenericMultiGroupModel.cs" />
     <Compile Include="Framework\ILogger.cs" />
     <Compile Include="Framework\IMedia.cs" />
     <Compile Include="Framework\ViewModelCommand.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Message\Binding\BindingBodyExercise.cs" />
     <Compile Include="Message\Binding\BindingTrainingExercise.cs" />
     <Compile Include="Message\Binding\BindingTrainingExerciseSet.cs" />
+    <Compile Include="Message\Binding\BindingTrainingExerciseSetRep.cs" />
     <Compile Include="Message\Binding\BindingUserInfo.cs" />
     <Compile Include="Message\Binding\BindingWeekTrainingDay.cs" />
     <Compile Include="Framework\IAndroidAPI.cs" />
@@ -95,6 +97,7 @@
     <Compile Include="ServiceManagers\MuscularGroupManager.cs" />
     <Compile Include="ServiceManagers\UserInfoManager.cs" />
     <Compile Include="ViewModels\DataSyncViewModel.cs" />
+    <Compile Include="ViewModels\EditTrainingExerciseViewModel.cs" />
     <Compile Include="ViewModels\MenuViewModel.cs" />
     <Compile Include="ViewModels\SelectTrainingExercisesViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />

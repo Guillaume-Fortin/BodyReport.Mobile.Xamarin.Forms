@@ -210,6 +210,8 @@
     <Compile Include="Framework\Media.cs" />
     <Compile Include="Framework\Renderers\BasePageRenderer.cs" />
     <Compile Include="Framework\Renderers\ImageCircleRenderer.cs" />
+    <Compile Include="Framework\Renderers\NumericEntryRenderer.cs" />
+    <Compile Include="Framework\Renderers\TextEntryRenderer.cs" />
     <Compile Include="Framework\SecurityDroid.cs" />
     <Compile Include="Framework\SQLite_Droid.cs" />
     <Compile Include="MainActivity.cs" />
@@ -282,6 +284,16 @@
     </AndroidResource>
     <AndroidResource Include="..\images\btn_up.png">
       <Link>Resources\drawable\btn_up.png</Link>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="..\images\btn_delete.png">
+      <Link>Resources\drawable\btn_delete.png</Link>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="..\images\btn_plus.png">
+      <Link>Resources\drawable\btn_plus.png</Link>
     </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

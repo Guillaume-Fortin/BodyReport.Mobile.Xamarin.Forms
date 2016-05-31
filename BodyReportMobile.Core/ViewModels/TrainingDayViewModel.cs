@@ -30,6 +30,7 @@ namespace BodyReportMobile.Core.ViewModels
     {
         private SQLiteConnection _dbContext;
         private BodyExerciseManager _bodyExerciseManager;
+        private TrainingDayManager _trainingDayManager;
         private IUserDialogs _userDialog;
 
         List<BodyExercise> _bodyExerciseList;
@@ -61,6 +62,7 @@ namespace BodyReportMobile.Core.ViewModels
             ShowDelayInMs = 0;
             _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
             _bodyExerciseManager = new BodyExerciseManager(_dbContext);
+            _trainingDayManager = new TrainingDayManager(_dbContext);
             _userDialog = Resolver.Resolve<IUserDialogs>();
 			CreateTrainingLabel = Translation.Get(TRS.CREATE); //necessary for ios Toolbaritem binding failed
         }
@@ -366,10 +368,13 @@ namespace BodyReportMobile.Core.ViewModels
 
         private async Task AddExerciseActionAsync(TrainingDay trainingDay)
         {
+            if (trainingDay == null)
+                return;
             try
             {
-                if (trainingDay != null)
-                {
+                int indexOfTrainingDay = _trainingDays.IndexOf(trainingDay);
+                if (indexOfTrainingDay != -1)
+                {   
                     var selectTrainingExercisesViewModelResut = await SelectTrainingExercisesViewModel.ShowAsync(this);
                     if (selectTrainingExercisesViewModelResut.Result && selectTrainingExercisesViewModelResut.BodyExerciseList != null)
                     {
@@ -401,7 +406,10 @@ namespace BodyReportMobile.Core.ViewModels
                         //local update
                         TrainingDayManager trainingDayManager = new TrainingDayManager(_dbContext);
                         trainingDayManager.UpdateTrainingDay(trainingDay, trainingDayScenario);
-                        
+
+                        //Update trainingDay in list
+                        _trainingDays[indexOfTrainingDay] = trainingDay;
+
                         //Binding trainingDay for refresh view
                         CreateOrReplaceBindingTrainingDay(trainingDay);
                     }
@@ -416,14 +424,59 @@ namespace BodyReportMobile.Core.ViewModels
 
         private async Task EditActionAsync(BindingTrainingExercise bindingTrainingExercise)
         {
-           // if (bindingTrainingExercise == null)
-             //   return;
-            throw new NotImplementedException();
+            if (bindingTrainingExercise == null || bindingTrainingExercise.TrainingExercise == null)
+                return;
+            
+            try
+            {
+                var trainingExercise = bindingTrainingExercise.TrainingExercise;
+                var editTrainingExerciseViewModelResult = await EditTrainingExerciseViewModel.ShowAsync(trainingExercise, this);
+                if (editTrainingExerciseViewModelResult != null && editTrainingExerciseViewModelResult.Result &&
+                    editTrainingExerciseViewModelResult.TrainingExercise != null)
+                {
+                    trainingExercise = editTrainingExerciseViewModelResult.TrainingExercise;
+                    var trainingDayKey = new TrainingDayKey()
+                    {
+                        UserId = trainingExercise.UserId,
+                        Year = trainingExercise.Year,
+                        WeekOfYear = trainingExercise.WeekOfYear,
+                        DayOfWeek = trainingExercise.DayOfWeek,
+                        TrainingDayId = trainingExercise.TrainingDayId
+                    };
+                    var trainingDay = _trainingDays.Where(t => TrainingDayKey.IsEqualByKey(t, trainingDayKey)).FirstOrDefault();
+                    if (trainingDay != null)
+                    {
+                        var indexOfTrainingDay = _trainingDays.IndexOf(trainingDay);
+                        var trainingExerciseTmp = trainingDay.TrainingExercises.Where(t => TrainingExerciseKey.IsEqualByKey(t, trainingExercise)).FirstOrDefault();
+                        var indexOf = trainingDay.TrainingExercises.IndexOf(trainingExerciseTmp);
+                        if (indexOf != -1)
+                        {
+                            //Replace exercise and sets
+                            trainingDay.TrainingExercises[indexOf] = trainingExercise;
+
+                            //Save in server
+                            var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
+                            trainingDay = await TrainingDayWebService.UpdateTrainingDayAsync(trainingDay, trainingDayScenario);
+                            //Save in local database
+                            _trainingDayManager.UpdateTrainingDay(trainingDay, trainingDayScenario);
+                            //Update trainingDay in list
+                            _trainingDays[indexOfTrainingDay] = trainingDay;
+                            //Update UI
+                            CreateOrReplaceBindingTrainingDay(trainingDay);
+                        }
+                    }
+                }
+            }
+            catch (Exception except)
+            {
+                ILogger.Instance.Error("Unable to edit training exercise set", except);
+                await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+            }
         }
 
         private async Task DeleteActionAsync(BindingTrainingExercise bindingTrainingExercise)
         {
-            if (bindingTrainingExercise == null)
+            if (bindingTrainingExercise == null || bindingTrainingExercise.TrainingExercise == null)
                 return;
 
             try
@@ -431,15 +484,30 @@ namespace BodyReportMobile.Core.ViewModels
                 if (await _userDialog.ConfirmAsync(string.Format(Translation.Get(TRS.ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI), Translation.Get(TRS.TRAINING_EXERCISE)),
                                                    Translation.Get(TRS.QUESTION), Translation.Get(TRS.YES), Translation.Get(TRS.NO)))
                 {
+                    var trainingExercise = bindingTrainingExercise.TrainingExercise;
                     // Delete TrainingExercise on server
-                    await TrainingExerciseWebService.DeleteTrainingExerciseAsync(bindingTrainingExercise.TrainingExercise);
+                    await TrainingExerciseWebService.DeleteTrainingExerciseAsync(trainingExercise);
                     
                     // Delete TrainingExercise on local database
                     var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
-                    trainingExerciseManager.DeleteTrainingExercise(bindingTrainingExercise.TrainingExercise);
+                    trainingExerciseManager.DeleteTrainingExercise(trainingExercise);
+
+                    //Remove trainingExercise in trainingDay
+                    TrainingDay trainingDay = null;
+                    foreach (var trainingDayTmp in _trainingDays)
+                    {
+                        if (trainingDayTmp.TrainingExercises == null)
+                            continue;
+
+                        if (trainingDayTmp.TrainingExercises.FirstOrDefault(t => t == trainingExercise) != null)
+                        {
+                            trainingDayTmp.TrainingExercises.Remove(trainingExercise);
+                            trainingDay = trainingDayTmp;
+                        }
+                    }
 
                     //Refresh binding
-                    if(GroupedTrainingExercises != null)
+                    if (GroupedTrainingExercises != null)
                     {
                         foreach(var gte in GroupedTrainingExercises)
                         {
@@ -450,6 +518,9 @@ namespace BodyReportMobile.Core.ViewModels
                             }
                         }
                     }
+
+                    if (trainingDay != null)
+                        PopulateBindingTrainingDay(trainingDay);
                 }
             }
             catch (Exception except)
@@ -476,7 +547,7 @@ namespace BodyReportMobile.Core.ViewModels
                     TrainingDayId = trainingExercise.TrainingDayId
                 };
                 var trainingDay = _trainingDays.Where(t => TrainingDayKey.IsEqualByKey(t, trainingDayKey)).FirstOrDefault();
-
+                var indexOfTrainingDay = _trainingDays.IndexOf(trainingDay);
                 if (trainingDay != null)
                 {
                     var indexOf = trainingDay.TrainingExercises.IndexOf(trainingExercise);
@@ -491,13 +562,21 @@ namespace BodyReportMobile.Core.ViewModels
                         trainingDay.TrainingExercises.Insert(indexOf + 1, trainingExercise);
                     }
 
-                    indexOf = 0;
+                    indexOf = 1;
                     foreach (var trainingExerciseTmp in trainingDay.TrainingExercises)
                     {
                         trainingExerciseTmp.Id = indexOf;
                         indexOf++;
                     }
 
+                    //Save in server
+                    var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
+                    trainingDay = await TrainingDayWebService.UpdateTrainingDayAsync(trainingDay, trainingDayScenario);
+                    //Save in local database
+                    _trainingDayManager.UpdateTrainingDay(trainingDay, trainingDayScenario);
+                    //Update trainingDay in list
+                    _trainingDays[indexOfTrainingDay] = trainingDay;
+                    //Update UI
                     CreateOrReplaceBindingTrainingDay(trainingDay);
                 }
             }
