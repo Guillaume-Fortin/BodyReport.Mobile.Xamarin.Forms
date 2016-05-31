@@ -14,7 +14,7 @@ namespace BodyReportMobile.Presenter.Framework.Controls
 			set { SetValue (MinValueProperty, value); }
 		}
 
-		public static readonly BindableProperty MaxValueProperty = BindableProperty.Create ("MaxValue", typeof(double), typeof(NumericEntry), double.MinValue);
+		public static readonly BindableProperty MaxValueProperty = BindableProperty.Create ("MaxValue", typeof(double), typeof(NumericEntry), double.MaxValue);
 
 		public double MaxValue {
 			get { return (double)GetValue (MaxValueProperty); }
@@ -30,6 +30,7 @@ namespace BodyReportMobile.Presenter.Framework.Controls
 
 		public NumericEntry ()
 		{
+            Keyboard = Keyboard.Numeric;
             //TODO binding necessary?
             this.SetBinding(Entry.TextProperty, new Binding(path: "Text", source: this));
 
