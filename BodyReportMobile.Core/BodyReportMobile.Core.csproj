@@ -47,6 +47,9 @@
     <Compile Include="..\..\BodyReport\src\BodyReport.Message\WebApi\HttpException.cs">
       <Link>Message\WebApi\HttpException.cs</Link>
     </Compile>
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\WebApi\MultipleParameters\SwitchDayParameter.cs">
+      <Link>Message\WebApi\MultipleParameters\SwitchDayParameter.cs</Link>
+    </Compile>
     <Compile Include="..\..\BodyReport\src\BodyReport.Message\WebApi\MultipleParameters\TrainingDayFinder.cs">
       <Link>Message\WebApi\MultipleParameters\TrainingDayFinder.cs</Link>
     </Compile>

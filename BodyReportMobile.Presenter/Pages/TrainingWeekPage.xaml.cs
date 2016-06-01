@@ -42,7 +42,6 @@ namespace BodyReportMobile.Presenter.Pages
                         };
                         touchViewCell.Tapped += DayCellTaped;
                         touchViewCell.SetBinding(TouchViewCell.ValueProperty, (BindingWeekTrainingDay source) => source.Label);
-
                         
                         var trigger = new DataTrigger(typeof(Label));
                         trigger.BindingContext = bindingWeekTrainingDay;
@@ -63,6 +62,13 @@ namespace BodyReportMobile.Presenter.Pages
                         setter.Value = Color.FromHex("#337ab7");
                         trigger.Setters.Add(setter);
                         touchViewCell.SetTitleTrigger(trigger);
+
+                        var menuItem = new MenuItem();
+                        menuItem.SetBinding(MenuItem.TextProperty, new Binding(path: "SwitchDayLabel", source: viewModel));
+                        menuItem.BindingContext = bindingWeekTrainingDay;
+                        menuItem.Command = viewModel.SwitchTrainingDayCommand;
+                        menuItem.SetBinding(MenuItem.CommandParameterProperty, new Binding(path: "DayOfWeek", source: bindingWeekTrainingDay));
+                        touchViewCell.ContextActions.Add(menuItem);
 
                         DaySection.Add(touchViewCell);
                     }   

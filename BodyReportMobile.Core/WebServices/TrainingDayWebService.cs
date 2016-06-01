@@ -54,5 +54,19 @@ namespace BodyReportMobile.Core.WebServices
             };
             return await HttpConnector.Instance.PostAsync<TrainingDayWithScenario, TrainingDay>("Api/TrainingDays/Update", trainingDayWithScenario);
         }
+
+        internal static async Task<bool> SwitchDayOfTrainingDay(TrainingDayKey trainingDayKey, int switchDayOfWeek)
+        {
+            if (trainingDayKey == null)
+                return false;
+
+            var switchDayParameter = new SwitchDayParameter()
+            {
+                TrainingDayKey = trainingDayKey,
+                SwitchDayOfWeek = switchDayOfWeek
+            };
+
+            return await HttpConnector.Instance.PostAsync<SwitchDayParameter, bool>("Api/TrainingDays/SwitchDay", switchDayParameter);
+        }
     }
 }

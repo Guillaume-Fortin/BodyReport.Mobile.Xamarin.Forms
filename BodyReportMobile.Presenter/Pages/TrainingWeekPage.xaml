@@ -40,29 +40,7 @@
 
         </TableSection>
 
-        <TableSection x:Name="DaySection" Title="{Binding TrainingDayLabel}">
-          <!--localcontrol:TouchViewCell x:Name="MondayCell"
-                                          Value="{Binding MondayLabel}"
-                                          IsIndicatorVisible="true" Tapped="OnCellTapped" TitleTextColor="#337ab7" ValueTextColor="#337ab7"/>
-            <localcontrol:TouchViewCell x:Name="TuesdayCell"
-                                          Value="{Binding TuesdayLabel}"
-                                          IsIndicatorVisible="true" Tapped="OnCellTapped" TitleTextColor="#337ab7" ValueTextColor="#337ab7"/>
-            <localcontrol:TouchViewCell x:Name="WednesdayCell"
-                                          Value="{Binding WednesdayLabel}"
-                                          IsIndicatorVisible="true" Tapped="OnCellTapped" TitleTextColor="#337ab7" ValueTextColor="#337ab7"/>
-            <localcontrol:TouchViewCell x:Name="ThursdayCell"
-                                          Value="{Binding ThursdayLabel}"
-                                          IsIndicatorVisible="true" Tapped="OnCellTapped" TitleTextColor="#ff0000" ValueTextColor="#ff0000"/>
-            <localcontrol:TouchViewCell x:Name="FridayCell"
-                                          Value="{Binding FridayLabel}"
-                                          IsIndicatorVisible="true" Tapped="OnCellTapped" TitleTextColor="#ff0000" ValueTextColor="#ff0000"/>
-            <localcontrol:TouchViewCell x:Name="SaturdayCell"
-                                          Value="{Binding SaturdayLabel}"
-                                          IsIndicatorVisible="true" Tapped="OnCellTapped" TitleTextColor="#ff0000" ValueTextColor="#ff0000"/>
-            <localcontrol:TouchViewCell x:Name="SundayCell"
-                                          Value="{Binding SundayLabel}"
-                                          IsIndicatorVisible="true" Tapped="OnCellTapped" TitleTextColor="#ff0000" ValueTextColor="#ff0000"/-->
-        </TableSection>
+        <TableSection x:Name="DaySection" Title="{Binding TrainingDayLabel}"/>
       </TableRoot>
     </TableView>
   </ContentPage.Content>

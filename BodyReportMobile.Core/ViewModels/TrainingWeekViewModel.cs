@@ -15,6 +15,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XLabs.Ioc;
+using BodyReportMobile.Core.ViewModels.Generic;
+using BodyReportMobile.Core.Message;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -57,6 +59,7 @@ namespace BodyReportMobile.Core.ViewModels
             WeekNumberLabel = Translation.Get(TRS.WEEK_NUMBER);
             TrainingDayLabel = Translation.Get(TRS.TRAINING_DAY);
             EditTrainingWeekLabel = Translation.Get(TRS.EDIT);
+            SwitchDayLabel = Translation.Get(TRS.SWITCH_TRAINING_DAY);
 
             foreach (var bindingWeekTrainingDay in BindingWeekTrainingDays)
             {
@@ -149,6 +152,65 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
+        public async Task SwitchTrainingDayActionAsync(DayOfWeek dayOfWeek)
+        {
+            if (TrainingWeek == null)
+                return;
+            try
+            {
+                var trainingDayKey = new TrainingDayKey()
+                {
+                    UserId = TrainingWeek.UserId,
+                    Year = TrainingWeek.Year,
+                    WeekOfYear = TrainingWeek.WeekOfYear,
+                    DayOfWeek = (int)dayOfWeek
+                };
+                List<GenericData> datas = new List<GenericData>();
+                foreach(DayOfWeek dayOfWeekTmp in Enum.GetValues(typeof(DayOfWeek)))
+                {
+                    if(dayOfWeekTmp != dayOfWeek)
+                    {
+                        datas.Add(new GenericData() { Tag = (int)dayOfWeekTmp, Name = Translation.Get(dayOfWeekTmp.ToString().ToUpper()) });
+                    }
+                }
+
+                var result = await ListViewModel.ShowGenericListAsync(Translation.Get(TRS.WEEK_NUMBER), datas, null, this);
+
+                if (result.Validated && result.SelectedData != null)
+                {
+                    int dayOfWeekSelected = (int)result.SelectedData.Tag;
+                    //Switch day on server
+                    await TrainingDayWebService.SwitchDayOfTrainingDay(trainingDayKey, dayOfWeekSelected);
+                    //Reload updated TrainingWeek on server
+                    var updatedTrainingWeek = await TrainingWeekWebService.GetTrainingWeekAsync(TrainingWeek, true);
+                    if(updatedTrainingWeek != null)
+                    {
+                        //Update local database
+                        _dbContext.BeginTransaction();
+                        try
+                        {
+                            var trainingWeekManager = new TrainingWeekManager(_dbContext);
+                            var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = true };
+                            trainingWeekManager.UpdateTrainingWeek(updatedTrainingWeek, trainingWeekScenario);
+                            _dbContext.Commit();
+                        }
+                        catch
+                        {
+                            _dbContext.Rollback();
+                            throw;
+                        }
+                        //Update UI
+                        TrainingWeek = updatedTrainingWeek;
+                        await SynchronizeDataAsync();
+                    }
+                }
+            }
+            catch(Exception except)
+            {
+                await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+            }
+        }
+
         private async Task ViewTrainingDayActionAsync(DayOfWeek dayOfWeek)
         {
             try
@@ -205,6 +267,7 @@ namespace BodyReportMobile.Core.ViewModels
         public string HeightLabel { get; set; }
         public string TrainingDayLabel { get; set; }
         public string EditTrainingWeekLabel { get; set; }
+        public string SwitchDayLabel { get; set; }
         public BindingWeekTrainingDay[] BindingWeekTrainingDays { get; set; } = new BindingWeekTrainingDay[7];
 
         #endregion
@@ -243,7 +306,24 @@ namespace BodyReportMobile.Core.ViewModels
                 return _editTrainingWeekCommand;
             }
         }
-        
+
+        private ICommand _switchTrainingDayCommand = null;
+        public ICommand SwitchTrainingDayCommand
+        {
+            get
+            {
+                if (_switchTrainingDayCommand == null)
+                {
+                    _switchTrainingDayCommand = new ViewModelCommandAsync(this, async (dayOfWeek) =>
+                    {
+                        if(dayOfWeek != null && dayOfWeek is DayOfWeek)
+                            await SwitchTrainingDayActionAsync((DayOfWeek)dayOfWeek);
+                    });
+                }
+                return _switchTrainingDayCommand;
+            }
+        }
+
         #endregion
     }
 }
