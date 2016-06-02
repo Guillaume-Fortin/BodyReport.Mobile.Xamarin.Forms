@@ -33,20 +33,6 @@ namespace BodyReportMobile.Core.ServiceManagers
             return _module.Update(country);
         }
 
-        public List<Country> UpdateCountryList(List<Country> countries)
-        {
-            if (countries == null)
-                return null;
-
-            List<Country> result = new List<Country>();
-
-            foreach (var country in countries)
-            {
-                result.Add(_module.Update(country));
-            }
-            return result;
-        }
-
         public void DeleteCountry(Country country)
         {
             _module.Delete(country);

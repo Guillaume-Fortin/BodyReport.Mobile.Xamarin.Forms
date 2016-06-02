@@ -10,15 +10,15 @@ using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Core.WebServices;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Data;
+using BodyReportMobile.Core.Services;
 using SQLite.Net;
-using BodyReportMobile.Core.ServiceManagers;
 
 namespace BodyReportMobile.Core.ViewModels
 {
 	public class EditTrainingWeekViewModel : BaseViewModel
 	{
         private SQLiteConnection _dbContext;
-        private TrainingWeekManager _trainingWeekManager;
+        private TrainingWeekService _trainingWeekService;
 
         public TEditMode EditMode { get; set; }
 
@@ -67,7 +67,7 @@ namespace BodyReportMobile.Core.ViewModels
 		public EditTrainingWeekViewModel () : base ()
 		{
             _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
-            _trainingWeekManager = new TrainingWeekManager(_dbContext);
+            _trainingWeekService = new TrainingWeekService(_dbContext);
         }
 
 		protected override async Task ShowAsync ()
@@ -215,8 +215,8 @@ namespace BodyReportMobile.Core.ViewModels
                 trainingWeek = await TrainingWeekWebService.CreateTrainingWeekAsync(TrainingWeek);
                 if (trainingWeek != null)
                 {
-                    _trainingWeekManager.DeleteTrainingWeek(trainingWeek);
-                    _trainingWeekManager.CreateTrainingWeek(trainingWeek);
+                    var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = true };
+                    _trainingWeekService.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
                 }
             }
             else
@@ -224,7 +224,7 @@ namespace BodyReportMobile.Core.ViewModels
                 var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
                 trainingWeek = await TrainingWeekWebService.UpdateTrainingWeekAsync(TrainingWeek, trainingWeekScenario);
                 if (trainingWeek != null)
-                    _trainingWeekManager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
+                    _trainingWeekService.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
             }
 
             return trainingWeek != null;

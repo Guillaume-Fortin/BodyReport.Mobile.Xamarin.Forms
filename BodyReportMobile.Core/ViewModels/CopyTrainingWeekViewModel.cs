@@ -1,15 +1,11 @@
 ﻿using Acr.UserDialogs;
 using BodyReportMobile.Core.Framework;
-using BodyReportMobile.Core.ServiceManagers;
 using BodyReportMobile.Core.WebServices;
+using BodyReportMobile.Core.Services;
 using BodyReport.Message;
 using BodyReport.Message.WebApi;
 using SQLite.Net;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XLabs.Ioc;
@@ -19,7 +15,7 @@ namespace BodyReportMobile.Core.ViewModels
     public class CopyTrainingWeekViewModel : BaseViewModel
     {
         private SQLiteConnection _dbContext;
-        private TrainingWeekManager _trainingWeekManager;
+        private TrainingWeekService _trainingWeekService;
 
         private TrainingWeek _originTrainingWeek;
         public CopyTrainingWeek CopyTrainingWeek { get; set; }
@@ -33,7 +29,7 @@ namespace BodyReportMobile.Core.ViewModels
         public CopyTrainingWeekViewModel() : base ()
 		{
             _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
-            _trainingWeekManager = new TrainingWeekManager(_dbContext);
+            _trainingWeekService = new TrainingWeekService(_dbContext);
         }
 
         protected override void InitTranslation()
@@ -121,8 +117,8 @@ namespace BodyReportMobile.Core.ViewModels
             TrainingWeek trainingWeek = await TrainingWeekWebService.CopyTrainingWeekAsync(CopyTrainingWeek);
             if(trainingWeek != null)
             {
-                _trainingWeekManager.DeleteTrainingWeek(trainingWeek);
-                _trainingWeekManager.CreateTrainingWeek(trainingWeek);
+                var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = true };
+                _trainingWeekService.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
                 result = true;
             }
             return result;

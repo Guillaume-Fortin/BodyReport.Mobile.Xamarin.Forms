@@ -1,15 +1,11 @@
 ﻿using BodyReportMobile.Core.Data;
 using BodyReportMobile.Core.Framework;
+using BodyReportMobile.Core.Manager;
 using BodyReport.Message;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XLabs.Ioc;
-using SQLite.Net;
-using BodyReportMobile.Core.Manager;
 using Acr.UserDialogs;
 
 namespace BodyReportMobile.Core.ViewModels

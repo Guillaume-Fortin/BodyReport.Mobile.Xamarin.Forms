@@ -46,17 +46,6 @@ namespace BodyReportMobile.Core.ServiceManagers
 
 			return _module.Update(muscle);
 		}
-
-		internal List<Muscle> UpdateMuscleList(List<Muscle> muscleList)
-		{
-			List<Muscle> list = new List<Muscle> ();
-			foreach (var muscle in muscleList)
-			{
-				//Translation.UpdateInDB(MuscleTransformer.GetTranslationKey(muscle.Id), muscle.Name, _dbContext);
-				list.Add(_module.Update (muscle));
-			}
-			return list;
-		}
 	}
 }
 

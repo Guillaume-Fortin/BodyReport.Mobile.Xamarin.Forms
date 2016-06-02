@@ -3,8 +3,8 @@ using BodyReportMobile.Core.Data;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Framework.Binding;
 using BodyReportMobile.Core.Message.Binding;
-using BodyReportMobile.Core.ServiceManagers;
 using BodyReportMobile.Core.WebServices;
+using BodyReportMobile.Core.Services;
 using BodyReport.Message;
 using SQLite.Net;
 using System;
@@ -29,8 +29,7 @@ namespace BodyReportMobile.Core.ViewModels
     public class TrainingDayViewModel : BaseViewModel
     {
         private SQLiteConnection _dbContext;
-        private BodyExerciseManager _bodyExerciseManager;
-        private TrainingDayManager _trainingDayManager;
+        private TrainingDayService _trainingDayService;
         private IUserDialogs _userDialog;
 
         List<BodyExercise> _bodyExerciseList;
@@ -61,8 +60,7 @@ namespace BodyReportMobile.Core.ViewModels
         {
             ShowDelayInMs = 0;
             _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
-            _bodyExerciseManager = new BodyExerciseManager(_dbContext);
-            _trainingDayManager = new TrainingDayManager(_dbContext);
+            _trainingDayService = new TrainingDayService(_dbContext);
             _userDialog = Resolver.Resolve<IUserDialogs>();
 			CreateTrainingLabel = Translation.Get(TRS.CREATE); //necessary for ios Toolbaritem binding failed
         }
@@ -262,7 +260,10 @@ namespace BodyReportMobile.Core.ViewModels
             try
             {
                 if(_bodyExerciseList == null)
-                    _bodyExerciseList = _bodyExerciseManager.FindBodyExercises();
+                {
+                    var bodyExerciseService = new BodyExerciseService(_dbContext);
+                    _bodyExerciseList = bodyExerciseService.FindBodyExercises();
+                }   
                 
                 //Create BindingCollection
                 GroupedTrainingExercises.Clear();
@@ -404,8 +405,7 @@ namespace BodyReportMobile.Core.ViewModels
                         trainingDay = await TrainingDayWebService.UpdateTrainingDayAsync(trainingDay, trainingDayScenario);
                         
                         //local update
-                        TrainingDayManager trainingDayManager = new TrainingDayManager(_dbContext);
-                        trainingDayManager.UpdateTrainingDay(trainingDay, trainingDayScenario);
+                        _trainingDayService.UpdateTrainingDay(trainingDay, trainingDayScenario);
 
                         //Update trainingDay in list
                         _trainingDays[indexOfTrainingDay] = trainingDay;
@@ -458,7 +458,7 @@ namespace BodyReportMobile.Core.ViewModels
                             var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
                             trainingDay = await TrainingDayWebService.UpdateTrainingDayAsync(trainingDay, trainingDayScenario);
                             //Save in local database
-                            _trainingDayManager.UpdateTrainingDay(trainingDay, trainingDayScenario);
+                            _trainingDayService.UpdateTrainingDay(trainingDay, trainingDayScenario);
                             //Update trainingDay in list
                             _trainingDays[indexOfTrainingDay] = trainingDay;
                             //Update UI
@@ -489,8 +489,8 @@ namespace BodyReportMobile.Core.ViewModels
                     await TrainingExerciseWebService.DeleteTrainingExerciseAsync(trainingExercise);
                     
                     // Delete TrainingExercise on local database
-                    var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
-                    trainingExerciseManager.DeleteTrainingExercise(trainingExercise);
+                    var trainingExerciseService = new TrainingExerciseService(_dbContext);
+                    trainingExerciseService.DeleteTrainingExercise(trainingExercise);
 
                     //Remove trainingExercise in trainingDay
                     TrainingDay trainingDay = null;
@@ -573,7 +573,7 @@ namespace BodyReportMobile.Core.ViewModels
                     var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
                     trainingDay = await TrainingDayWebService.UpdateTrainingDayAsync(trainingDay, trainingDayScenario);
                     //Save in local database
-                    _trainingDayManager.UpdateTrainingDay(trainingDay, trainingDayScenario);
+                    _trainingDayService.UpdateTrainingDay(trainingDay, trainingDayScenario);
                     //Update trainingDay in list
                     _trainingDays[indexOfTrainingDay] = trainingDay;
                     //Update UI

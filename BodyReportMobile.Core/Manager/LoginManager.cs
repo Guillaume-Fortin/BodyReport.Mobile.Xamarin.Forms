@@ -6,8 +6,8 @@ using XLabs.Ioc;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.MvxMessages;
 using BodyReportMobile.Core.WebServices;
-using BodyReportMobile.Core.ServiceManagers;
 using BodyReportMobile.Core.Data;
+using BodyReportMobile.Core.Services;
 
 namespace BodyReportMobile.Core.Manager
 {
@@ -46,14 +46,13 @@ namespace BodyReportMobile.Core.Manager
                 if (userInfo != null)
                 {
                     var dbContext = Resolver.Resolve<ISQLite>().GetConnection();
-                    var userInfoManager = new UserInfoManager(dbContext);
-                    var userInfoList = userInfoManager.FindUserInfos();
+                    var userInfoService = new UserInfoService(dbContext);
+                    var userInfoList = userInfoService.FindUserInfos();
                     if(userInfoList != null && userInfoList.Count > 0)
                     { // delete old userInfo
-                        foreach (var userInfoDeleted in userInfoList)
-                            userInfoManager.DeleteUserInfo(userInfoDeleted);
+                        userInfoService.DeleteUserInfoList(userInfoList);
                     }
-                    userInfoManager.UpdateUserInfo(userInfo);
+                    userInfoService.UpdateUserInfo(userInfo);
                     UserData.Instance.UserInfo = userInfo;
                     _userId = userInfo.UserId;
                     result = true;
@@ -84,8 +83,8 @@ namespace BodyReportMobile.Core.Manager
         {
             // load local login info
             var dbContext = Resolver.Resolve<ISQLite>().GetConnection();
-            var userInfoManager = new UserInfoManager(dbContext);
-            var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = _userId });
+            var userInfoService = new UserInfoService(dbContext);
+            var userInfo = userInfoService.GetUserInfo(new UserInfoKey() { UserId = _userId });
             if (userInfo != null)
             {
                 UserData.Instance.UserInfo = userInfo;

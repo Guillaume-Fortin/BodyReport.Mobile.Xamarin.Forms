@@ -29,16 +29,6 @@ namespace BodyReportMobile.Core.ServiceManagers
 		{
 			return _module.Update(translation);
 		}
-
-		internal List<TranslationVal> UpdateTranslationList(List<TranslationVal> translationList)
-		{
-			List<TranslationVal> list = new List<TranslationVal> ();
-			foreach (var translation in translationList)
-			{
-				list.Add(_module.Update (translation));
-			}
-			return list;
-		}
 	}
 }
 

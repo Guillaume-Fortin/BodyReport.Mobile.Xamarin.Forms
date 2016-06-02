@@ -5,7 +5,7 @@ using System.IO;
 using Newtonsoft.Json;
 using XLabs.Ioc;
 using SQLite.Net;
-using BodyReportMobile.Core.ServiceManagers;
+using BodyReportMobile.Core.Services;
 
 namespace BodyReportMobile.Core.Framework
 {
@@ -141,13 +141,13 @@ namespace BodyReportMobile.Core.Framework
                 {
                     int currentCultureId = GetCurrentCultureId();
 
-                    var translationManager = new TranslationManager(_dbContext);
+                    var translationService = new TranslationService(_dbContext);
                     var translationValKey = new TranslationValKey()
                     {
                         CultureId = currentCultureId,
                         Key = key
                     };
-                    var trValue = translationManager.GetTranslation(translationValKey);
+                    var trValue = translationService.GetTranslation(translationValKey);
 
                     if (trValue != null && trValue.Value != null)
                         result = trValue.Value;

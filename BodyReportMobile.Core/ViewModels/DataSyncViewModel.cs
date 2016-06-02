@@ -1,8 +1,8 @@
 ﻿using BodyReportMobile.Core.Data;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Manager;
-using BodyReportMobile.Core.ServiceManagers;
 using BodyReportMobile.Core.WebServices;
+using BodyReportMobile.Core.Services;
 using BodyReport.Message;
 using SQLite.Net;
 using System;
@@ -161,8 +161,8 @@ namespace BodyReportMobile.Core.ViewModels
                 var countryList = await CountryWebService.FindCountriesAsync();
                 if (countryList != null)
                 {
-                    var countryManager = new CountryManager(_dbContext);
-                    countryManager.UpdateCountryList(countryList);
+                    var countryService = new CountryService(_dbContext);
+                    countryService.UpdateCountryList(countryList);
                 }
             }
             catch (Exception except)
@@ -182,8 +182,8 @@ namespace BodyReportMobile.Core.ViewModels
                 var muscleList = await MuscleWebService.FindMusclesAsync();
                 if (muscleList != null)
                 {
-                    var muscleManager = new MuscleManager(_dbContext);
-                    muscleManager.UpdateMuscleList(muscleList);
+                    var muscleService = new MuscleService(_dbContext);
+                    muscleService.UpdateMuscleList(muscleList);
                 }
             }
             catch (Exception except)
@@ -203,8 +203,8 @@ namespace BodyReportMobile.Core.ViewModels
                 var muscularGroupList = await MuscularGroupWebService.FindMuscularGroupsAsync();
                 if (muscularGroupList != null)
                 {
-                    var muscularGroupManager = new MuscularGroupManager(_dbContext);
-                    muscularGroupManager.UpdateMuscularGroupList(muscularGroupList);
+                    var muscularGroupService = new MuscularGroupService(_dbContext);
+                    muscularGroupService.UpdateMuscularGroupList(muscularGroupList);
                 }
             }
             catch (Exception except)
@@ -224,8 +224,8 @@ namespace BodyReportMobile.Core.ViewModels
                 var bodyExerciseList = await BodyExerciseWebService.FindBodyExercisesAsync();
                 if (bodyExerciseList != null)
                 {
-                    var bodyExerciseManager = new BodyExerciseManager(_dbContext);
-                    bodyExerciseManager.UpdateBodyExerciseList(bodyExerciseList);
+                    var bodyExerciseService = new BodyExerciseService(_dbContext);
+                    bodyExerciseService.UpdateBodyExerciseList(bodyExerciseList);
 
                     SynchronizationLabel = string.Format("{0} : {1}", Translation.Get(TRS.BODY_EXERCISES), Translation.Get(TRS.IMAGE));
                     //Synchronize body exercises images
@@ -263,8 +263,8 @@ namespace BodyReportMobile.Core.ViewModels
                 var translationList = await TranslationWebService.FindTranslationsAsync();
                 if (translationList != null)
                 {
-                    var translationManager = new TranslationManager(_dbContext);
-                    translationManager.UpdateTranslationList(translationList);
+                    var translationService = new TranslationService(_dbContext);
+                    translationService.UpdateTranslationList(translationList);
                 }
             }
             catch (Exception except)
@@ -284,9 +284,9 @@ namespace BodyReportMobile.Core.ViewModels
                 var criteria = new TrainingWeekCriteria();
                 criteria.UserId = new StringCriteria() { Equal = UserData.Instance.UserInfo.UserId };
                 TrainingWeekScenario trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
-                var trainingWeekManager = new TrainingWeekManager(_dbContext);
+                var trainingWeekService = new TrainingWeekService(_dbContext);
                 //retreive local data
-                var localTrainingWeekList = trainingWeekManager.FindTrainingWeek(criteria, trainingWeekScenario);
+                var localTrainingWeekList = trainingWeekService.FindTrainingWeek(criteria, trainingWeekScenario);
                 //retreive online data
                 var criteriaList = new CriteriaList<TrainingWeekCriteria>() { criteria };
                 var onlineTrainingWeekList = await TrainingWeekWebService.FindTrainingWeeksAsync(criteriaList, trainingWeekScenario);
@@ -321,7 +321,7 @@ namespace BodyReportMobile.Core.ViewModels
                         foreach (var deleteTrainingWeek in deletedTrainingWeekList)
                         {
                             //Delete in local database
-                            trainingWeekManager.DeleteTrainingWeek(deleteTrainingWeek);
+                            trainingWeekService.DeleteTrainingWeek(deleteTrainingWeek);
                             localTrainingWeekList.Remove(deleteTrainingWeek);
                         }
                     }
@@ -386,7 +386,7 @@ namespace BodyReportMobile.Core.ViewModels
                             _synchronizeCount++;
                             count++;
                             await Task.Delay(1); //Update UI
-                            trainingWeekManager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
+                            trainingWeekService.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
                         }
                     }
                 }

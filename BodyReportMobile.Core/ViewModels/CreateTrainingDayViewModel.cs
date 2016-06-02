@@ -1,24 +1,21 @@
 ﻿using Acr.UserDialogs;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Message.Binding;
-using BodyReportMobile.Core.ServiceManagers;
 using BodyReportMobile.Core.WebServices;
 using BodyReport.Message;
 using SQLite.Net;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XLabs.Ioc;
+using BodyReportMobile.Core.Services;
 
 namespace BodyReportMobile.Core.ViewModels
 {
     public class CreateTrainingDayViewModel : BaseViewModel
     {
         private SQLiteConnection _dbContext;
-        private TrainingWeekManager _trainingWeekManager;
+        private TrainingDayService _trainingDayService;
         private IUserDialogs _userDialog;
         private TEditMode _editMode;
 
@@ -28,7 +25,7 @@ namespace BodyReportMobile.Core.ViewModels
         {
             ShowDelayInMs = 0;
             _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
-            _trainingWeekManager = new TrainingWeekManager(_dbContext);
+            _trainingDayService = new TrainingDayService(_dbContext);
             _userDialog = Resolver.Resolve<IUserDialogs>();
         }
 
@@ -119,6 +116,8 @@ namespace BodyReportMobile.Core.ViewModels
                 if (trainingDayCreated != null)
                 {
                     _trainingDay.TrainingDayId = trainingDayCreated.TrainingDayId;
+                    var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
+                    _trainingDayService.UpdateTrainingDay(trainingDayCreated, trainingDayScenario);
                     result = true;
                 }
             }
@@ -127,7 +126,10 @@ namespace BodyReportMobile.Core.ViewModels
                 var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
                 var trainingDayUpdated = await TrainingDayWebService.UpdateTrainingDayAsync(_trainingDay, trainingDayScenario);
                 if (trainingDayUpdated != null)
+                {
+                    _trainingDayService.UpdateTrainingDay(trainingDayUpdated, trainingDayScenario);
                     result = true;
+                }
             }
 
             return result;

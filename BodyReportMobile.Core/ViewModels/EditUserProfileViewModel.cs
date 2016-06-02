@@ -3,7 +3,7 @@ using BodyReportMobile.Core.Data;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Message;
 using BodyReportMobile.Core.Message.Binding;
-using BodyReportMobile.Core.ServiceManagers;
+using BodyReportMobile.Core.Services;
 using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Core.WebServices;
 using BodyReport.Message;
@@ -11,7 +11,6 @@ using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XLabs.Ioc;
@@ -21,7 +20,7 @@ namespace BodyReportMobile.Core.ViewModels
     public class EditUserProfileViewModel : BaseViewModel
     {
         private readonly SQLiteConnection _dbContext;
-        private readonly UserInfoManager _userInfoManager;
+        private readonly UserInfoService _userInfoService;
         
         private string _userId;
         private UserInfo _userInfo;
@@ -31,7 +30,7 @@ namespace BodyReportMobile.Core.ViewModels
         public EditUserProfileViewModel() : base()
         {
             _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
-            _userInfoManager = new UserInfoManager(_dbContext);
+            _userInfoService = new UserInfoService(_dbContext);
         }
 
         protected override void InitTranslation()
@@ -80,15 +79,15 @@ namespace BodyReportMobile.Core.ViewModels
         {
             if (_countries == null)
             {
-                var countryManager = new CountryManager(_dbContext);
-                _countries = countryManager.FindCountries();
+                var countryService = new CountryService(_dbContext);
+                _countries = countryService.FindCountries();
                 if (_countries == null || _countries.Count == 0)
                 {
                     //find country in server if not present in database (this viewModel can be display directly after user login)
                     _countries = await CountryWebService.FindCountriesAsync();
                     //populate country in local database
                     if (_countries != null && _countries.Count > 0)
-                        countryManager.UpdateCountryList(_countries);
+                        countryService.UpdateCountryList(_countries);
                 }
             }
 
@@ -233,8 +232,7 @@ namespace BodyReportMobile.Core.ViewModels
 
             if(userInfo != null && userInfo.UserId == UserData.Instance.UserInfo.UserId)
             {
-                var userInfoManager = new UserInfoManager(_dbContext);
-                userInfoManager.UpdateUserInfo(userInfo);
+                _userInfoService.UpdateUserInfo(userInfo);
             }
             return userInfo != null;
         }

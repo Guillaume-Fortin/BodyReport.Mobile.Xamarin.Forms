@@ -1,17 +1,14 @@
 ﻿using Acr.UserDialogs;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Message.Binding;
-using BodyReportMobile.Core.ServiceManagers;
 using BodyReportMobile.Core.ViewModels.Generic;
+using BodyReportMobile.Core.Services;
 using BodyReport.Message;
 using SQLite.Net;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -28,9 +25,6 @@ namespace BodyReportMobile.Core.ViewModels
     public class SelectTrainingExercisesViewModel : BaseViewModel
     {
         private SQLiteConnection _dbContext;
-        private MuscularGroupManager _muscularGroupManager;
-        private MuscleManager _muscleManager;
-        private BodyExerciseManager _bodyExerciseManager;
         private IUserDialogs _userDialog;
 
         public List<BindingBodyExercise> BindingBodyExercises { get; set; } = new List<BindingBodyExercise>();
@@ -46,9 +40,6 @@ namespace BodyReportMobile.Core.ViewModels
         {
             ShowDelayInMs = 0;
             _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
-            _bodyExerciseManager = new BodyExerciseManager(_dbContext);
-            _muscularGroupManager = new MuscularGroupManager(_dbContext);
-            _muscleManager = new MuscleManager(_dbContext);
             _userDialog = Resolver.Resolve<IUserDialogs>();
         }
 
@@ -107,14 +98,23 @@ namespace BodyReportMobile.Core.ViewModels
         {
             try
             {
-                if(_muscularGroups == null)
-                    _muscularGroups = _muscularGroupManager.FindMuscularGroups();
+                if (_muscularGroups == null)
+                {
+                    var muscularGroupService = new MuscularGroupService(_dbContext);
+                    _muscularGroups = muscularGroupService.FindMuscularGroups();
+                }
 
-                if(_muscles == null)
-                    _muscles = _muscleManager.FindMuscles();
+                if (_muscles == null)
+                {
+                    var muscleService = new MuscleService(_dbContext);
+                    _muscles = muscleService.FindMuscles();
+                }
 
                 if (_bodyExercises == null)
-                    _bodyExercises = _bodyExerciseManager.FindBodyExercises();
+                {
+                    var bodyExerciseService = new BodyExerciseService(_dbContext);
+                    _bodyExercises = bodyExerciseService.FindBodyExercises();
+                }
 
                 /*
                 if(onShow && _muscularGroups != null && _muscularGroups.Count > 0 && _muscles != null)

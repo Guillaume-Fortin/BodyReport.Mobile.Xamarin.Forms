@@ -2,9 +2,9 @@
 using BodyReportMobile.Core.Data;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Framework.Binding;
-using BodyReportMobile.Core.Message.Binding;
-using BodyReportMobile.Core.ServiceManagers;
 using BodyReportMobile.Core.WebServices;
+using BodyReportMobile.Core.ViewModels.Generic;
+using BodyReportMobile.Core.Message;
 using BodyReport.Framework;
 using BodyReport.Message;
 using SQLite.Net;
@@ -15,8 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XLabs.Ioc;
-using BodyReportMobile.Core.ViewModels.Generic;
-using BodyReportMobile.Core.Message;
+using BodyReportMobile.Core.Services;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -189,9 +188,9 @@ namespace BodyReportMobile.Core.ViewModels
                         _dbContext.BeginTransaction();
                         try
                         {
-                            var trainingWeekManager = new TrainingWeekManager(_dbContext);
+                            var trainingWeekService = new TrainingWeekService(_dbContext);
                             var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = true };
-                            trainingWeekManager.UpdateTrainingWeek(updatedTrainingWeek, trainingWeekScenario);
+                            trainingWeekService.UpdateTrainingWeek(updatedTrainingWeek, trainingWeekScenario);
                             _dbContext.Commit();
                         }
                         catch

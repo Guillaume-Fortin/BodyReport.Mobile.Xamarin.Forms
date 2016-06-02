@@ -2,17 +2,14 @@
 using BodyReportMobile.Core.Crud.Transformer;
 using BodyReportMobile.Core.Data;
 using BodyReportMobile.Core.Framework;
-using BodyReportMobile.Core.Framework.Binding;
 using BodyReportMobile.Core.Message.Binding;
-using BodyReportMobile.Core.ServiceManagers;
+using BodyReportMobile.Core.Services;
 using BodyReportMobile.Core.WebServices;
 using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XLabs.Ioc;
@@ -28,9 +25,6 @@ namespace BodyReportMobile.Core.ViewModels
     public class EditTrainingExerciseViewModel : BaseViewModel
     {
         private SQLiteConnection _dbContext;
-        private TrainingExerciseSetManager _trainingExerciseSetManager;
-        private UserInfoManager _userInfoManager;
-
         private UserInfo _userInfo;
         private TrainingExercise _trainingExercise;
         private TrainingExercise _completedTrainingExercise;
@@ -38,8 +32,6 @@ namespace BodyReportMobile.Core.ViewModels
         public EditTrainingExerciseViewModel() : base()
         {
             _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
-            _trainingExerciseSetManager = new TrainingExerciseSetManager(_dbContext);
-            _userInfoManager = new UserInfoManager(_dbContext);
         }
 
         public static async Task<EditTrainingExerciseViewModelResult> ShowAsync(TrainingExercise trainingExercise, BaseViewModel parent = null)
@@ -98,7 +90,10 @@ namespace BodyReportMobile.Core.ViewModels
                     {
                         var userInfoKey = new UserInfoKey() { UserId = _trainingExercise.UserId };
                         if (_trainingExercise.UserId == UserData.Instance.UserInfo.UserId)
-                            _userInfo = _userInfoManager.GetUserInfo(userInfoKey);
+                        {
+                            var userInfoService = new UserInfoService(_dbContext);
+                            _userInfo = userInfoService.GetUserInfo(userInfoKey);
+                        }
                         else
                             _userInfo = await UserInfoWebService.GetUserInfoAsync(userInfoKey);
                     }

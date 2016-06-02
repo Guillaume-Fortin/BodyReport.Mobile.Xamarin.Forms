@@ -99,6 +99,16 @@
     <Compile Include="ServiceManagers\CountryManager.cs" />
     <Compile Include="ServiceManagers\MuscularGroupManager.cs" />
     <Compile Include="ServiceManagers\UserInfoManager.cs" />
+    <Compile Include="Services\BodyExerciseService.cs" />
+    <Compile Include="Services\CountryService.cs" />
+    <Compile Include="Services\LocalService.cs" />
+    <Compile Include="Services\MuscleService.cs" />
+    <Compile Include="Services\MuscularGroupService.cs" />
+    <Compile Include="Services\TrainingDayService.cs" />
+    <Compile Include="Services\TrainingExerciseService.cs" />
+    <Compile Include="Services\TrainingWeekService.cs" />
+    <Compile Include="Services\TranslationService.cs" />
+    <Compile Include="Services\UserInfoService.cs" />
     <Compile Include="ViewModels\DataSyncViewModel.cs" />
     <Compile Include="ViewModels\EditTrainingExerciseViewModel.cs" />
     <Compile Include="ViewModels\MenuViewModel.cs" />

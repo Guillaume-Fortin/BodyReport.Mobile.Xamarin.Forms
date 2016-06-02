@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Windows.Input;
 using System.Threading.Tasks;
-using BodyReportMobile.Core.Message;
-using System.Collections.Generic;
 using BodyReport.Message;
-using BodyReportMobile.Core.ServiceManagers;
 using SQLite.Net;
 using XLabs.Ioc;
-using BodyReportMobile.Core.ViewModels.Generic;
-using BodyReportMobile.Core.Manager;
 using BodyReportMobile.Core.WebServices;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Data;
@@ -16,7 +11,6 @@ using System.IO;
 using Acr.UserDialogs;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
-using BodyReport.Message.WebApi;
 
 namespace BodyReportMobile.Core.ViewModels
 {

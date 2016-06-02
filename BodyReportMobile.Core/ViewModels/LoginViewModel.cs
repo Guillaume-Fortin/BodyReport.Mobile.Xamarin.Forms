@@ -1,14 +1,12 @@
 ﻿using System;
-using BodyReportMobile.Core.ViewModels;
 using System.Windows.Input;
 using BodyReport.Message;
 using BodyReportMobile.Core.Framework;
 using System.Threading.Tasks;
-using BodyReportMobile.Core.Manager;
 using XLabs.Ioc;
 using Acr.UserDialogs;
 using BodyReportMobile.Core.Data;
-using BodyReportMobile.Core.Message;
+using BodyReportMobile.Core.Manager;
 
 namespace BodyReportMobile.Core.ViewModels
 {
