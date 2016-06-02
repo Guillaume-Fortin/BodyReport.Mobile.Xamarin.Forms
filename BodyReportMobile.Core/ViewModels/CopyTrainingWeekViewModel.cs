@@ -36,7 +36,7 @@ namespace BodyReportMobile.Core.ViewModels
         {
             base.InitTranslation();
 
-            TitleLabel = Translation.Get(TRS.TRAINING_WEEK) + ". " + Translation.Get(TRS.COPY);
+            TitleLabel = Translation.Get(TRS.COPY);
             ValidateLabel = Translation.Get(TRS.VALIDATE);
             OriginTrainingWeekLabel = Translation.Get(TRS.ORIGIN_TRAINING_WEEK);
             NewTrainingWeekLabel = Translation.Get(TRS.NEW_TRAINING_WEEK);
