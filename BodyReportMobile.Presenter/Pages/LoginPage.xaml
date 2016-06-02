@@ -4,26 +4,30 @@
       xmlns:controls="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
       x:Class="BodyReportMobile.Presenter.Pages.LoginPage"
 			Title="{Binding TitleLabel}">
-	<ContentPage.Content>
-	</ContentPage.Content>
 
-  <Grid>
-    <StackLayout Orientation="Vertical" Margin="20">
-      <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
-        <Image Source="{Binding LanguageFlagImageSource}" WidthRequest="60" HeightRequest="60">
-          <Image.GestureRecognizers>
-            <TapGestureRecognizer Command="{Binding ChangeLanguageCommand}" CommandParameter="Image1" NumberOfTapsRequired="1" />
-          </Image.GestureRecognizers>
-        </Image>
-        <StackLayout Orientation="Vertical" Margin="4" HorizontalOptions="FillAndExpand">
-          <controls:TextEntry Placeholder="{Binding UserNameLabel}" Text="{Binding UserName}" MaxLength="{Binding UserNameMaxLength}"/>
-          <controls:TextEntry Placeholder="{Binding PasswordLabel}" Text="{Binding Password}" IsPassword="True" MaxLength="{Binding PasswordMaxLength}"/>
-        </StackLayout>
-      </StackLayout>
-      <Button Text="{Binding LogInLabel}" Command="{Binding LogInCommand}" HorizontalOptions="FillAndExpand"/>
-      <Button Text="{Binding RegisterLabel}" Command="{Binding RegisterAccountCommand}" HorizontalOptions="FillAndExpand"/>
-      
-      <Label Text="{Binding InformationsLabel}" TextColor="White" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-    </StackLayout>
-  </Grid>
+  <ContentPage.Padding>
+    <OnPlatform x:TypeArguments="Thickness" iOS="0,20,0,0"/>
+  </ContentPage.Padding>
+
+	<ContentPage.Content>
+	  <Grid>
+	    <StackLayout Orientation="Vertical" Margin="20">
+	      <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+	        <Image Source="{Binding LanguageFlagImageSource}" WidthRequest="60" HeightRequest="60">
+	          <Image.GestureRecognizers>
+	            <TapGestureRecognizer Command="{Binding ChangeLanguageCommand}" CommandParameter="Image1" NumberOfTapsRequired="1" />
+	          </Image.GestureRecognizers>
+	        </Image>
+	        <StackLayout Orientation="Vertical" Margin="4" HorizontalOptions="FillAndExpand">
+	          <controls:TextEntry Placeholder="{Binding UserNameLabel}" Text="{Binding UserName}" MaxLength="{Binding UserNameMaxLength}"/>
+	          <controls:TextEntry Placeholder="{Binding PasswordLabel}" Text="{Binding Password}" IsPassword="True" MaxLength="{Binding PasswordMaxLength}"/>
+	        </StackLayout>
+	      </StackLayout>
+	      <Button Text="{Binding LogInLabel}" Command="{Binding LogInCommand}" HorizontalOptions="FillAndExpand"/>
+	      <Button Text="{Binding RegisterLabel}" Command="{Binding RegisterAccountCommand}" HorizontalOptions="FillAndExpand"/>
+	      
+	      <Label Text="{Binding InformationsLabel}" TextColor="White" VerticalOptions="CenterAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+	    </StackLayout>
+	  </Grid>
+	</ContentPage.Content>
 </local:BaseContentPage>

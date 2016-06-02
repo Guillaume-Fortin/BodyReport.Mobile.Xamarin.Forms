@@ -7,6 +7,10 @@
              x:Class="BodyReportMobile.Presenter.Pages.DataSyncPage"
              Title="{Binding TitleLabel}">
 
+  <ContentPage.Padding>
+    <OnPlatform x:TypeArguments="Thickness" iOS="0,20,0,0"/>
+  </ContentPage.Padding>
+
   <ContentPage.Content>
     <Grid BackgroundColor="White">
       <Grid.RowDefinitions>
