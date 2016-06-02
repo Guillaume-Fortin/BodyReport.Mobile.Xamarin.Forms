@@ -24,14 +24,17 @@
       <ListView x:Name="listView" ItemsSource="{Binding GroupedTrainingExercises}"
                 GroupDisplayBinding="{Binding LongName}"
 			          IsGroupingEnabled="true"
-                HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"
+                HasUnevenRows="True" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"
                 ItemTapped="ItemTapped">
         <ListView.GroupHeaderTemplate>
           <DataTemplate>
             <ViewCell x:Name="groupViewCell">
+              <ViewCell.Height>
+			    <OnPlatform x:TypeArguments="x:Double" iOS="60"/>
+		  	  </ViewCell.Height>
               <ViewCell.View>
-                <StackLayout Orientation="Vertical" >
-                  <StackLayout Orientation="Horizontal" Padding="10" >
+                <StackLayout Orientation="Vertical">
+                  <StackLayout Orientation="Horizontal" Padding="10,0,0,0" >
                     <Label Text="{Binding LongName}"/>
                     <Label TextColor="#3366BB"
                       Text="{Binding Path=BindingContext.EditTrainingDayLabel, Source={x:Reference trainingDayPage}}">
