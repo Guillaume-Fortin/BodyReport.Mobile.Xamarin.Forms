@@ -16,8 +16,7 @@ namespace BodyReportMobile.Core.Framework
 {
     public class HttpConnector
     {
-        //private string _baseUrl = "http://192.168.0.15:5000/";
-        private string _baseUrl = "http://192.168.1.11:5000/";
+        private string _baseUrl = null;
         private const string _relativeLoginUrl = "Api/Account/Login";
         private HttpClient _httpClient = null;
         private bool _connected = false;
@@ -38,6 +37,9 @@ namespace BodyReportMobile.Core.Framework
             }
         }
 
+        /// <summary>
+        /// Like http://www.bodyreport.org:5000/ but prefer use ip (domain very slow in mobile)
+        /// </summary>
         public string BaseUrl
         {
             get
@@ -48,6 +50,8 @@ namespace BodyReportMobile.Core.Framework
             set
             {
                 _baseUrl = value;
+                if(_httpClient != null)
+                    _httpClient.BaseAddress = new Uri(_baseUrl);
             }
         }
 
@@ -58,10 +62,10 @@ namespace BodyReportMobile.Core.Framework
             HttpClientHandler handler = new HttpClientHandler();
             handler.CookieContainer = cookies;
 
-            _httpClient = new System.Net.Http.HttpClient(handler);
-            _httpClient.BaseAddress = new Uri(BaseUrl);
+            _httpClient = new HttpClient(handler);
             _httpClient.Timeout = TimeSpan.FromSeconds(30);
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _httpClient.DefaultRequestHeaders.ExpectContinue = false;
         }
 
         public async Task<bool> ConnectUserAsync(string userName, string password, LangType langType, bool autoPromptLogin)
@@ -352,6 +356,7 @@ namespace BodyReportMobile.Core.Framework
                 {
                     httpClient = new HttpClient();
                     httpClient.BaseAddress = new Uri(BaseUrl);
+                    httpClient.DefaultRequestHeaders.ExpectContinue = false;
                 }
 
                 using (Stream contentStream = await httpClient.GetStreamAsync(relativeUrl))

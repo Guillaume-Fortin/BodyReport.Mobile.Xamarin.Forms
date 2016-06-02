@@ -76,6 +76,11 @@ namespace BodyReportMobile.Core.ViewModels
             try
             {
                 ActionIsInProgress = true;
+                
+                var baseUrl = "http://163.172.13.105:5000/"; // prefer use ip of www.bodyreport.org
+                if(HttpConnector.Instance.BaseUrl != baseUrl)
+                    HttpConnector.Instance.BaseUrl = baseUrl;
+
                 await ManageUserConnectionAsync();
 
                 await SynchronizeWebData();
