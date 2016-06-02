@@ -13,25 +13,34 @@
   <ContentPage.ToolbarItems>
     <ToolbarItem Name="MenuToolbarItem" Icon="menu_icon.png" Command="{Binding MenuCommand}" Order="Primary" Priority="0" />
   </ContentPage.ToolbarItems>
-    
+
   <ContentPage.Content>
-    <Grid>
+    <Grid Padding="10">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="*" />
       </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="150"/>
+      </Grid.ColumnDefinitions>
 
-      <StackLayout Grid.Row="0" Padding="4,4,4,4">
-        <localcontrol:CircleImage BorderColor="#add8e6" FillColor="Olive" BorderThickness="3" HeightRequest="150" WidthRequest="150"
-                                Aspect="AspectFill" HorizontalOptions="Center" Source="{Binding UserProfilImage}">
-          <localcontrol:CircleImage.GestureRecognizers>
-            <TapGestureRecognizer Command="{Binding SelectUserPictureCommand}" NumberOfTapsRequired="1" />
-          </localcontrol:CircleImage.GestureRecognizers>
+      <localcontrol:CircleImage BorderColor="#add8e6" FillColor="Olive" BorderThickness="3"
+                                 Grid.Row="0" Grid.Column="0" HeightRequest="150" WidthRequest="150"
+                                Aspect="AspectFill" VerticalOptions="Center" HorizontalOptions="Center"
+                                Source="{Binding UserProfilImage}">
+        <localcontrol:CircleImage.GestureRecognizers>
+          <TapGestureRecognizer Command="{Binding SelectUserPictureCommand}" NumberOfTapsRequired="1" />
+        </localcontrol:CircleImage.GestureRecognizers>
       </localcontrol:CircleImage>
-        
 
+      <StackLayout Grid.Row="0" Grid.Column="1" Orientation="Vertical">
+        <Label Text="{Binding UserNameLabel}" HorizontalTextAlignment="Center" HorizontalOptions="FillAndExpand"/>
+        <Label Text="{Binding UserHeightLabel}" HorizontalTextAlignment="Center" HorizontalOptions="FillAndExpand"/>
+        <Label Text="{Binding UserWeightLabel}" HorizontalTextAlignment="Center" HorizontalOptions="FillAndExpand"/>
       </StackLayout>
-        <TableView  Grid.Row="1" x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+      
+      <TableView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
         <TableRoot>
           <TableSection>
             <localcontrol:TouchViewCell x:Name="TrainingJournalCell" Tapped="OnCellTapped"

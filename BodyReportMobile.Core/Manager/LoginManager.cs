@@ -212,8 +212,12 @@ namespace BodyReportMobile.Core.Manager
 				_busy = false;
 			}
             return connectionOK;
-
         }
-	}
+
+        public string UserName
+        {
+            get { return _userName; }
+        }
+    }
 }
 

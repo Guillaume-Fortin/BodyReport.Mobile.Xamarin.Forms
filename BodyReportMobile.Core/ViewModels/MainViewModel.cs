@@ -11,6 +11,7 @@ using System.IO;
 using Acr.UserDialogs;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
+using BodyReportMobile.Core.Manager;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -99,12 +100,24 @@ namespace BodyReportMobile.Core.ViewModels
 
         private void DisplayUserProfil()
         {
-            string imagePath = UserData.Instance.UserInfo == null ?  null : AppTools.Instance.GetUserImageLocalPath(UserData.Instance.UserInfo.UserId);
+            string imagePath = UserData.Instance.UserInfo == null ? null : AppTools.Instance.GetUserImageLocalPath(UserData.Instance.UserInfo.UserId);
 
             if (!string.IsNullOrWhiteSpace(imagePath) && _fileManager.FileExist(imagePath))
                 UserProfilImage = imagePath;
             else
                 UserProfilImage = "logo.png";
+
+            UserNameLabel = LoginManager.Instance.UserName;
+
+            var userUnit = UserData.Instance.UserInfo?.Unit;
+            string weightUnit = "kg", lengthUnit = "cm";
+            if (userUnit == (int)TUnitType.Imperial)
+            {
+                weightUnit = Translation.Get(TRS.POUND);
+                lengthUnit = Translation.Get(TRS.INCH);
+            }
+            UserHeightLabel = string.Format("{0} {1}", UserData.Instance.UserInfo?.Height, lengthUnit);
+            UserWeightLabel = string.Format("{0} {1}", UserData.Instance.UserInfo?.Weight, weightUnit);
         }
 
         private async Task GoToTrainingJournalActionAsync()
@@ -196,6 +209,52 @@ namespace BodyReportMobile.Core.ViewModels
                 ILogger.Instance.Error("Can't take user profile image", except);
             }
         }
+
+        #region label properties binding
+
+        private string _userNameLabel;
+        public string UserNameLabel
+        {
+            get
+            {
+                return _userNameLabel;
+            }
+            set
+            {
+                _userNameLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _userHeightLabel;
+        public string UserHeightLabel
+        {
+            get
+            {
+                return _userHeightLabel;
+            }
+            set
+            {
+                _userHeightLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _userWeightLabel;
+        public string UserWeightLabel
+        {
+            get
+            {
+                return _userWeightLabel;
+            }
+            set
+            {
+                _userWeightLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion
 
         #region Command
 
