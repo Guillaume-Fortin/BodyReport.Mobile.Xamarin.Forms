@@ -41,6 +41,11 @@
       </StackLayout>
       
       <TableView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+
+		  <TableView.BackgroundColor>
+		    <OnPlatform x:TypeArguments="Color"
+		                iOS="#6DBEE3"/>
+		  </TableView.BackgroundColor>
         <TableRoot>
           <TableSection>
             <localcontrol:TouchViewCell x:Name="TrainingJournalCell" Tapped="OnCellTapped"
