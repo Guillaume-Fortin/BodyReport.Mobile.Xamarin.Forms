@@ -74,6 +74,7 @@
     <Compile Include="Crud\Transformer\CountryTransformer.cs" />
     <Compile Include="Crud\Transformer\CriteriaTransformer.cs" />
     <Compile Include="Crud\Transformer\MuscularGroupTransformer.cs" />
+    <Compile Include="Data\DataSync.cs" />
     <Compile Include="Framework\AppMessenger.cs" />
     <Compile Include="Framework\AppTools.cs" />
     <Compile Include="Framework\Binding\GenericMultiGroupModel.cs" />

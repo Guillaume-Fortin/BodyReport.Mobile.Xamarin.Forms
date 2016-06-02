@@ -43,9 +43,8 @@ namespace BodyReportMobile.Core.ViewModels
             
             RetreiveLocalData();
             SynchronizeData();
-            
-            await RetreiveAndSaveOnlineDataAsync ();
-            SynchronizeData();
+
+            await RefreshDataActionAsync();
         }
 
 		protected override void InitTranslation()
@@ -62,55 +61,6 @@ namespace BodyReportMobile.Core.ViewModels
         {
             var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
             _trainingWeekList = _trainingWeekService.FindTrainingWeek(null, trainingWeekScenario);
-        }
-
-        private async Task<bool> RetreiveAndSaveOnlineDataAsync ()
-		{
-            bool result = false;
-            try
-			{
-                DataIsRefreshing = true;
-                var criteria = new TrainingWeekCriteria();
-                criteria.UserId = new StringCriteria() { Equal = UserData.Instance.UserInfo.UserId };
-                var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
-                var criteriaList = new CriteriaList<TrainingWeekCriteria>() { criteria };
-				var onlineTrainingWeekList = await TrainingWeekWebService.FindTrainingWeeksAsync (criteriaList, trainingWeekScenario);
-				if (onlineTrainingWeekList != null)
-				{
-                    var localTrainingWeekList = _trainingWeekService.FindTrainingWeek (criteria, trainingWeekScenario);
-					if (localTrainingWeekList != null)
-					{
-                        //Delete delete local trainingWeek if it doesn't find in server
-                        bool found;
-                        foreach (var localTrainingWeek in localTrainingWeekList)
-                        {
-                            found = false;
-                            foreach (var olineTrainingWeek in onlineTrainingWeekList)
-                            {
-                                if(TrainingWeek.IsEqualByKey(olineTrainingWeek, localTrainingWeek))
-                                {
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if(!found)
-                                _trainingWeekService.DeleteTrainingWeek(localTrainingWeek);
-                        }
-					}
-                    _trainingWeekList = new List<TrainingWeek> ();
-					foreach (var trainingWeek in onlineTrainingWeekList)
-                        _trainingWeekList.Add (_trainingWeekService.UpdateTrainingWeek (trainingWeek, trainingWeekScenario));
-				}
-                DataIsRefreshing = false;
-                result = true;
-            }
-			catch (Exception except)
-			{
-                DataIsRefreshing = false;
-                ILogger.Instance.Info("Can't retreive training journal in server", except);
-            }
-            return result;
-
         }
 
 		public void SynchronizeData ()
@@ -159,11 +109,15 @@ namespace BodyReportMobile.Core.ViewModels
             }
 		}
 
-        private async Task RefreshDataActionAsync()
+        private async Task<bool> RefreshDataActionAsync()
         {
-            await RetreiveAndSaveOnlineDataAsync();
+            DataIsRefreshing = true;
+            bool result = await DataSync.SynchronizeTrainingWeeksAsync(_dbContext);
+            RetreiveLocalData();
             SynchronizeData();
-		}
+            DataIsRefreshing = false;
+            return result;
+        }
         
 		private async Task CreateNewTrainingWeekActionAsync()
 		{
@@ -228,7 +182,7 @@ namespace BodyReportMobile.Core.ViewModels
                 if (trainingWeek != null)
                 {
                     await TrainingWeekWebService.DeleteTrainingWeekByKeyAsync(trainingWeek);
-                    bool onlineDataRefreshed = await RetreiveAndSaveOnlineDataAsync();
+                    bool onlineDataRefreshed = await RefreshDataActionAsync();
                     if (!onlineDataRefreshed)
                     {
                         // delete data in local database
@@ -251,30 +205,40 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 if (bindingTrainingWeek != null && bindingTrainingWeek.TrainingWeek != null)
                 {
-                    var trainingWeekKey = bindingTrainingWeek.TrainingWeek;
                     TrainingWeek trainingWeek = null;
-                    var trainingWeekScenario = new TrainingWeekScenario()
-                    {
-                        ManageTrainingDay = true,
-                        TrainingDayScenario = new TrainingDayScenario() { ManageExercise = true }
-                    };
+                    var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = true };
                     try
                     {
-                        //load server data
-                        trainingWeek = await TrainingWeekWebService.GetTrainingWeekAsync(trainingWeekKey, true);
+                        //load server data (only header)
+                        trainingWeek = await TrainingWeekWebService.GetTrainingWeekAsync(bindingTrainingWeek.TrainingWeek, false);
                         if (trainingWeek != null)
                         {
-                            //Save data on local database
-                            _trainingWeekService.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
+                            if (trainingWeek.ModificationDate != bindingTrainingWeek.TrainingWeek.ModificationDate)
+                            {
+                                //load server data (full)
+                                trainingWeek = await TrainingWeekWebService.GetTrainingWeekAsync(bindingTrainingWeek.TrainingWeek, true);
+                                if (trainingWeek != null)
+                                {
+                                    //Save data on local database
+                                    _trainingWeekService.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
+                                }
+                            }
+                            else
+                                trainingWeek = null; // force reload local data
                         }
                     }
                     catch
                     {
                         // Unable to retreive local data
                         ILogger.Instance.Info("Unable to retreive TrainingWeek on server");
-                        //load local data
-                        trainingWeek = _trainingWeekService.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
+                        trainingWeek = null;
                     }
+
+                    if (trainingWeek == null)
+                    { //load local data
+                        trainingWeek = _trainingWeekService.GetTrainingWeek(bindingTrainingWeek.TrainingWeek, trainingWeekScenario);
+                    }
+
                     if (trainingWeek != null)
                     {
                         //Display view model

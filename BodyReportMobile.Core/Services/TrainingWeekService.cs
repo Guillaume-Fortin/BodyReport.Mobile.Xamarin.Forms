@@ -50,12 +50,54 @@ namespace BodyReportMobile.Core.Services
             }
         }
 
+        public List<TrainingWeek> UpdateTrainingWeekList(List<TrainingWeek> trainingWeekList, TrainingWeekScenario trainingWeekScenario)
+        {
+            if (trainingWeekList == null)
+                return null;
+            List<TrainingWeek> list = new List<TrainingWeek>();
+            _dbContext.BeginTransaction();
+            try
+            {
+                foreach (var trainingWeek in trainingWeekList)
+                    list.Add(_manager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario));
+            }
+            catch
+            {
+                _dbContext.Rollback();
+                throw;
+            }
+            finally
+            {
+                _dbContext.Commit();
+            }
+            return list;
+        }
+
         public void DeleteTrainingWeek(TrainingWeekKey key)
         {
             _dbContext.BeginTransaction();
             try
             {
                 _manager.DeleteTrainingWeek(key);
+            }
+            catch
+            {
+                _dbContext.Rollback();
+                throw;
+            }
+            finally
+            {
+                _dbContext.Commit();
+            }
+        }
+
+        public void DeleteTrainingWeekList(List<TrainingWeek> trainingWeekList)
+        {
+            _dbContext.BeginTransaction();
+            try
+            {
+                foreach(var trainingWeek in trainingWeekList)
+                    _manager.DeleteTrainingWeek(trainingWeek);
             }
             catch
             {
