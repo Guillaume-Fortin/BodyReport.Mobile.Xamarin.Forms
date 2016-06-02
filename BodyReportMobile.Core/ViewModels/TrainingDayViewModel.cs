@@ -359,6 +359,21 @@ namespace BodyReportMobile.Core.ViewModels
                 return;
             try
             {
+                if (await _userDialog.ConfirmAsync(string.Format(Translation.Get(TRS.ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI), Translation.Get(TRS.TRAINING_DAY)),
+                                                   Translation.Get(TRS.QUESTION), Translation.Get(TRS.YES), Translation.Get(TRS.NO)))
+                {
+                    //Delete on server
+                    if (await TrainingDayWebService.DeleteTrainingDayAsync(trainingDay))
+                    {
+                        //Delete on local
+                        _trainingDayService.DeleteTrainingDay(trainingDay);
+                        //Binding trainingDay for refresh view 
+                        _trainingDays.Remove(trainingDay);
+                        var collection = GroupedTrainingExercises.Where(lgte => TrainingDayKey.IsEqualByKey((TrainingDay)lgte.ReferenceObject, trainingDay)).FirstOrDefault();
+                        if (collection != null)
+                            GroupedTrainingExercises.Remove(collection);
+                    }
+                }
             }
             catch (Exception except)
             {
