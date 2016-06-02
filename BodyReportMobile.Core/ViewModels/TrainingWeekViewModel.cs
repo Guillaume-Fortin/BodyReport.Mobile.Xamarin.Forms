@@ -246,8 +246,9 @@ namespace BodyReportMobile.Core.ViewModels
                     if(trainingDayViewModelResut.Result)
                     {
                         TrainingWeek.TrainingDays.RemoveAll(td => td.DayOfWeek == (int)dayOfWeek);
-                        if(trainingDayViewModelResut.TrainingDays != null)
+                        if(trainingDayViewModelResut.TrainingDays != null && trainingDayViewModelResut.TrainingDays.Count > 0)
                             TrainingWeek.TrainingDays.AddRange(trainingDayViewModelResut.TrainingDays);
+                        FillWeekDays(TrainingWeek);
                     }
                 }
             }
