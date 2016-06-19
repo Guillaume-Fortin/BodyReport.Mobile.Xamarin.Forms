@@ -11,7 +11,6 @@ namespace BodyReportMobile.Presenter.Pages
 	{
 		public MainPage (MainViewModel viewModel) : base (viewModel)
 		{
-			DisableBackButton = true;
 			InitializeComponent ();
 		}
 

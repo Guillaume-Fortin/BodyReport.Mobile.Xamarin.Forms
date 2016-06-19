@@ -70,15 +70,8 @@ namespace BodyReportMobile.Core.ViewModels
                     EndTimeLabel = Translation.Get(TRS.END_HOUR),
                 };
 
-                if (_trainingDay.BeginHour == null)
-                    BindingTrainingDay.BeginTime = new TimeSpan(12, 0, 0);
-                else
-                    BindingTrainingDay.BeginTime = _trainingDay.BeginHour.ToLocalTime().TimeOfDay;
-
-                if (_trainingDay.EndHour == null)
-                    BindingTrainingDay.EndTime = new TimeSpan(12, 0, 0);
-                else
-                    BindingTrainingDay.EndTime = _trainingDay.EndHour.ToLocalTime().TimeOfDay;
+                BindingTrainingDay.BeginTime = _trainingDay.BeginHour.ToLocalTime().TimeOfDay;
+				BindingTrainingDay.EndTime = _trainingDay.EndHour.ToLocalTime().TimeOfDay;
             }
             catch (Exception except)
             {

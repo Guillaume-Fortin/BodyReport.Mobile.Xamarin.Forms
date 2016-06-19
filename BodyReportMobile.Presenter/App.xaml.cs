@@ -7,13 +7,16 @@ using BodyReportMobile.Core.Framework;
 using Xamarin.Forms;
 using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Presenter.Pages.Generics;
+using Xamarin.Forms.Xaml;
 
 namespace BodyReportMobile.Presenter
 {
-	public class App : Application
+	[assembly: XamlCompilation (XamlCompilationOptions.Compile)]
+	public partial class App : Application
 	{
 		public App()
 		{
+			InitializeComponent ();
             Initialize();
 		}
 
@@ -77,6 +80,26 @@ namespace BodyReportMobile.Presenter
             base.OnResume();
             // Handle when your app resumes
         }
+
+		public static bool GetXamlResources<T>(string resourceName, out T value)
+		{
+			value = default(T);
+			if (App.Current.Resources != null && App.Current.Resources.ContainsKey (resourceName))
+			{
+				value = (T)App.Current.Resources [resourceName];
+				return true;
+			}
+			return false;
+		}
+
+		public static T GetXamlResources<T>(string resourceName)
+		{
+			if (App.Current.Resources != null && App.Current.Resources.ContainsKey (resourceName))
+			{
+				return (T)App.Current.Resources [resourceName];
+			}
+			return default(T);
+		}
     }
 }
 

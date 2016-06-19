@@ -30,7 +30,7 @@
               Title="{Binding WeekNumberLabel}"
               Value="{Binding TrainingWeek.WeekOfYear, Mode=TwoWay}"
               Description="{Binding TrainingWeek.WeekOfYearDescription}"
-              IsIndicatorVisible="true" Height="60"/>
+              IsIndicatorVisible="true" Height="60" />
 
             <localcontrol:NumericEntryCell x:Name="HeightCell" Label="{Binding HeightLabel}"
                     Text="{Binding TrainingWeek.UserHeight, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="0" MaxValue="999"/>

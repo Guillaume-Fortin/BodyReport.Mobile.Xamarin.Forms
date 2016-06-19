@@ -12,12 +12,12 @@ using Acr.UserDialogs;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 using BodyReportMobile.Core.Manager;
+using Xamarin.Forms;
 
 namespace BodyReportMobile.Core.ViewModels
 {
 	public class MainViewModel : BaseViewModel
 	{
-		public string MenuLabel { get; set;}
         public string TrainingJournalLabel { get; set;}
         public string _userProfilImage { get; set; }
 
@@ -31,16 +31,15 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
-		private SQLiteConnection _dbContext;
         private IFileManager _fileManager;
         private IUserDialogs _userDialog;
 
         public MainViewModel() : base()
         {
-			_dbContext = Resolver.Resolve<ISQLite> ().GetConnection ();
             _fileManager = Resolver.Resolve<IFileManager>();
             _userDialog = Resolver.Resolve<IUserDialogs>();
             ShowDelayInMs = 0;
+			DisableBackButton = true;
         }
 
         public static async Task<bool> ShowAsync(BaseViewModel parent = null)
@@ -72,7 +71,7 @@ namespace BodyReportMobile.Core.ViewModels
         {
             try
             {
-                await DataSyncViewModel.ShowAsync(this);
+                await DataSyncViewModel.ShowViewAsync(this);
 
                 DisplayUserProfil();
             }
@@ -87,7 +86,8 @@ namespace BodyReportMobile.Core.ViewModels
             base.InitTranslation();
 
 			TitleLabel = "BodyReport";
-			MenuLabel = Translation.Get (TRS.MENU);
+			if(Device.OS == TargetPlatform.Android)
+				MenuLabel = Translation.Get (TRS.MENU);
             TrainingJournalLabel = Translation.Get (TRS.TRAINING_JOURNAL);
 
             OnPropertyChanged(null);
@@ -253,6 +253,17 @@ namespace BodyReportMobile.Core.ViewModels
                 OnPropertyChanged();
             }
         }
+
+		private string _menuLabel;
+		public string MenuLabel {
+			get {
+				return _menuLabel;
+			}
+			set {
+				_menuLabel = value;
+				OnPropertyChanged ();
+			}
+		}
 
         #endregion
 

@@ -1,0 +1,86 @@
+﻿<Application
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
+    x:Class="BodyReportMobile.Presenter.App">
+    <Application.Resources>
+		<ResourceDictionary>
+			<Color x:Key="titleBarColor">#03A9F4</Color>
+			<Color x:Key="titleBarTextColor">White</Color>
+			<Color x:Key="backgroundTitleColor">#29B6F6</Color>
+			<Color x:Key="backgroundColor">White</Color>
+
+			<Color x:Key="backgroundFrameColor">#B3E5FC</Color>
+
+			<Color x:Key="buttonBackgroundColor">#03A9F4</Color>
+			<Color x:Key="buttonTextColor">White</Color>
+			<Color x:Key="titleTextColor">#0288D1</Color>
+			<Color x:Key="textColor">Black</Color>
+			<Color x:Key="descriptionTextColor">Green</Color>
+			<Color x:Key="entryBackgroundColor">White</Color>
+			<Color x:Key="entryBorderColor">#03A9F4</Color>
+			<Color x:Key="cellBackgroundColor">White</Color>
+			<Color x:Key="placeholderColor">#C5CAE9</Color>
+
+			<Style x:Key="titleLabelTouchViewCellStyle" TargetType="Label">
+           		<Setter Property="TextColor" Value="{DynamicResource titleTextColor}" />
+        	</Style>
+			
+			<Style x:Key="valueLabelTouchViewCellStyle" TargetType="Label">
+           		<Setter Property="TextColor" Value="{DynamicResource textColor}" />
+        	</Style>
+
+			<Style x:Key="descriptionLabelTouchViewCellStyle" TargetType="Label">
+           		<Setter Property="TextColor" Value="{DynamicResource textColor}" />
+        	</Style>
+
+			<Style x:Key="titleLabelNumericEntryCellStyle" TargetType="Label">
+           		<Setter Property="TextColor" Value="{DynamicResource titleTextColor}" />
+        	</Style>
+			
+			<Style x:Key="titleLabelTextEntryCellStyle" TargetType="Label">
+           		<Setter Property="TextColor" Value="{DynamicResource titleTextColor}" />
+        	</Style>
+
+			<Style x:Key="titleLabelTimeViewCellStyle" TargetType="Label">
+           		<Setter Property="TextColor" Value="{DynamicResource titleTextColor}" />
+        	</Style>
+
+			<Style x:Key="titleLabelDateViewCellStyle" TargetType="Label">
+           		<Setter Property="TextColor" Value="{DynamicResource titleTextColor}" />
+        	</Style>
+			
+			<Style x:Key="titleNumericEntryCellStyle" TargetType="Label">
+           		<Setter Property="TextColor" Value="{DynamicResource titleTextColor}" />
+        	</Style>
+			
+			<Style x:Key="textEntryStyle" TargetType="controls:TextEntry">
+           		<Setter Property="BackgroundColor" Value="{DynamicResource entryBackgroundColor}" />
+           		<Setter Property="TextColor" Value="{DynamicResource textColor}" />
+           		<Setter Property="PlaceholderColor" Value="{DynamicResource placeholderColor}" />
+        	</Style>
+        	<Style TargetType="Button">
+            	<Setter Property="BackgroundColor" Value="{DynamicResource buttonBackgroundColor}" />
+            	<Setter Property="TextColor" Value="{DynamicResource buttonTextColor}" />
+        	</Style>
+			<Style TargetType="Label">
+            	<Setter Property="TextColor" Value="{DynamicResource textColor}" />
+        	</Style>
+        	<!--Style TargetType="VisualElement">
+           		<Setter Property="BackgroundColor" Value="{DynamicResource backgroundColor}" />
+        	</Style-->
+        	<Style TargetType="TableView">
+           		<Setter Property="BackgroundColor" Value="{DynamicResource backgroundColor}" />
+        	</Style>
+        	<Style TargetType="ListView">
+           		<Setter Property="BackgroundColor" Value="{DynamicResource backgroundColor}" />
+        	</Style>
+        	<Style TargetType="Grid">
+           		<Setter Property="BackgroundColor" Value="{DynamicResource backgroundColor}" />
+        	</Style>
+        	<Style TargetType="ContentPage">
+           		<Setter Property="BackgroundColor" Value="{DynamicResource backgroundColor}" />
+        	</Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

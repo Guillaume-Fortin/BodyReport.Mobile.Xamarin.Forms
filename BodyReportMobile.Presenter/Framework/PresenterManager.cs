@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using BodyReportMobile.Presenter;
 
 namespace BodyReportMobile.Core.Framework
 {
@@ -57,7 +58,7 @@ namespace BodyReportMobile.Core.Framework
             return null;
         }
 
-        public async Task<bool> TryDisplayViewAsync(BaseViewModel viewModel, BaseViewModel parentViewModel, bool hideTitleBar)
+        public async Task<bool> TryDisplayViewAsync(BaseViewModel viewModel, BaseViewModel parentViewModel)
         {
             bool result = false;
             
@@ -77,8 +78,9 @@ namespace BodyReportMobile.Core.Framework
                 {
                     try
                     {
-                        if(hideTitleBar)
-                            NavigationPage.SetHasNavigationBar(page, false);
+						//temporary disable back button for android (bug with material design) can't prevent back button press in toolbar
+						if(viewModel.DisableBackButton || Device.OS == TargetPlatform.Android)
+							NavigationPage.SetHasBackButton (page, false);
                         await MainNavigationPage.PushAsync(page);
                         result = true;
                     }
@@ -89,7 +91,6 @@ namespace BodyReportMobile.Core.Framework
                     }
                 }
             }
-
 
             return result;
         }

@@ -23,14 +23,14 @@
     <Grid>
       <ListView x:Name="listView" ItemsSource="{Binding GroupedTrainingExercises}"
                 GroupDisplayBinding="{Binding LongName}"
-			          IsGroupingEnabled="true"
+			    IsGroupingEnabled="true"
                 HasUnevenRows="True" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"
                 ItemTapped="ItemTapped">
         <ListView.GroupHeaderTemplate>
           <DataTemplate>
             <ViewCell x:Name="groupViewCell">
               <ViewCell.Height>
-			    <OnPlatform x:TypeArguments="x:Double" iOS="60"/>
+			    <OnPlatform x:TypeArguments="x:Double" iOS="80"/>
 		  	  </ViewCell.Height>
               <ViewCell.View>
                 <StackLayout Orientation="Vertical">

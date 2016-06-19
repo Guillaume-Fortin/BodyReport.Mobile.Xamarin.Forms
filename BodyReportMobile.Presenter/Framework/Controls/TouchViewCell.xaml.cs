@@ -89,7 +89,15 @@ namespace BodyReportMobile.Presenter.Framework.Controls
             get { return (Color)GetValue(TitleTextColorProperty); }
             set { SetValue(TitleTextColorProperty, value); }
         }
+		/*
+		public static readonly BindableProperty TitleStyleProperty = BindableProperty.Create("TitleStyle", typeof(Style), typeof(TouchViewCell), default(Style), BindingMode.TwoWay);
 
+		public Style TitleStyle
+		{
+			get { return (Style)GetValue(TitleStyleProperty); }
+			set { SetValue(TitleStyleProperty, value); }
+		}
+*/
         public static readonly BindableProperty ValueTextColorProperty = BindableProperty.Create("ValueTextColor", typeof(Color), typeof(TouchViewCell), Color.Default, BindingMode.TwoWay);
 
         public Color ValueTextColor
@@ -98,6 +106,14 @@ namespace BodyReportMobile.Presenter.Framework.Controls
             set { SetValue(ValueTextColorProperty, value); }
         }
 
+		public static readonly BindableProperty ValueStyleProperty = BindableProperty.Create("ValueStyle", typeof(Style), typeof(TouchViewCell), default(Style), BindingMode.TwoWay);
+
+		public Style ValueStyle
+		{
+			get { return (Style)GetValue(ValueStyleProperty); }
+			set { SetValue(ValueStyleProperty, value); }
+		}
+
         public static readonly BindableProperty DescriptionTextColorProperty = BindableProperty.Create("DescriptionTextColor", typeof(Color), typeof(TouchViewCell), Color.Default, BindingMode.TwoWay);
 
         public Color DescriptionTextColor
@@ -105,12 +121,18 @@ namespace BodyReportMobile.Presenter.Framework.Controls
             get { return (Color)GetValue(DescriptionTextColorProperty); }
             set { SetValue(DescriptionTextColorProperty, value); }
         }
+		/*
+		public static readonly BindableProperty DescriptionStyleProperty = BindableProperty.Create("DescriptionStyle", typeof(Style), typeof(TouchViewCell), default(Style), BindingMode.TwoWay);
+
+		public Style DescriptionStyle
+		{
+			get { return (Style)GetValue(DescriptionStyleProperty); }
+			set { SetValue(DescriptionStyleProperty, value); }
+		}*/
 
         public TouchViewCell ()
 		{
 			InitializeComponent ();
-
-            //ValueLabel.Triggers.Add()
 
         /*	this.TitleLabel.SetBinding (Label.TextProperty, new Binding(path: "Title", source: this));
 			this.TitleLabel.SetBinding (Label.TextProperty, new Binding(path: "Title", source: this));*/

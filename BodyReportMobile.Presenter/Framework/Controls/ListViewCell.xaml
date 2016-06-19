@@ -31,7 +31,7 @@
 		<StackLayout Orientation="Vertical">
 			<Label Text="{Binding Name}" TextColor="Black" FontSize="14"/>
 			<StackLayout Padding="5,0,0,0">
-				<Label Text="{Binding Description}" TextColor="#03A9F4" FontSize="13"/>
+				<Label Text="{Binding Description}" TextColor="#03A9F4" FontSize="14"/>
 			</StackLayout>
 		</StackLayout>
 	</StackLayout>

@@ -42,7 +42,7 @@ namespace BodyReportMobile.Presenter.Pages
                         };
                         touchViewCell.Tapped += DayCellTaped;
                         touchViewCell.SetBinding(TouchViewCell.ValueProperty, (BindingWeekTrainingDay source) => source.Label);
-                        
+
                         var trigger = new DataTrigger(typeof(Label));
                         trigger.BindingContext = bindingWeekTrainingDay;
                         trigger.Binding = new Binding("TrainingDayExist");

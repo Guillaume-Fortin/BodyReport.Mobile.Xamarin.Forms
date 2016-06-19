@@ -5,11 +5,27 @@
           x:Name="textEntryCell"
           x:Class="BodyReportMobile.Presenter.Framework.Controls.TextEntryCell">
 
-  <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" >
-    <Label x:Name="titleLabel" Text="{Binding Path=Label, Mode=TwoWay, Source={x:Reference textEntryCell}}"
-           WidthRequest="120" LineBreakMode="MiddleTruncation" HorizontalOptions="Start" VerticalOptions="Center"/>
-    <localcontrol:TextEntry x:Name="textEntry" HorizontalOptions="FillAndExpand" VerticalOptions="Center"
+  <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="2">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+      		<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		
+    <Label x:Name="titleLabel"
+		   Style="{DynamicResource titleLabelTextEntryCellStyle}"
+		   Text="{Binding Path=Label, Mode=TwoWay, Source={x:Reference textEntryCell}}"
+           WidthRequest="120" LineBreakMode="MiddleTruncation" HorizontalOptions="Start" VerticalOptions="Center" FontSize="12"
+		   Grid.Row="0" Grid.Column="2"/>
+		
+    <localcontrol:TextEntry x:Name="textEntry" Style="{DynamicResource textEntryStyle}"
+		  HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"
           Text="{Binding Path=Text, Mode=TwoWay, Source={x:Reference textEntryCell}}"
-          MaxLength="{Binding Path=MaxLength, Mode=TwoWay, Source={x:Reference textEntryCell}}"/>
-  </StackLayout>
+		  Grid.Row="0" Grid.Column="3" 
+          MaxLength="{Binding Path=MaxLength, Mode=TwoWay, Source={x:Reference textEntryCell}}" FontSize="14"/>
+  </Grid>
 </ViewCell>

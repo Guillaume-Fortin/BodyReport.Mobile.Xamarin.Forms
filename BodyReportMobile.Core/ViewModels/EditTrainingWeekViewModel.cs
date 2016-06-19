@@ -42,14 +42,13 @@ namespace BodyReportMobile.Core.ViewModels
 		{
 			base.InitTranslation ();
 
-			string weightUnit = "kg", lengthUnit = "cm", unit = Translation.Get (TRS.METRIC);
+			string weightUnit = "kg", lengthUnit = "cm";
 
 			var userInfo = UserData.Instance.UserInfo;
 			if (userInfo.Unit == (int)TUnitType.Imperial)
 			{
 				weightUnit = Translation.Get (TRS.POUND);
 				lengthUnit = Translation.Get (TRS.INCH);
-				unit = Translation.Get (TRS.IMPERIAL);
 			}
 
 			TitleLabel = Translation.Get (TRS.TRAINING_WEEK);

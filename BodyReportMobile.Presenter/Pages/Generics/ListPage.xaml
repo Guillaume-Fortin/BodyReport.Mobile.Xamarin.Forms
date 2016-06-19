@@ -8,33 +8,9 @@
 		<ListView x:Name="listView" ItemsSource="{Binding Datas}" ItemSelected="OnItemSelected" HasUnevenRows="true"  CachingStrategy="RecycleElement">
 			<ListView.ItemTemplate>
 	        <DataTemplate>
-	          <!--ImageCell ImageSource="{Binding Image}" Text="{Binding Name}" TextColor="{Binding BackgroundColor}" Detail="{Binding Description}" DetailColor="Gray">
-
-	          </ImageCell-->
-
-            <localcontrol:ListViewCell/>
-
-	          <!--ViewCell>
-
-	          <StackLayout BackgroundColor="Red"
-                        Orientation="Vertical">
-
-		         <StackLayout.Triggers>
-			        <DataTrigger TargetType="StackLayout"
-			                     Binding="{Binding Source={x:Reference listView}, Path=SelectedItem}"
-			                     Value="">
-			            <Setter Property="BackgroundColor" Value="Blue" />
-			        </DataTrigger>
-		    	  </StackLayout.Triggers>
-
-		   	  </StackLayout>
-
-	    	  </ViewCell-->
-
-
+            	<localcontrol:ListViewCell/>
 	        </DataTemplate>
 	      </ListView.ItemTemplate>
-
 		</ListView>
 	</ContentPage.Content>
 </local:BaseContentPage>

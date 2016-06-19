@@ -3,6 +3,7 @@
 		  xmlns:local="clr-namespace:BodyReportMobile.Presenter"
       xmlns:localcontrol="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
       xmlns:behaviors="clr-namespace:BodyReportMobile.Presenter.Framework.Behaviors"
+	  Style="{DynamicResource textEntryStyle}"
       x:Name="textEntry" x:Class="BodyReportMobile.Presenter.Framework.Controls.TextEntry">
   <Entry.Behaviors>
     <behaviors:MaxLengthValidator MaxLength="{Binding MaxLength, Source={x:Reference textEntry}}"/>

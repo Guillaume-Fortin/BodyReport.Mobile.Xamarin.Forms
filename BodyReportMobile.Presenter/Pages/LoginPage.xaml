@@ -18,7 +18,7 @@
 	            <TapGestureRecognizer Command="{Binding ChangeLanguageCommand}" CommandParameter="Image1" NumberOfTapsRequired="1" />
 	          </Image.GestureRecognizers>
 	        </Image>
-	        <StackLayout Orientation="Vertical" Margin="4" HorizontalOptions="FillAndExpand">
+	        <StackLayout Orientation="Vertical" Spacing="0" Margin="0" HorizontalOptions="FillAndExpand">
 	          <controls:TextEntry Placeholder="{Binding UserNameLabel}" Text="{Binding UserName}" MaxLength="{Binding UserNameMaxLength}"/>
 	          <controls:TextEntry Placeholder="{Binding PasswordLabel}" Text="{Binding Password}" IsPassword="True" MaxLength="{Binding PasswordMaxLength}"/>
 	        </StackLayout>

@@ -17,9 +17,9 @@ namespace BodyReport.Droid
              NoHistory = true)] //Doesn't place it in back stack
     public class SplashActivity : Activity
     {
-        protected override void OnCreate(Bundle bundle)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(bundle);
+            base.OnCreate(savedInstanceState);
             this.StartActivity(typeof(MainActivity));
         }
     }

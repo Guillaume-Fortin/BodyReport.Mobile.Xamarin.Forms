@@ -41,6 +41,11 @@ namespace BodyReportMobile.Core.ViewModels
         /// </summary>
         private bool _actionIsInProgress = false;
 
+		/// <summary>
+		/// Disable back button.
+		/// </summary>
+		private bool _disableBackButton = false;
+
         /// <summary>
         /// Show view model with delay
         /// </summary>
@@ -159,7 +164,7 @@ namespace BodyReportMobile.Core.ViewModels
         {
         }
         
-        protected static async Task<bool> ShowModalViewModelAsync(BaseViewModel viewModel, BaseViewModel parentViewModel, bool mainViewModel = false, bool hideTitleBar = false)
+        protected static async Task<bool> ShowModalViewModelAsync(BaseViewModel viewModel, BaseViewModel parentViewModel, bool mainViewModel = false)
         {
             if (string.IsNullOrWhiteSpace(viewModel.ViewModelGuid))
                 viewModel.ViewModelGuid = Guid.NewGuid().ToString();
@@ -172,7 +177,7 @@ namespace BodyReportMobile.Core.ViewModels
             var presenter = Resolver.Resolve<IPresenterManager>();
             if (presenter != null)
             {
-                result = await presenter.TryDisplayViewAsync(viewModel, parentViewModel, hideTitleBar);
+                result = await presenter.TryDisplayViewAsync(viewModel, parentViewModel);
             }
 
             if (mainViewModel && result)
@@ -223,7 +228,20 @@ namespace BodyReportMobile.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-        
+
+		public bool DisableBackButton
+		{
+			get
+			{
+				return _disableBackButton;
+			}
+			set
+			{
+				_disableBackButton = value;
+				OnPropertyChanged();
+			}
+		}
+
         public bool DataIsRefreshing
         {
             get { return _dataIsRefreshing; }

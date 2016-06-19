@@ -55,6 +55,10 @@
         <ListView.ItemTemplate>
           <DataTemplate>
             <ViewCell x:Name="setRepViewCell">
+			 <ViewCell.Height>
+			    <OnPlatform x:TypeArguments="x:Double" iOS="76"/>
+		  	  </ViewCell.Height>
+							
               <Grid>
                 <Grid.RowDefinitions>
                   <RowDefinition Height="Auto"/>
@@ -63,7 +67,7 @@
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="*" />
                   <ColumnDefinition Width="*" />
-                  <ColumnDefinition Width="25" />
+                  <ColumnDefinition Width="30" />
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Row="0" Grid.Column="0"
@@ -104,7 +108,7 @@
 
                 <StackLayout Orientation="Vertical" Grid.Row="1" Grid.Column="2" VerticalOptions="Center">
                   <Image Source="btn_delete.png" IsVisible="False"
-                         WidthRequest="25" HeightRequest="25">
+                         Aspect="AspectFill" WidthRequest="30" HeightRequest="30">
                     <Image.Triggers>
                       <DataTrigger TargetType="Image"
                                    Binding="{Binding Path=Text.Length, Source={x:Reference repsLabel}}"
@@ -119,7 +123,8 @@
                     </Image.GestureRecognizers>
                   </Image>
                 <Image Source="btn_plus.png" IsVisible="{Binding BtnPlusVisible}"
-                         WidthRequest="25" HeightRequest="25">
+                		Aspect="AspectFill"
+						WidthRequest="30" HeightRequest="30">
                     <Image.GestureRecognizers>
                       <TapGestureRecognizer
                         Command="{Binding BindingContext.AddRepCommand, Source={x:Reference myPage}}" NumberOfTapsRequired="1" />

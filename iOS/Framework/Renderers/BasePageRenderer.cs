@@ -42,9 +42,13 @@ namespace BodyReport.iOS.Framework.Renderers
 					var basePage = Element as BaseContentPage;
 					if (basePage != null) {
 						string backBtnTitle = basePage.BackButtonTitle;
-						if (!basePage.DisableBackButton && !string.IsNullOrEmpty (backBtnTitle)) {
+
+						var viewModel = basePage.ViewModel;
+						if (viewModel != null)
+						{
 							root.NavigationItem.SetLeftBarButtonItem (new UIBarButtonItem (backBtnTitle, UIBarButtonItemStyle.Plain, btnReturnClick), true);
-							if (basePage.DisableBackButton) {
+							if (viewModel.DisableBackButton)
+							{
 								root.NavigationItem.LeftBarButtonItem.Style = UIBarButtonItemStyle.Plain;
 								root.NavigationItem.LeftBarButtonItem.Enabled = false;
 								root.NavigationItem.LeftBarButtonItem.Title = "";
@@ -56,8 +60,24 @@ namespace BodyReport.iOS.Framework.Renderers
 						this.NavigationController.NavigationBar.Translucent = false; // pour ne pas que la bar prenne la couleur de fond de la fenêtre
 
 
-						this.NavigationController.NavigationBar.BarTintColor = UIColor.FromRGB(0.012f, 0.663f, 0.957f); //#03A9F4
-						this.NavigationController.NavigationBar.TintColor = UIColor.White;
+						Color color;
+						if (basePage.Resources != null)
+						{
+							if (basePage.Resources.ContainsKey ("titleBarColor"))
+							{
+								color = (Color)basePage.Resources ["titleBarColor"];
+								this.NavigationController.NavigationBar.BarTintColor = color.ToUIColor();
+							}
+							if (basePage.Resources.ContainsKey ("titleBarTextColor"))
+							{
+								color = (Color)basePage.Resources ["titleBarTextColor"];
+								this.NavigationController.NavigationBar.TintColor = color.ToUIColor();
+								this.NavigationController.NavigationBar.TitleTextAttributes = new UIStringAttributes()
+								{
+									ForegroundColor = color.ToUIColor()
+								};
+							}
+						}
 					}
 				}
 			}

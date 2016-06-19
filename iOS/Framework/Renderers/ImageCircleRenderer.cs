@@ -18,7 +18,7 @@ namespace BodyReport.iOS.Framework.Renderers
 		/// <summary>
 		/// Used for registration with dependency service
 		/// </summary>
-		public static void Init()
+		public static new void Init()
 		{
 			var temp = DateTime.Now;
 		}

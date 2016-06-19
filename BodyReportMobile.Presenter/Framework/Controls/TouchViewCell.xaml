@@ -2,29 +2,8 @@
 <ViewCell xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 		xmlns:converter="clr-namespace:BodyReportMobile.Presenter.Framework.Converter"
           x:Name="touchViewCell" x:Class="BodyReportMobile.Presenter.Framework.Controls.TouchViewCell">
-  <!--StackLayout BackgroundColor="Aqua" Orientation="Horizontal" HorizontalOptions="FillAndExpand" >
-	    <Label x:Name="TitleLabel" Text="{Binding Path=Title, Source={x:Reference touchViewCell}}"
-	    	WidthRequest="120" LineBreakMode="MiddleTruncation" HorizontalOptions="Start" VerticalOptions="Center"/>
-	    <StackLayout BackgroundColor="Blue" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Orientation="Vertical" Spacing="0">
-	    	<Label x:Name="ValueLabel" Text="{Binding Path=Value, Mode=TwoWay, Source={x:Reference touchViewCell}}" 
-	    		   HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand"/>
-	    	<Label x:Name="DescriptionLabel" IsVisible="true" Text="{Binding Path=Description, Mode=TwoWay, Source={x:Reference touchViewCell}}"
-	    		   HorizontalOptions="FillAndExpand" VerticalOptions="End" FontSize="12">
-	    		 <Label.Triggers>
-	                <DataTrigger TargetType="Label"
-	                             Binding="{Binding Path=Text.Length}"
-	                             Value="0">
-	                    <Setter Property="IsVisible" Value="False" />
-	                    <Setter Property="WidthRequest" Value="0" />
-	            		<Setter Property="HeightRequest" Value="0" />
-	                </DataTrigger>
-	            </Label.Triggers>
-	    	</Label>
-	    </StackLayout>
-	    <Image BackgroundColor="Red" Source="disclosure_indicator.png" WidthRequest="20" HeightRequest="40" HorizontalOptions="EndAndExpand" VerticalOptions="Center" IsVisible="{Binding Path=IsIndicatorVisible Source={x:Reference touchViewCell}}" />
-	</StackLayout-->
-
-  <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="2" BackgroundColor="{Binding Path=BackgroundColor, Mode=TwoWay, Source={x:Reference touchViewCell}}">
+  <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="2"
+		BackgroundColor="{Binding Path=BackgroundColor, Mode=TwoWay, Source={x:Reference touchViewCell}}">
     <Grid.Resources>
       <ResourceDictionary>
         <converter:StringToImageConverter x:Key="stringToImageConverter" />
@@ -60,11 +39,12 @@
     </Image>
 
     <Label x:Name="TitleLabel"
-        Text="{Binding Path=Title, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+        Style="{DynamicResource titleLabelTouchViewCellStyle}"
+		Text="{Binding Path=Title, Mode=TwoWay, Source={x:Reference touchViewCell}}"
         TextColor="{Binding Path=TitleTextColor, Mode=TwoWay, Source={x:Reference touchViewCell}}"
-	    	LineBreakMode="MiddleTruncation" HorizontalTextAlignment="Start" VerticalTextAlignment="Center"
+	    LineBreakMode="MiddleTruncation" HorizontalTextAlignment="Start" VerticalTextAlignment="Center"
         HorizontalOptions="Center" VerticalOptions="Center"
-	    	Grid.Row="0" Grid.Column="2" IsVisible="true" HeightRequest="40" WidthRequest="120">
+	    	Grid.Row="0" Grid.Column="2" IsVisible="true" HeightRequest="40" WidthRequest="120" FontSize="12">
       <Label.Triggers>
         <Trigger TargetType="Label"
                      Property="Text"
@@ -77,8 +57,9 @@
     <StackLayout Grid.Row="0" Grid.Column="3" Spacing="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
 
       <Label x:Name="ValueLabel"
+			 Style="{DynamicResource valueLabelTouchViewCellStyle}"
              Text="{Binding Path=Value, Mode=TwoWay, Source={x:Reference touchViewCell}}"
-	    		   TextColor="{Binding Path=ValueTextColor, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+	         TextColor="{Binding Path=ValueTextColor, Mode=TwoWay, Source={x:Reference touchViewCell}}"
              HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" VerticalTextAlignment="Center" FontSize="14">
         <Label.Triggers>
           <DataTrigger TargetType="Label"
@@ -90,9 +71,10 @@
 
       </Label>
       <Label x:Name="DescriptionLabel" IsVisible="true"
+			 Style="{DynamicResource descriptionLabelTouchViewCellStyle}"
              Text="{Binding Path=Description, Mode=TwoWay, Source={x:Reference touchViewCell}}"
-    		     TextColor="{Binding Path=DescriptionTextColor, Mode=TwoWay, Source={x:Reference touchViewCell}}"
-             HorizontalOptions="FillAndExpand" VerticalOptions="End" FontSize="12">
+    		 TextColor="{Binding Path=DescriptionTextColor, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+             HorizontalOptions="FillAndExpand" VerticalOptions="End" FontSize="14">
         <Label.Triggers>
           <DataTrigger TargetType="Label"
                        Binding="{Binding Path=Text.Length, Source={x:Reference DescriptionLabel}}"
@@ -105,7 +87,7 @@
       </Label>
     </StackLayout>
     <Image x:Name="myImage" Source="disclosure_indicator.png" WidthRequest="20" HeightRequest="40"
-	     Grid.Row="0" Grid.Column="4" HorizontalOptions="EndAndExpand" VerticalOptions="Center"
-       IsVisible="{Binding Path=IsIndicatorVisible, Mode=TwoWay, Source={x:Reference touchViewCell}}" />
+	       Grid.Row="0" Grid.Column="4" HorizontalOptions="EndAndExpand" VerticalOptions="Center"
+           IsVisible="{Binding Path=IsIndicatorVisible, Mode=TwoWay, Source={x:Reference touchViewCell}}" />
   </Grid>
 </ViewCell>

@@ -210,8 +210,7 @@ namespace BodyReportMobile.Core.Data
                                 //Same trainingWeek
                                 if (TrainingWeek.IsEqualByKey(onlineTrainingWeek, localTrainingWeek))
                                 {
-                                    if (onlineTrainingWeek.ModificationDate != null && localTrainingWeek.ModificationDate != null &&
-                                        onlineTrainingWeek.ModificationDate.ToUniversalTime() != localTrainingWeek.ModificationDate.ToUniversalTime()) //ToUniversalTime for security...
+                                    if (onlineTrainingWeek.ModificationDate.ToUniversalTime() != localTrainingWeek.ModificationDate.ToUniversalTime()) //ToUniversalTime for security...
                                         synchronizeTrainingWeekList.Add(onlineTrainingWeek);
                                     found = true;
                                     break;

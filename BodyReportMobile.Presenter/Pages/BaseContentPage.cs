@@ -14,7 +14,7 @@ namespace BodyReportMobile.Presenter.Pages
         private bool _firstViewAppear = true;
         protected BaseViewModel _viewModel = null;
 
-        public bool DisableBackButton { get; set;} = false;
+		public BaseViewModel ViewModel { get { return _viewModel; } }
 		public string BackButtonTitle { get; set;} = Translation.Get(TRS.RETURN);
 
 		public BaseContentPage ()
@@ -27,12 +27,12 @@ namespace BodyReportMobile.Presenter.Pages
             BindingContext = viewModel;
             RegisterEvent();
             CreateBinding();
+			Resources = App.Current.Resources;
         }
 
         protected virtual void CreateBinding()
         {
-            if (_viewModel != null && _viewModel is BaseViewModel)
-                this.SetBinding(ContentPage.IsBusyProperty, (BaseViewModel source) => source.ActionIsInProgress);
+			this.SetBinding (ContentPage.IsBusyProperty, (BaseViewModel source) => source.ActionIsInProgress);
         }
 
         private void RegisterEvent()

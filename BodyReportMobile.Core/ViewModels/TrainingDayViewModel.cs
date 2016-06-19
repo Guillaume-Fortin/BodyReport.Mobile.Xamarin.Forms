@@ -145,14 +145,10 @@ namespace BodyReportMobile.Core.ViewModels
             if (trainingDay == null)
                 return null;
             
-            string weightUnit = "kg", lengthUnit = "cm", unit = Translation.Get(TRS.METRIC);
+            string weightUnit = "kg";
 
             if (UserData.Instance.UserInfo.Unit == (int)TUnitType.Imperial)
-            {
                 weightUnit = Translation.Get(TRS.POUND);
-                lengthUnit = Translation.Get(TRS.INCH);
-                unit = Translation.Get(TRS.IMPERIAL);
-            }
 
             StringBuilder setRepSb = new StringBuilder();
             StringBuilder setRepWeightSb = new StringBuilder();
@@ -161,8 +157,8 @@ namespace BodyReportMobile.Core.ViewModels
             BindingTrainingExercise bindingTrainingExercise;
 
             var collection = new GenericGroupModelCollection<BindingTrainingExercise>(); ;
-            beginHourStr = trainingDay.BeginHour == null ? "00:00" : trainingDay.BeginHour.ToLocalTime().ToString("HH:mm");
-            endHourStr = trainingDay.EndHour == null ? "00:00" : trainingDay.EndHour.ToLocalTime().ToString("HH:mm");
+            beginHourStr = trainingDay.BeginHour.ToLocalTime().ToString("HH:mm");
+            endHourStr = trainingDay.EndHour.ToLocalTime().ToString("HH:mm");
             collection.LongName = string.Format("{0} {1} {2} {3}", Translation.Get(TRS.FROM), beginHourStr, Translation.Get(TRS.TO), endHourStr);
             collection.ShortName = collection.LongName;
             collection.ReferenceObject = trainingDay;

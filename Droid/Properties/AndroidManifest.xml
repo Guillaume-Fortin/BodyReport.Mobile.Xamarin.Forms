@@ -16,5 +16,5 @@
 	<uses-permission android:name="android.permission.GET_PACKAGE_SIZE" />
 	<uses-permission android:name="android.permission.STATUS_BAR" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	<application android:label="BodyReport"></application>
+	<application android:theme="@style/AppTheme" android:label="BodyReport"></application>
 </manifest>

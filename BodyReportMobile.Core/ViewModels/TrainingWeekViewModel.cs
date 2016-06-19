@@ -66,13 +66,12 @@ namespace BodyReportMobile.Core.ViewModels
             }
             OnPropertyChanged("BindingWeekTrainingDays");
 
-            string weightUnit = "kg", lengthUnit = "cm", unit = Translation.Get(TRS.METRIC);
+            string weightUnit = "kg", lengthUnit = "cm";
             var userInfo = UserData.Instance.UserInfo;
             if (userInfo.Unit == (int)TUnitType.Imperial)
             {
                 weightUnit = Translation.Get(TRS.POUND);
                 lengthUnit = Translation.Get(TRS.INCH);
-                unit = Translation.Get(TRS.IMPERIAL);
             }
             HeightLabel = Translation.Get(TRS.HEIGHT) + " (" + lengthUnit + ")";
             WeightLabel = Translation.Get(TRS.WEIGHT) + " (" + weightUnit + ")";

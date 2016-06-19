@@ -19,6 +19,7 @@ namespace BodyReportMobile.Core.ViewModels
 		{
             _allowCancelViewModel = false;
             ShowDelayInMs = 0;
+			DisableBackButton = true;
             _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
         }
 
@@ -56,10 +57,10 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
-        public static async Task<bool> ShowAsync(BaseViewModel parent = null)
+        public static async Task<bool> ShowViewAsync(BaseViewModel parent = null)
         {
             var viewModel = new DataSyncViewModel();
-            return await ShowModalViewModelAsync(viewModel, parent, false, true);
+            return await ShowModalViewModelAsync(viewModel, parent, false);
         }
 
         private async Task SynchronizeData()
