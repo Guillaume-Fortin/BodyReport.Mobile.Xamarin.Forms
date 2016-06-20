@@ -57,7 +57,9 @@ namespace BodyReport.iOS.Framework.Renderers
 		{
 			if (Control != null && keyPath == "bounds")
 				Control.DrawCustomBorder (_borderColor, 1f);
-		}
+
+            base.ObserveValue (keyPath, ofObject, change, context);
+        }
 	}
 }
 
