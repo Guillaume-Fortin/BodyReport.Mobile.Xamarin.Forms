@@ -150,6 +150,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Xamarin.iOS" />
+    <Reference Include="XLabs.IOC, Version=2.2.0.38178, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\XLabs.IoC.2.2.0-pre05\lib\portable-net45+netcore45+wpa81+wp8+monoandroid+monotouch+xamarinios10+xamarinmac\XLabs.IOC.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BodyReportMobile.Presenter\BodyReportMobile.Presenter.csproj">

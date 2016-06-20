@@ -167,8 +167,20 @@
       <HintPath>..\packages\Xamarin.Forms.2.3.0.49\lib\MonoAndroid10\Xamarin.Forms.Xaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.AppIndexing, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.GooglePlayServices.AppIndexing.29.0.0.2\lib\MonoAndroid41\Xamarin.GooglePlayServices.AppIndexing.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Base, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.GooglePlayServices.Base.29.0.0.2\lib\MonoAndroid41\Xamarin.GooglePlayServices.Base.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Xamarin.GooglePlayServices.Basement, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.GooglePlayServices.Basement.29.0.0.2\lib\MonoAndroid41\Xamarin.GooglePlayServices.Basement.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="XLabs.IOC, Version=2.2.0.38178, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\XLabs.IoC.2.2.0-pre05\lib\portable-net45+netcore45+wpa81+wp8+monoandroid+monotouch+xamarinios10+xamarinmac\XLabs.IOC.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
