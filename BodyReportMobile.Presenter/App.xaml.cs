@@ -9,9 +9,9 @@ using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Presenter.Pages.Generics;
 using Xamarin.Forms.Xaml;
 
+[assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace BodyReportMobile.Presenter
 {
-	[assembly: XamlCompilation (XamlCompilationOptions.Compile)]
 	public partial class App : Application
 	{
 		public App()
