@@ -183,20 +183,9 @@ namespace BodyReportMobile.Core.ViewModels
                     var updatedTrainingWeek = await TrainingWeekWebService.GetTrainingWeekAsync(TrainingWeek, true);
                     if(updatedTrainingWeek != null)
                     {
-                        //Update local database
-                        _dbContext.BeginTransaction();
-                        try
-                        {
-                            var trainingWeekService = new TrainingWeekService(_dbContext);
-                            var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = true };
-                            trainingWeekService.UpdateTrainingWeek(updatedTrainingWeek, trainingWeekScenario);
-                            _dbContext.Commit();
-                        }
-                        catch
-                        {
-                            _dbContext.Rollback();
-                            throw;
-                        }
+                        var trainingWeekService = new TrainingWeekService(_dbContext);
+                        var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = true };
+                        trainingWeekService.UpdateTrainingWeek(updatedTrainingWeek, trainingWeekScenario);
                         //Update UI
                         TrainingWeek = updatedTrainingWeek;
                         await SynchronizeDataAsync();
