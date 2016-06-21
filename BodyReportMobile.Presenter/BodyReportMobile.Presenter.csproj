@@ -60,6 +60,7 @@
       <DependentUpon>TouchViewCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Framework\Converter\StringToImageConverter.cs" />
+    <Compile Include="Framework\Converter\TextToDoubleConverter.cs" />
     <Compile Include="Framework\PresenterManager.cs" />
     <Compile Include="Pages\BaseContentPage.cs" />
     <Compile Include="Pages\CopyTrainingWeekPage.xaml.cs">

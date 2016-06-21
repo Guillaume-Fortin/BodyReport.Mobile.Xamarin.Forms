@@ -40,7 +40,7 @@ namespace BodyReportMobile.Presenter.Framework.Converter
 				if (str.Length == 0)
 					return 0;
 
-				if (!int.TryParse (str, out result))
+				if (int.TryParse (str, out result))
 					return result;
 
 				bool converted = false;

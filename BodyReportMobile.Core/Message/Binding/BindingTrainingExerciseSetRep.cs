@@ -48,8 +48,11 @@ namespace BodyReportMobile.Core.Message.Binding
             get { return _weights; }
             set
             {
-                _weights = value;
-                OnPropertyChanged();
+                if (_weights != value)
+                {
+                    _weights = value;
+                    OnPropertyChanged();
+                }
             }
         }
 

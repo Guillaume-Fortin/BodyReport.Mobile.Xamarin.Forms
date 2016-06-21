@@ -18,6 +18,7 @@
         <ResourceDictionary>
           <converter:StringToImageConverter x:Key="stringToImageConverter" />
           <converter:TextToIntConverter x:Key="intConverter" />
+          <converter:TextToDoubleConverter x:Key="doubleConverter" />
         </ResourceDictionary>
       </Grid.Resources>
       <Grid.RowDefinitions>
@@ -102,7 +103,7 @@
                                        IsInteger="True" />
 
                 <localcontrol:NumericEntry Grid.Row="1" Grid.Column="1" VerticalOptions="End"
-                                       Text="{Binding Weights, Converter={StaticResource intConverter}}"
+                                       Text="{Binding Weights, Converter={StaticResource doubleConverter}}"
                                        MinValue="0" MaxValue="300"
                                        IsInteger="False" />
 

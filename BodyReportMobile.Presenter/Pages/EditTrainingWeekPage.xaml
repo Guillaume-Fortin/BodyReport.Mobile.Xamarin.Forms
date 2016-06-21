@@ -9,11 +9,11 @@
 
 	<ContentPage.Resources>
       <ResourceDictionary>
-          <converter:TextToIntConverter x:Key="intConverter" />
+          <converter:TextToDoubleConverter x:Key="doubleConverter" />
 		 </ResourceDictionary>
 	</ContentPage.Resources>
 
-	<ContentPage.ToolbarItems>
+  <ContentPage.ToolbarItems>
 	  <ToolbarItem Name="LoginToolbarItem" Text="{Binding ValidateLabel}" Command="{Binding ValidateCommand}" Order="Primary" Priority="0" />
 	</ContentPage.ToolbarItems>
 	<ContentPage.Content>
@@ -33,10 +33,10 @@
               IsIndicatorVisible="true" Height="60" />
 
             <localcontrol:NumericEntryCell x:Name="HeightCell" Label="{Binding HeightLabel}"
-                    Text="{Binding TrainingWeek.UserHeight, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="0" MaxValue="999"/>
+                    Text="{Binding TrainingWeek.UserHeight, Mode=TwoWay, Converter={StaticResource doubleConverter}}" MinValue="0" MaxValue="999"/>
 
             <localcontrol:NumericEntryCell x:Name="WeightCell" Label="{Binding WeightLabel}"
-                    Text="{Binding TrainingWeek.UserWeight, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="0" MaxValue="999"/>
+                    Text="{Binding TrainingWeek.UserWeight, Mode=TwoWay, Converter={StaticResource doubleConverter}}" MinValue="0" MaxValue="999"/>
 
           </TableSection>
         </TableRoot>

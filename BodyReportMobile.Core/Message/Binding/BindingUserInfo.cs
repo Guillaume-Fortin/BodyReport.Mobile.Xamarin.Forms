@@ -77,8 +77,11 @@ namespace BodyReportMobile.Core.Message.Binding
             get { return _height; }
             set
             {
-                _height = value;
-                OnPropertyChanged();
+                if (_height != value)
+                {
+                    _height = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -91,8 +94,11 @@ namespace BodyReportMobile.Core.Message.Binding
             get { return _weight; }
             set
             {
-                _weight = value;
-                OnPropertyChanged();
+                if (_weight != value)
+                {
+                    _weight = value;
+                    OnPropertyChanged();
+                }
             }
         }
 

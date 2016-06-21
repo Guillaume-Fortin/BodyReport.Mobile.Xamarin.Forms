@@ -10,7 +10,7 @@
 
   <ContentPage.Resources>
     <ResourceDictionary>
-      <converter:TextToIntConverter x:Key="intConverter" />
+      <converter:TextToDoubleConverter x:Key="doubleConverter" />
     </ResourceDictionary>
   </ContentPage.Resources>
 
@@ -41,10 +41,10 @@
               IsIndicatorVisible="true"/>
 
             <localcontrol:NumericEntryCell x:Name="HeightCell" Label="{Binding HeightLabel}"
-                    Text="{Binding BindingUserInfo.Height, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="0" MaxValue="999"/>
+                    Text="{Binding BindingUserInfo.Height, Mode=TwoWay, Converter={StaticResource doubleConverter}}" MinValue="0" MaxValue="999"/>
 
             <localcontrol:NumericEntryCell x:Name="WeightCell" Label="{Binding WeightLabel}"
-                    Text="{Binding BindingUserInfo.Weight, Mode=TwoWay, Converter={StaticResource intConverter}}" MinValue="0" MaxValue="999"/>
+                    Text="{Binding BindingUserInfo.Weight, Mode=TwoWay, Converter={StaticResource doubleConverter}}" MinValue="0" MaxValue="999"/>
 
             <localcontrol:TextEntryCell Label="{Binding ZipCodeLabel}" Text="{Binding BindingUserInfo.ZipCode, Mode=TwoWay}"
                     MaxLength="{Binding BindingUserInfo.ZipCodeMaxLength, Mode=TwoWay}"/>
