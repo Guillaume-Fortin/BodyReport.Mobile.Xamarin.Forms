@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Linq.Expressions;
 using SQLite.Net;
+using BodyReport.Framework;
 
 namespace BodyReportMobile.Core.Crud.Transformer
 {
@@ -23,11 +24,46 @@ namespace BodyReportMobile.Core.Crud.Transformer
         {
         }
 
+        public static void CompleteQuery<TEntity, T>(ref IQueryable<TEntity> source, CriteriaList<T> criteriaFieldList) where TEntity : class
+                                                                                                                         where T : CriteriaField
+        {
+            if (criteriaFieldList == null)
+                return;
+
+            Expression<Func<TEntity, bool>> queryExpression, globalQueryExpression;
+            globalQueryExpression = null;
+            foreach (T criteriaField in criteriaFieldList)
+            {
+                if (criteriaField != null)
+                {
+                    queryExpression = null;
+                    CompleteQueryInternal(ref queryExpression, criteriaField);
+                    if (queryExpression != null)
+                    {
+                        if (globalQueryExpression == null)
+                            globalQueryExpression = queryExpression;
+                        else
+                            globalQueryExpression = globalQueryExpression.OrElse(queryExpression);
+                    }
+                }
+            }
+            if (globalQueryExpression != null)
+                source = source.Where(globalQueryExpression);
+        }
+
         public static void CompleteQuery<TEntity>(ref TableQuery<TEntity> source, CriteriaField criteriaField) where TEntity : class
         {
             if (source == null || criteriaField == null)
                 return;
 
+            Expression<Func<TEntity, bool>> queryExpression = null;
+            CompleteQueryInternal(ref queryExpression, criteriaField);
+            if (queryExpression != null)
+                source = source.Where(queryExpression);
+        }
+
+        private static void CompleteQueryInternal<TEntity>(ref Expression<Func<TEntity, bool>> queryExpression, CriteriaField criteriaField) where TEntity : class
+        {
             var criteriaFieldProperties = criteriaField.GetType().GetRuntimeProperties();
 
             object value;
@@ -43,7 +79,42 @@ namespace BodyReportMobile.Core.Crud.Transformer
                     if (value == null)
                         continue;
 
-                    CompleteQueryWithCriteria(ref source, fieldName, value);
+                    CompleteQueryWithCriteria(ref queryExpression, fieldName, value);
+                }
+            }
+        }
+
+        private static void CompleteQueryWithCriteria<TEntity>(ref Expression<Func<TEntity, bool>> queryExpression, string fieldName, object criteria) where TEntity : class
+        {
+            var entityType = typeof(TEntity);
+            var entityProperty = entityType.GetRuntimeProperty(fieldName);
+
+            if (entityProperty != null)
+            {
+                var entityParameter = Expression.Parameter(typeof(TEntity), "e");
+                var propertyType = entityProperty.PropertyType;
+
+                var expressionList = new List<Expression>();
+                Expression expression;
+
+                if (criteria is IntegerCriteria)
+                {
+                    IntegerCriteriaTreatment(criteria as IntegerCriteria, expressionList, propertyType, entityParameter, entityProperty);
+                }
+                else if (criteria is StringCriteria)
+                {
+                    StringCriteriaTreatment(criteria as StringCriteria, expressionList, propertyType, entityParameter, entityProperty);
+                }
+
+                expression = StackExpression(expressionList);
+                if (expression != null)
+                {
+                    var lambda = Expression.Lambda(expression, entityParameter) as Expression<Func<TEntity, bool>>;
+
+                    if (queryExpression == null)
+                        queryExpression = lambda;
+                    else
+                        queryExpression = queryExpression.AndAlso(lambda);
                 }
             }
         }
@@ -157,37 +228,6 @@ namespace BodyReportMobile.Core.Crud.Transformer
             }
         }
 
-        private static void CompleteQueryWithCriteria<TEntity>(ref TableQuery<TEntity> source, string fieldName, object criteria) where TEntity : class
-        {
-            var entityType = typeof(TEntity);
-            var entityProperty = entityType.GetRuntimeProperty(fieldName);
-
-            if (entityProperty != null)
-            {
-                var entityParameter = Expression.Parameter(typeof(TEntity), "e");
-                var propertyType = entityProperty.PropertyType;
-
-                var expressionList = new List<Expression>();
-                Expression expression;
-
-                if (criteria is IntegerCriteria)
-                {
-                    IntegerCriteriaTreatment(criteria as IntegerCriteria, expressionList, propertyType, entityParameter, entityProperty);
-                }
-                else if (criteria is StringCriteria)
-                {
-                    StringCriteriaTreatment(criteria as StringCriteria, expressionList, propertyType, entityParameter, entityProperty);
-                }
-
-                expression = StackExpression(expressionList);
-                if (expression != null)
-                {
-                    var lambda = Expression.Lambda(expression, entityParameter) as Expression<Func<TEntity, bool>>;
-                    source = source.Where(lambda);
-                }
-            }
-        }
-
         private static void IntegerCriteriaTreatment(IntegerCriteria criteria, List<Expression> expressionList, Type propertyType,
                                                      ParameterExpression entityParameter, PropertyInfo entityProperty)
         {
@@ -206,7 +246,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
             }
             if (criteria.NotEqual.HasValue)
             {
-                expressionList.Add(AddEqualExpression(entityParameter, entityProperty, criteria.NotEqual.Value));
+                expressionList.Add(AddNotEqualExpression(entityParameter, entityProperty, criteria.NotEqual.Value));
             }
             if (criteria.NotEqualList != null)
             {
@@ -235,7 +275,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
             }
             if (criteria.NotEqual != null)
             {
-                expressionList.Add(AddEqualStringExpression(entityParameter, entityProperty, criteria.NotEqual, false));
+                expressionList.Add(AddNotEqualStringExpression(entityParameter, entityProperty, criteria.NotEqual, false));
             }
             if (criteria.NotEqualList != null)
             {

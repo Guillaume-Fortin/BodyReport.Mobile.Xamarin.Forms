@@ -35,6 +35,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\BodyReport\src\BodyReport.Framework\ExpressionUtility.cs">
+      <Link>Framework\ExpressionUtility.cs</Link>
+    </Compile>
+    <Compile Include="..\..\BodyReport\src\BodyReport.Framework\ParameterRebinder.cs">
+      <Link>Framework\ParameterRebinder.cs</Link>
+    </Compile>
     <Compile Include="..\..\BodyReport\src\BodyReport.Message\FieldsLength.cs">
       <Link>Message\FieldsLength.cs</Link>
     </Compile>
