@@ -27,7 +27,8 @@
 
     <Image x:Name="LogoImage"
            Source="{Binding Path=Image, Mode=OneWay, Source={x:Reference touchViewCell}, Converter={StaticResource stringToImageConverter}}"
-           WidthRequest="{Binding Path=ImageWidthRequest, Mode=TwoWay, Source={x:Reference touchViewCell}}"
+           Aspect="Fill"
+		   WidthRequest="{Binding Path=ImageWidthRequest, Mode=TwoWay, Source={x:Reference touchViewCell}}"
            HeightRequest="{Binding Path=ImageHeightRequest, Mode=TwoWay, Source={x:Reference touchViewCell}}"
            Grid.Row="0" Grid.Column="1" HorizontalOptions="Start" VerticalOptions="Center"
 	         IsVisible="True">

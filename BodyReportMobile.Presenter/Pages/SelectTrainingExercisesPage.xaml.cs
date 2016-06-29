@@ -39,8 +39,9 @@ namespace BodyReportMobile.Presenter.Pages
                         {
                             IsIndicatorVisible = false,
                             BindingContext = bindingBodyExercise,
-                            ImageWidthRequest = 140,
-                            ImageHeightRequest = 140
+                            ImageWidthRequest = 100,
+                            ImageHeightRequest = 100,
+							Height = 100
                         };
                         touchViewCell.Tapped += BodyExerciseItemTapped;
                         touchViewCell.SetBinding(TouchViewCell.IsCheckedVisibleProperty, (BindingBodyExercise source) => source.Selected);
