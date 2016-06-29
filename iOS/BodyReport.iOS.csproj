@@ -172,6 +172,10 @@
     <ImageAsset Include="Resources\Images.xcassets\LaunchImage.launchimage\Contents.json">
       <InProject>false</InProject>
     </ImageAsset>
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_180x180.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_29x29.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_58x58.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_80x80.png" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
