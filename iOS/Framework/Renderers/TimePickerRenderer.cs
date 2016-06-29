@@ -14,7 +14,8 @@ namespace BodyReport.iOS.Framework.Renderers
 	{
 		UIColor _borderColor = UIColor.Gray;
 		bool _disposed = false;
-		IDisposable _boundObserver = null;
+		bool _observerPresent = false;
+		IntPtr tokenObserveBound = (IntPtr)1;
 
 		public TimePickerRenderer()
 		{
@@ -26,10 +27,10 @@ namespace BodyReport.iOS.Framework.Renderers
 		protected override void Dispose (bool disposing)
 		{
 			_disposed = true;
-			if (_boundObserver != null)
-			{
-				_boundObserver.Dispose ();
-				_boundObserver = null;
+
+			if (_observerPresent && Control != null && Control.Layer != null) {
+				Control.Layer.RemoveObserver (this, "bounds", tokenObserveBound);
+				_observerPresent = false;
 			}
 			base.Dispose (disposing);
 		}
@@ -40,14 +41,18 @@ namespace BodyReport.iOS.Framework.Renderers
 
 			if (Control != null) {
 				this.Control.BorderStyle = UITextBorderStyle.None;
-				if(!_disposed && Control.Layer != null && _boundObserver == null)
-					_boundObserver = Control.Layer.AddObserver ("bounds", NSKeyValueObservingOptions.New, obs => ObserveBoundValue(obs));
+
+				if (!_observerPresent && !_disposed && Control.Layer != null) {
+					Control.Layer.AddObserver (this, (NSString)"bounds", NSKeyValueObservingOptions.New, tokenObserveBound);
+					_observerPresent = true;
+				}
 			}
 		}
 
-		public void ObserveBoundValue (NSObservedChange obs)
+		public override void ObserveValue (NSString keyPath, NSObject ofObject,
+				   NSDictionary change, IntPtr context)
 		{
-			if (Control != null)
+			if (Control != null && keyPath == "bounds")
 				Control.DrawCustomBorder (_borderColor, 1f);
 		}
 	}

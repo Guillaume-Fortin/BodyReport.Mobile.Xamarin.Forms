@@ -45,8 +45,8 @@ namespace BodyReport.iOS.Framework.Renderers
 				Control.AutocapitalizationType = UITextAutocapitalizationType.None; // No Autocapitalization
 				Control.BorderStyle = UITextBorderStyle.None;
 
-				if (!_disposed && Control.Layer != null) {
-					Control.Layer.AddObserver (this, (NSString)"bounds", NSKeyValueObservingOptions.Old | NSKeyValueObservingOptions.New, tokenObserveBound);
+				if (!_observerPresent && !_disposed && Control.Layer != null) {
+					Control.Layer.AddObserver (this, (NSString)"bounds", NSKeyValueObservingOptions.New, tokenObserveBound);
 					_observerPresent = true;
 				}
 			}
@@ -57,8 +57,6 @@ namespace BodyReport.iOS.Framework.Renderers
 		{
 			if (Control != null && keyPath == "bounds")
 				Control.DrawCustomBorder (_borderColor, 1f);
-
-            base.ObserveValue (keyPath, ofObject, change, context);
         }
 	}
 }
