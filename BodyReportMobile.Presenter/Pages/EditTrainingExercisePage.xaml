@@ -63,7 +63,7 @@
               <Grid>
                 <Grid.RowDefinitions>
                   <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="Auto"/>
+                  <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="*" />
@@ -97,12 +97,12 @@
                   </Label.Triggers>
                 </Label>
 
-                <localcontrol:NumericEntry Grid.Row="1" Grid.Column="0" VerticalOptions="End"
+                <localcontrol:NumericEntry Grid.Row="1" Grid.Column="0" VerticalOptions="FillAndExpand"
                                        Text="{Binding Reps, Converter={StaticResource intConverter}}"
                                        MinValue="0" MaxValue="300"
                                        IsInteger="True" />
 
-                <localcontrol:NumericEntry Grid.Row="1" Grid.Column="1" VerticalOptions="End"
+                <localcontrol:NumericEntry Grid.Row="1" Grid.Column="1" VerticalOptions="FillAndExpand"
                                        Text="{Binding Weights, Converter={StaticResource doubleConverter}}"
                                        MinValue="0" MaxValue="300"
                                        IsInteger="False" />
