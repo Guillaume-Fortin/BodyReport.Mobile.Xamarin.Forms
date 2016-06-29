@@ -39,5 +39,7 @@
 	<string>BodyReport</string>
 	<key>XSLaunchImageAssets</key>
 	<string>Resources/Images.xcassets/LaunchImage.launchimage</string>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 </dict>
 </plist>
