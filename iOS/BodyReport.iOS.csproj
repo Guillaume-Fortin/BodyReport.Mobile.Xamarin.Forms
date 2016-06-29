@@ -176,6 +176,14 @@
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_29x29.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_58x58.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_80x80.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_40x40.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_50x50.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_100x100.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_72x72.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_144x144.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_76x76.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_152x152.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_167x167.png" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />

@@ -41,5 +41,7 @@
 	<string>Resources/Images.xcassets/LaunchImage.launchimage</string>
 	<key>UIRequiresFullScreen</key>
 	<true/>
+	<key>UIStatusBarHidden</key>
+	<true/>
 </dict>
 </plist>
