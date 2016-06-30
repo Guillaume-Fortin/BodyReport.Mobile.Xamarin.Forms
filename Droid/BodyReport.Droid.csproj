@@ -55,6 +55,7 @@
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <EnableProguard>False</EnableProguard>
     <DebugSymbols>False</DebugSymbols>
+	<JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
     <MandroidI18n>CJK,Mideast,Rare,West,Other</MandroidI18n>
   </PropertyGroup>
   <ItemGroup>
