@@ -2,11 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>keychain-access-groups</key>
-	<array>
-		<string>com.thetyne.bodyreport</string>
-	</array>
-	<key>inter-app-audio</key>
-	<true/>
+	<key>application-identifier</key>
+	<string>X2U2KT8RML.com.thetyne.bodyreport</string>
 </dict>
 </plist>
