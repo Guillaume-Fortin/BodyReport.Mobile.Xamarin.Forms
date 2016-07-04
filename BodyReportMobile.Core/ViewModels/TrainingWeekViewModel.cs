@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using XLabs.Ioc;
 using BodyReportMobile.Core.Services;
+using BodyReportMobile.Core.Manager;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -76,7 +77,7 @@ namespace BodyReportMobile.Core.ViewModels
             HeightLabel = Translation.Get(TRS.HEIGHT) + " (" + lengthUnit + ")";
             WeightLabel = Translation.Get(TRS.WEIGHT) + " (" + weightUnit + ")";
 
-            UserNameLabel = Translation.Get(TRS.USER_NAME) +" : " +"Thetyne";
+            UserNameLabel = Translation.Get(TRS.USER_NAME) +" : " + LoginManager.Instance.UserName;
 
             OnPropertyChanged(null);
         }
