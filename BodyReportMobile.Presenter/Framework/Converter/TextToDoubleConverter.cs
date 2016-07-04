@@ -8,12 +8,10 @@ namespace BodyReportMobile.Presenter.Framework.Converter
 {
     public class TextToDoubleConverter : IValueConverter
     {
-        private char[] okValues = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '.' };
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is double)
-                return value.ToString();
+                return ((double)value).ToString(CultureInfo.InvariantCulture);
 
             return value.ToString();
         }
@@ -24,6 +22,8 @@ namespace BodyReportMobile.Presenter.Framework.Converter
             string dotValue = value as string;
             if (dotValue != null && dotValue.IndexOf(',') != -1)
                 dotValue = dotValue.Replace(',', '.');
+            if (dotValue.Length > 0 && dotValue[dotValue.Length - 1] == '.')
+                return value;
             if (double.TryParse(dotValue, NumberStyles.Any, CultureInfo.InvariantCulture, out resultDouble))
             {
                 return resultDouble;

@@ -50,26 +50,37 @@ namespace BodyReportMobile.Presenter.Framework.Controls
 
         private void CheckValue()
         {
-			if(IsInteger)
-				this.Text = ParseIntegerValue ().ToString();
-			else
-				this.Text = ParseDoubleValue ().ToString();
+            double newValue;
+            if (IsInteger)
+                this.Text = ParseIntegerValue().ToString();
+            else if (ParseDoubleValue(this.Text, out newValue))
+            {
+                this.Text = newValue.ToString(CultureInfo.InvariantCulture);
+            }
 		}
 
-		private double ParseDoubleValue()
+		private bool ParseDoubleValue(string text, out double result)
 		{
-			double value, newValue;
-			if (Utils.TryParse (this.Text, out value)) {
+            result = MinValue;
+            if (!string.IsNullOrEmpty(text) && (text[text.Length - 1] == '.' || text[text.Length - 1] == '|'))
+                return false;
+
+            double value, newValue;
+			if ( Utils.TryParse (text, out value)) {
 				newValue = value;
 				if(MinValue != double.MinValue)
 					newValue = Math.Max (newValue, MinValue);
 				if(MaxValue != double.MaxValue)
 					newValue = Math.Min (newValue, MaxValue);
-
-				return newValue;
+                
+                result = newValue;
+                return true;
 			}
 			else
-				return MinValue;
+            {
+                result = MinValue;
+                return true;
+            }
 		}
 
 		private int ParseIntegerValue()
