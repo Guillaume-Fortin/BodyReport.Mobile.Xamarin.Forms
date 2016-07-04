@@ -72,12 +72,19 @@ namespace BodyReportMobile.Core.ViewModels
             var viewModel = new EditUserProfileViewModel();
             viewModel._userId = userId;
             viewModel._allowCancelViewModel = allowCancelViewModel;
+            if(!await viewModel.PreLoadDataAsync())
+            {
+                var userDialog = Resolver.Resolve<IUserDialogs>();
+                await userDialog.AlertAsync(Translation.Get(TRS.CONNECTION_FAILED), Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+                return false;
+            }
             return await ShowModalViewModelAsync(viewModel, parent, false);
         }
-
-        private async Task SynchronizeDataAsync()
+        
+        private async Task<bool> PreLoadDataAsync()
         {
-            if (_countries == null)
+            bool result = false;
+            try
             {
                 var countryService = new CountryService(_dbContext);
                 _countries = countryService.FindCountries();
@@ -89,12 +96,22 @@ namespace BodyReportMobile.Core.ViewModels
                     if (_countries != null && _countries.Count > 0)
                         countryService.UpdateCountryList(_countries);
                 }
-            }
 
-            if (!string.IsNullOrWhiteSpace(_userId))
-            {
                 var userInfoKey = new UserInfoKey() { UserId = _userId };
                 _userInfo = await UserInfoWebService.GetUserInfoAsync(userInfoKey);
+                if (_userInfo != null && _countries != null && _countries.Count > 0)
+                    result = true;
+            }
+            catch
+            {
+            }
+            return result;
+        }
+
+        private async Task SynchronizeDataAsync()
+        {
+            if (!string.IsNullOrWhiteSpace(_userId))
+            {
                 BindingUserInfo.UserInfo = _userInfo;
                 if (_userInfo != null)
                 {
@@ -112,7 +129,7 @@ namespace BodyReportMobile.Core.ViewModels
                 BindingUserInfo.Height = _userInfo.Height;
                 BindingUserInfo.Weight = _userInfo.Weight;
 
-                if(_countries != null && _countries.Count > 0)
+                if (_countries != null && _countries.Count > 0)
                 {
                     var country = _countries.Where(c => c.Id == _userInfo.CountryId).FirstOrDefault();
                     if (country != null)
