@@ -143,6 +143,9 @@ namespace BodyReportMobile.Core.ViewModels
                 //user deconnection detected
                 await InitUserConnectionAsync();
             }
+
+            //Security refresh user info
+            DisplayUserProfil();
         }
         
         private async Task SelectUserPictureActionAsync()
