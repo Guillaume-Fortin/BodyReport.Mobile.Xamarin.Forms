@@ -41,6 +41,10 @@ namespace BodyReport.Droid
 			global::Xamarin.Forms.Forms.Init (this, savedInstanceState);
 			LoadApplication (new App ());
             //ActionBar.SetIcon(new ColorDrawable(Android.Graphics.Color.Transparent));
+
+            V7Toolbar toolbar = this.FindViewById<V7Toolbar>(Resource.Id.testToolbar);
+            if (toolbar != null)
+                SetSupportActionBar(toolbar);
         }
 
         /// <summary>

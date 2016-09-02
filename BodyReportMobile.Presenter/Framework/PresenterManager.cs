@@ -79,7 +79,7 @@ namespace BodyReportMobile.Core.Framework
                     try
                     {
 						//temporary disable back button for android (bug with material design) can't prevent back button press in toolbar
-						if(viewModel.DisableBackButton || Device.OS == TargetPlatform.Android)
+						if(viewModel.DisableBackButton /*|| Device.OS == TargetPlatform.Android*/)
 							NavigationPage.SetHasBackButton (page, false);
                         await MainNavigationPage.PushAsync(page);
                         result = true;
