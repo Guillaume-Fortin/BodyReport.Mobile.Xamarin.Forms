@@ -73,6 +73,7 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 await DataSyncViewModel.ShowViewAsync(this);
 
+				InitTranslation ();
                 DisplayUserProfil();
             }
             catch(Exception except)
