@@ -5,9 +5,9 @@ using BodyReport.Message;
 using System.Collections.Generic;
 using BodyReportMobile.Core.Crud.Module;
 
-namespace BodyReportMobile.Core.ServiceManagers
+namespace BodyReportMobile.Core.Manager
 {
-	public class TrainingWeekManager : ServiceManager
+	public class TrainingWeekManager : BodyReportManager
 	{
 		TrainingWeekModule _trainingWeekModule = null;
 		public TrainingWeekManager(SQLiteConnection dbContext) : base(dbContext)

@@ -4,9 +4,9 @@ using BodyReport.Message;
 using System.Collections.Generic;
 using SQLite.Net;
 
-namespace BodyReportMobile.Core.ServiceManagers
+namespace BodyReportMobile.Core.Manager
 {
-	public class TranslationManager : ServiceManager
+	public class TranslationManager : BodyReportManager
 	{
 		TranslationModule _module = null;
 
