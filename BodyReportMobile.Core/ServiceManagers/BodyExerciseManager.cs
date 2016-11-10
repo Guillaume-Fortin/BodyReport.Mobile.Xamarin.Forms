@@ -9,9 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BodyReportMobile.Core.Manager
+namespace BodyReportMobile.Core.ServiceManagers
 {
-    public class BodyExerciseManager : BodyReportManager
+    public class BodyExerciseManager : ServiceManager
     {
         BodyExerciseModule _module = null;
 

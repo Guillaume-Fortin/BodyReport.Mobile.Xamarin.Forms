@@ -8,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BodyReportMobile.Core.Manager
+namespace BodyReportMobile.Core.ServiceManagers
 {
-    public class CountryManager : BodyReportManager
+    public class CountryManager : ServiceManager
     {
         CountryModule _module;
         public CountryManager(SQLiteConnection dbContext) : base(dbContext)

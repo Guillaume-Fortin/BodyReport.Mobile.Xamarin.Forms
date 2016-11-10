@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BodyReportMobile.Core.Manager
+namespace BodyReportMobile.Core.ServiceManagers
 {
-    public class UserInfoManager : BodyReportManager
+    public class UserInfoManager : ServiceManager
     {
         UserInfoModule _userInfoModule = null;
 

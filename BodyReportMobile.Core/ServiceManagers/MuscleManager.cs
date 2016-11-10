@@ -6,9 +6,9 @@ using BodyReportMobile.Core.Crud.Transformer;
 using SQLite.Net;
 using BodyReportMobile.Core.Framework;
 
-namespace BodyReportMobile.Core.Manager
+namespace BodyReportMobile.Core.ServiceManagers
 {
-	public class MuscleManager : BodyReportManager
+	public class MuscleManager : ServiceManager
 	{
 		MuscleModule _module;
 		public MuscleManager(SQLiteConnection dbContext) : base(dbContext)

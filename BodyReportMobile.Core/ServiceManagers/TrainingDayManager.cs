@@ -4,9 +4,9 @@ using BodyReport.Message;
 using System.Collections.Generic;
 using BodyReportMobile.Core.Crud.Module;
 
-namespace BodyReportMobile.Core.Manager
+namespace BodyReportMobile.Core.ServiceManagers
 {
-	public class TrainingDayManager : BodyReportManager
+	public class TrainingDayManager : ServiceManager
 	{
 		TrainingDayModule _trainingDayModule = null;
 
