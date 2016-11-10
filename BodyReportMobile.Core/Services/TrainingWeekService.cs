@@ -1,7 +1,7 @@
 ﻿using BodyReport.Message;
 using System.Collections.Generic;
 using SQLite.Net;
-using BodyReportMobile.Core.ServiceManagers;
+using BodyReportMobile.Core.Manager;
 
 namespace BodyReportMobile.Core.Services
 {

@@ -1,9 +1,9 @@
 ﻿using System;
 using SQLite.Net;
 
-namespace BodyReportMobile.Core.ServiceManagers
+namespace BodyReportMobile.Core.Manager
 {
-	public class ServiceManager
+	public class BodyReportManager
 	{
 		/// <summary>
 		/// DataBase context with transaction
@@ -14,7 +14,7 @@ namespace BodyReportMobile.Core.ServiceManagers
 		/// Constructor
 		/// </summary>
 		/// <param name="dbContext">db context</param>
-		public ServiceManager(SQLiteConnection dbContext)
+		public BodyReportManager(SQLiteConnection dbContext)
 		{
 			_dbContext = dbContext;
 		}

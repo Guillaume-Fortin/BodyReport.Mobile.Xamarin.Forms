@@ -9,9 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BodyReportMobile.Core.ServiceManagers
+namespace BodyReportMobile.Core.Manager
 {
-    public class MuscularGroupManager : ServiceManager
+    public class MuscularGroupManager : BodyReportManager
     {
         MuscularGroupModule _module;
         public MuscularGroupManager(SQLiteConnection dbContext) : base(dbContext)

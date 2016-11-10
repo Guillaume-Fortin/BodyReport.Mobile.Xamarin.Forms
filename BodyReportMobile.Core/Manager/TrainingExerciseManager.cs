@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using BodyReportMobile.Core.Crud.Module;
 using BodyReport.Framework;
 
-namespace BodyReportMobile.Core.ServiceManagers
+namespace BodyReportMobile.Core.Manager
 {
-	public class TrainingExerciseManager : ServiceManager
-	{
+	public class TrainingExerciseManager : BodyReportManager
+    {
 		TrainingExerciseModule _trainingDayExerciseModule = null;
 		TrainingExerciseSetManager _trainingExerciseSetManager = null;
 

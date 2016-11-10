@@ -1,5 +1,5 @@
 ﻿using BodyReport.Message;
-using BodyReportMobile.Core.ServiceManagers;
+using BodyReportMobile.Core.Manager;
 using SQLite.Net;
 using System.Collections.Generic;
 
