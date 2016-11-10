@@ -65,7 +65,7 @@ namespace BodyReportMobile.Core.Data
             try
             {
                 //Synchronize Muscles
-                var muscleList = await MuscleWebService.FindMusclesAsync();
+                var muscleList = await MuscleWebService.FindAsync();
                 if (muscleList != null)
                 {
                     var muscleService = new MuscleService(dbContext);
@@ -101,7 +101,7 @@ namespace BodyReportMobile.Core.Data
             try
             {
                 //Synchronize body exercises
-                var bodyExerciseList = await BodyExerciseWebService.FindBodyExercisesAsync();
+                var bodyExerciseList = await BodyExerciseWebService.FindAsync();
                 if (bodyExerciseList != null)
                 {
                     var bodyExerciseService = new BodyExerciseService(dbContext);

@@ -1,6 +1,6 @@
 ﻿using BodyReportMobile.Core.Framework;
 using BodyReport.Message;
-using BodyReport.Message.WebApi.MultipleParameters;
+using BodyReport.Message.Web.MultipleParameters;
 using System;
 using System.Collections.Generic;
 using System.Linq;

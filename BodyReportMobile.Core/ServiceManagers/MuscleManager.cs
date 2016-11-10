@@ -16,7 +16,7 @@ namespace BodyReportMobile.Core.ServiceManagers
 			_module = new MuscleModule(_dbContext);
 		}
 
-		public List<Muscle> FindMuscles(MuscleCriteria muscleCriteria = null)
+		public List<Muscle> Find(MuscleCriteria muscleCriteria = null)
 		{
 			var muscleList = _module.Find(muscleCriteria);
             if (muscleList != null)
@@ -31,7 +31,7 @@ namespace BodyReportMobile.Core.ServiceManagers
             return muscleList;
         }
 
-		internal Muscle GetMuscle(MuscleKey key)
+		internal Muscle Get(MuscleKey key)
 		{
 			var muscle = _module.Get(key);
             if(muscle != null)
@@ -39,7 +39,7 @@ namespace BodyReportMobile.Core.ServiceManagers
             return muscle;
         }
 
-        internal Muscle UpdateMuscle(Muscle muscle)
+        internal Muscle Update(Muscle muscle)
 		{
 			//Update Translation Name
 			//Translation.UpdateInDB(MuscleTransformer.GetTranslationKey(muscle.Id), muscle.Name, _dbContext);

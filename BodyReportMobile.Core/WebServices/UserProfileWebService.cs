@@ -27,7 +27,7 @@ namespace BodyReportMobile.Core.WebServices
         {
             Dictionary<string, string> datas = new Dictionary<string, string>();
             datas.Add("userId", userId);
-            return await HttpConnector.Instance.GetAsync<string>("api/UserProfile/GetUserProfileImageRelativeUrl", datas);
+            return await HttpConnector.Instance.GetAsync<string>("Api/UserProfile/GetUserProfileImageRelativeUrl", datas);
         }
     }
 }

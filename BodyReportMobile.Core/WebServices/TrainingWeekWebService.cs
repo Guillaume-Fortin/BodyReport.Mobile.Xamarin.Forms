@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using BodyReport.Message;
 using BodyReportMobile.Core.Framework;
-using BodyReport.Message.WebApi;
-using BodyReport.Message.WebApi.MultipleParameters;
+using BodyReport.Message.Web;
+using BodyReport.Message.Web.MultipleParameters;
 
 namespace BodyReportMobile.Core.WebServices
 {
@@ -36,10 +36,9 @@ namespace BodyReportMobile.Core.WebServices
             return await HttpConnector.Instance.PostAsync<TrainingWeekWithScenario, TrainingWeek> ("Api/TrainingWeeks/Update", trainingWeekWithScenario);
 		}
 
-        public static async Task DeleteTrainingWeekByKeyAsync(TrainingWeekKey trainingWeekKey)
+        public static async Task<bool> DeleteTrainingWeekByKeyAsync(TrainingWeekKey trainingWeekKey)
         {
-            await HttpConnector.Instance.PostAsync<TrainingWeekKey, object>("Api/TrainingWeeks/DeleteByKey", trainingWeekKey);
-            return;
+            return await HttpConnector.Instance.PostAsync<TrainingWeekKey, bool>("Api/TrainingWeeks/Delete", trainingWeekKey);
         }
 
         public static async Task<TrainingWeek> GetTrainingWeekAsync(TrainingWeekKey key, bool manageDay=false)

@@ -8,7 +8,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using XLabs.Ioc;
 using BodyReportMobile.Core.MvxMessages;
-using BodyReport.Message.WebApi;
+using BodyReport.Message.Web;
 using System.IO;
 using BodyReport.Message;
 

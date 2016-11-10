@@ -3,7 +3,7 @@ using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.WebServices;
 using BodyReportMobile.Core.Services;
 using BodyReport.Message;
-using BodyReport.Message.WebApi;
+using BodyReport.Message.Web;
 using SQLite.Net;
 using System;
 using System.Threading.Tasks;

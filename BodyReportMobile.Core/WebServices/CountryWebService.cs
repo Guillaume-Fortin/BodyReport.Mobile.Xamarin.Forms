@@ -12,7 +12,7 @@ namespace BodyReportMobile.Core.WebServices
     {
         public static async Task<List<Country>> FindCountriesAsync()
         {
-            return await HttpConnector.Instance.GetAsync<List<Country>>("api/Countries/Find");
+            return await HttpConnector.Instance.GetAsync<List<Country>>("Api/Countries/Find");
         }
     }
 }

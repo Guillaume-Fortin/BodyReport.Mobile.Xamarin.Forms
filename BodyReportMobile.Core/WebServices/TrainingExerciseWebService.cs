@@ -10,9 +10,9 @@ namespace BodyReportMobile.Core.WebServices
 {
     public static class TrainingExerciseWebService
     {
-        public static async Task DeleteTrainingExerciseAsync(TrainingExerciseKey trainingExerciseKey)
+        public static async Task<bool> DeleteTrainingExerciseAsync(TrainingExerciseKey trainingExerciseKey)
         {
-            await HttpConnector.Instance.PostAsync<TrainingExerciseKey, object>("Api/TrainingExercises/DeleteByKey", trainingExerciseKey);
+            return await HttpConnector.Instance.PostAsync<TrainingExerciseKey, bool>("Api/TrainingExercises/Delete", trainingExerciseKey);
         }
     }
 }

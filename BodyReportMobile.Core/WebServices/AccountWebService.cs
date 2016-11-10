@@ -1,5 +1,5 @@
 ﻿using BodyReportMobile.Core.Framework;
-using BodyReport.Message.WebApi;
+using BodyReport.Message.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;

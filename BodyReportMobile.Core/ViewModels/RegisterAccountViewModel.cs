@@ -2,7 +2,7 @@
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.WebServices;
 using BodyReport.Message;
-using BodyReport.Message.WebApi;
+using BodyReport.Message.Web;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;

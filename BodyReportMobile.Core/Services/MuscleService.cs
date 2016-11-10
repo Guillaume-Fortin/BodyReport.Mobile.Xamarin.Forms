@@ -16,17 +16,17 @@ namespace BodyReportMobile.Core.Services
 
         public List<Muscle> FindMuscles(MuscleCriteria muscleCriteria = null)
         {
-            return _manager.FindMuscles(muscleCriteria);
+            return _manager.Find(muscleCriteria);
         }
 
         internal Muscle GetMuscle(MuscleKey key)
         {
-            return _manager.GetMuscle(key);
+            return _manager.Get(key);
         }
 
         internal Muscle UpdateMuscle(Muscle muscle)
         {
-            return _manager.UpdateMuscle(muscle);
+            return _manager.Update(muscle);
         }
 
         internal List<Muscle> UpdateMuscleList(List<Muscle> muscleList)
@@ -37,7 +37,7 @@ namespace BodyReportMobile.Core.Services
             {
                 foreach (var muscle in muscleList)
                 {
-                    list.Add(_manager.UpdateMuscle(muscle));
+                    list.Add(_manager.Update(muscle));
                 }
             }
             catch

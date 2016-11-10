@@ -20,7 +20,7 @@ namespace BodyReportMobile.Core.ServiceManagers
             _module = new BodyExerciseModule(_dbContext);
         }
 
-        public BodyExercise GetBodyExercise(BodyExerciseKey key)
+        public BodyExercise Get(BodyExerciseKey key)
         {
             var bodyExercise = _module.Get(key);
             if (bodyExercise != null)
@@ -28,7 +28,7 @@ namespace BodyReportMobile.Core.ServiceManagers
             return bodyExercise;
         }
 
-        public List<BodyExercise> FindBodyExercises(BodyExerciseCriteria bodyExerciseCriteria = null)
+        public List<BodyExercise> Find(BodyExerciseCriteria bodyExerciseCriteria = null)
         {
             var bodyExerciseList = _module.Find(bodyExerciseCriteria);
             if (bodyExerciseList != null)
@@ -43,7 +43,7 @@ namespace BodyReportMobile.Core.ServiceManagers
             return bodyExerciseList;
         }
 
-        public BodyExercise CreateBodyExercise(BodyExercise bodyExercise)
+        public BodyExercise Create(BodyExercise bodyExercise)
         {
             string name = bodyExercise.Name;
             bodyExercise = _module.Create(bodyExercise);
@@ -57,7 +57,7 @@ namespace BodyReportMobile.Core.ServiceManagers
             return bodyExercise;
         }
 
-        internal void DeleteBodyExercise(BodyExerciseKey key)
+        internal void Delete(BodyExerciseKey key)
         {
             //Update Translation Name
             //Translation.DeleteInDB(MuscularGroupTransformer.GetTranslationKey(key.Id), _dbContext);
@@ -65,7 +65,7 @@ namespace BodyReportMobile.Core.ServiceManagers
             _module.Delete(key);
         }
 
-        internal BodyExercise UpdateBodyExercise(BodyExercise bodyExercise)
+        internal BodyExercise Update(BodyExercise bodyExercise)
         {
             //Update Translation Name
             //Translation.UpdateInDB(BodyExerciseTransformer.GetTranslationKey(bodyExercise.Id), bodyExercise.Name, _dbContext);

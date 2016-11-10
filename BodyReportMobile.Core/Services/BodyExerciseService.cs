@@ -16,27 +16,27 @@ namespace BodyReportMobile.Core.Services
 
         public BodyExercise GetBodyExercise(BodyExerciseKey key)
         {
-            return _manager.GetBodyExercise(key);
+            return _manager.Get(key);
         }
 
         public List<BodyExercise> FindBodyExercises(BodyExerciseCriteria bodyExerciseCriteria = null)
         {
-            return _manager.FindBodyExercises(bodyExerciseCriteria);
+            return _manager.Find(bodyExerciseCriteria);
         }
 
         public BodyExercise CreateBodyExercise(BodyExercise bodyExercise)
         {
-            return _manager.CreateBodyExercise(bodyExercise);
+            return _manager.Create(bodyExercise);
         }
 
         internal void DeleteBodyExercise(BodyExerciseKey key)
         {
-            _manager.DeleteBodyExercise(key);
+            _manager.Delete(key);
         }
 
         internal BodyExercise UpdateBodyExercise(BodyExercise bodyExercise)
         {
-            return _manager.UpdateBodyExercise(bodyExercise);
+            return _manager.Update(bodyExercise);
         }
 
         internal List<BodyExercise> UpdateBodyExerciseList(List<BodyExercise> bodyExerciseList)
@@ -47,7 +47,7 @@ namespace BodyReportMobile.Core.Services
             {
                 foreach (var bodyExercise in bodyExerciseList)
                 {
-                    list.Add(_manager.UpdateBodyExercise(bodyExercise));
+                    list.Add(_manager.Update(bodyExercise));
                 }
             }
             catch
