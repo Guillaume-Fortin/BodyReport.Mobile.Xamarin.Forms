@@ -3,6 +3,7 @@ using SQLite.Net;
 using BodyReport.Message;
 using System.Collections.Generic;
 using BodyReportMobile.Core.Crud.Module;
+using BodyReportMobile.Core.ServiceLayers;
 
 namespace BodyReportMobile.Core.Manager
 {
@@ -12,7 +13,7 @@ namespace BodyReportMobile.Core.Manager
 
 		public TrainingDayManager(SQLiteConnection dbContext) : base(dbContext)
 		{
-			_trainingDayModule = new TrainingDayModule(_dbContext);
+			_trainingDayModule = new TrainingDayModule(DbContext);
 		}
 
 		internal TrainingDay CreateTrainingDay(TrainingDay trainingDay)
@@ -22,11 +23,11 @@ namespace BodyReportMobile.Core.Manager
 
 			if (trainingDay.TrainingExercises != null)
 			{
-				var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
+				var trainingExerciseService = new TrainingExerciseService(DbContext);
 				trainingDayResult.TrainingExercises = new List<TrainingExercise>();
 				foreach (var trainingExercise in trainingDay.TrainingExercises)
 				{
-					trainingDayResult.TrainingExercises.Add(trainingExerciseManager.CreateTrainingExercise(trainingExercise));
+					trainingDayResult.TrainingExercises.Add(trainingExerciseService.CreateTrainingExercise(trainingExercise));
 				}
 			}
 
@@ -45,16 +46,16 @@ namespace BodyReportMobile.Core.Manager
 					DayOfWeek = new IntegerCriteria() { Equal = trainingJournalDay.DayOfWeek },
 					TrainingDayId = new IntegerCriteria() { Equal = trainingJournalDay.TrainingDayId }
 				};
-				var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
-				trainingJournalDay.TrainingExercises = trainingExerciseManager.FindTrainingExercise(trainingExerciseCriteria);
+				var trainingExerciseService = new TrainingExerciseService(DbContext);
+				trainingJournalDay.TrainingExercises = trainingExerciseService.FindTrainingExercise(trainingExerciseCriteria);
 			}
 		}
 
-		internal TrainingDay GetTrainingDay(TrainingDayKey key, bool manageExercise)
+		internal TrainingDay GetTrainingDay(TrainingDayKey key, TrainingDayScenario scenario)
 		{
 			var trainingDay = _trainingDayModule.Get(key);
 
-			if (manageExercise && trainingDay != null)
+			if (scenario != null && scenario.ManageExercise && trainingDay != null)
 			{
 				CompleteTrainingDayWithExercise(trainingDay);
 			}
@@ -85,7 +86,7 @@ namespace BodyReportMobile.Core.Manager
 
             if (trainingDayScenario != null && trainingDayScenario.ManageExercise)
             {
-                var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
+                var trainingExerciseService = new TrainingExerciseService(DbContext);
 
                 var trainingExerciseCriteria = new TrainingExerciseCriteria()
                 {
@@ -95,11 +96,11 @@ namespace BodyReportMobile.Core.Manager
                     DayOfWeek = new IntegerCriteria() { Equal = trainingDay.DayOfWeek },
                     TrainingDayId = new IntegerCriteria() { Equal = trainingDay.TrainingDayId }
                 };
-                var trainingExercisesDb = trainingExerciseManager.FindTrainingExercise(trainingExerciseCriteria);
+                var trainingExercisesDb = trainingExerciseService.FindTrainingExercise(trainingExerciseCriteria);
                 if (trainingExercisesDb != null && trainingExercisesDb.Count > 0)
                 {
                     foreach (var trainingExerciseDb in trainingExercisesDb)
-                        trainingExerciseManager.DeleteTrainingExercise(trainingExerciseDb);
+                        trainingExerciseService.DeleteTrainingExercise(trainingExerciseDb);
                 }
 
                 if (trainingDay.TrainingExercises != null)
@@ -107,7 +108,7 @@ namespace BodyReportMobile.Core.Manager
                     trainingDayResult.TrainingExercises = new List<TrainingExercise>();
                     foreach (var trainingExercise in trainingDay.TrainingExercises)
                     {
-                        trainingDayResult.TrainingExercises.Add(trainingExerciseManager.UpdateTrainingExercise(trainingExercise, true));
+                        trainingDayResult.TrainingExercises.Add(trainingExerciseService.UpdateTrainingExercise(trainingExercise, true));
                     }
                 }
             }
@@ -115,18 +116,23 @@ namespace BodyReportMobile.Core.Manager
 			return trainingDayResult;
 		}
 
-		internal void DeleteTrainingDay(TrainingDay trainingDay)
+		internal void DeleteTrainingDay(TrainingDayKey key)
 		{
-			_trainingDayModule.Delete(trainingDay);
+            var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
+            var trainingDay = GetTrainingDay(key, trainingDayScenario);
+            if (trainingDay != null)
+            {
+                _trainingDayModule.Delete(trainingDay);
 
-			if (trainingDay.TrainingExercises != null)
-			{
-				var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
-				foreach (var trainingExercise in trainingDay.TrainingExercises)
-				{
-					trainingExerciseManager.DeleteTrainingExercise(trainingExercise);
-				}
-			}
+                if (trainingDay.TrainingExercises != null)
+                {
+                    var trainingExerciseService = new TrainingExerciseService(DbContext);
+                    foreach (var trainingExercise in trainingDay.TrainingExercises)
+                    {
+                        trainingExerciseService.DeleteTrainingExercise(trainingExercise);
+                    }
+                }
+            }
 		}
 	}
 }

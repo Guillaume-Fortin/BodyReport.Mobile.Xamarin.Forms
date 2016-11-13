@@ -10,7 +10,7 @@ using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Core.WebServices;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Data;
-using BodyReportMobile.Core.Services;
+using BodyReportMobile.Core.ServiceLayers;
 using SQLite.Net;
 
 namespace BodyReportMobile.Core.ViewModels

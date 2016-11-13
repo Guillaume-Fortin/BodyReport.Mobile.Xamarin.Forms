@@ -8,7 +8,7 @@ using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XLabs.Ioc;
-using BodyReportMobile.Core.Services;
+using BodyReportMobile.Core.ServiceLayers;
 
 namespace BodyReportMobile.Core.ViewModels
 {

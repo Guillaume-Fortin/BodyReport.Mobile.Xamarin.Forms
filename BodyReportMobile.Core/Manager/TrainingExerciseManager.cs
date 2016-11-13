@@ -9,18 +9,18 @@ namespace BodyReportMobile.Core.Manager
 {
 	public class TrainingExerciseManager : BodyReportManager
     {
-		TrainingExerciseModule _trainingDayExerciseModule = null;
+		TrainingExerciseModule _trainingExerciseModule = null;
 		TrainingExerciseSetManager _trainingExerciseSetManager = null;
 
 		public TrainingExerciseManager(SQLiteConnection dbContext) : base(dbContext)
 		{
-			_trainingDayExerciseModule = new TrainingExerciseModule(_dbContext);
-			_trainingExerciseSetManager = new TrainingExerciseSetManager(_dbContext);
+			_trainingExerciseModule = new TrainingExerciseModule(DbContext);
+			_trainingExerciseSetManager = new TrainingExerciseSetManager(DbContext);
 		}
 
 		public TrainingExercise CreateTrainingExercise(TrainingExercise trainingExercise)
 		{
-			var result = _trainingDayExerciseModule.Create(trainingExercise);
+			var result = _trainingExerciseModule.Create(trainingExercise);
 			if (result != null && trainingExercise.TrainingExerciseSets != null)
 			{
 				TrainingExerciseSet trainingExerciseSet;
@@ -37,7 +37,7 @@ namespace BodyReportMobile.Core.Manager
 
 		public TrainingExercise UpdateTrainingExercise(TrainingExercise trainingExercise, bool manageDeleteLinkItem)
 		{
-			var result = _trainingDayExerciseModule.Update(trainingExercise);
+			var result = _trainingExerciseModule.Update(trainingExercise);
 			if (result != null && trainingExercise.TrainingExerciseSets != null)
 			{
 				if(manageDeleteLinkItem)
@@ -90,7 +90,7 @@ namespace BodyReportMobile.Core.Manager
 
 		public TrainingExercise GetTrainingExercise(TrainingExerciseKey key)
 		{
-			var trainingExercise = _trainingDayExerciseModule.Get(key);
+			var trainingExercise = _trainingExerciseModule.Get(key);
 
 			if(trainingExercise != null)
 			{
@@ -102,7 +102,7 @@ namespace BodyReportMobile.Core.Manager
 
 		public List<TrainingExercise> FindTrainingExercise(TrainingExerciseCriteria trainingExerciseCriteria)
 		{
-			var trainingExercises = _trainingDayExerciseModule.Find(trainingExerciseCriteria);
+			var trainingExercises = _trainingExerciseModule.Find(trainingExerciseCriteria);
 
 			if (trainingExercises != null)
 			{
@@ -115,17 +115,21 @@ namespace BodyReportMobile.Core.Manager
 			return trainingExercises;
 		}
 
-		public void DeleteTrainingExercise(TrainingExercise trainingExercise)
+		public void DeleteTrainingExercise(TrainingExerciseKey key)
 		{
-			_trainingDayExerciseModule.Delete(trainingExercise);
+            var trainingExercise = GetTrainingExercise(key);
+            if (trainingExercise != null)
+            {
+                _trainingExerciseModule.Delete(trainingExercise);
 
-			if (trainingExercise.TrainingExerciseSets != null)
-			{
-				foreach (var trainingExerciseSet in trainingExercise.TrainingExerciseSets)
-				{
-					_trainingExerciseSetManager.DeleteTrainingExerciseSet(trainingExerciseSet);
-				}
-			}
+                if (trainingExercise.TrainingExerciseSets != null)
+                {
+                    foreach (var trainingExerciseSet in trainingExercise.TrainingExerciseSets)
+                    {
+                        _trainingExerciseSetManager.DeleteTrainingExerciseSet(trainingExerciseSet);
+                    }
+                }
+            }
 		}
 
 		private void TransformUserUnitToMetricUnit(TUnitType userUnit, TrainingExerciseSet trainingExerciseSet)

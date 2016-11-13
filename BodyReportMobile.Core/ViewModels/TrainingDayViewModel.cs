@@ -4,7 +4,7 @@ using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Framework.Binding;
 using BodyReportMobile.Core.Message.Binding;
 using BodyReportMobile.Core.WebServices;
-using BodyReportMobile.Core.Services;
+using BodyReportMobile.Core.ServiceLayers;
 using BodyReport.Message;
 using SQLite.Net;
 using System;

@@ -5,7 +5,7 @@ using System.IO;
 using Newtonsoft.Json;
 using XLabs.Ioc;
 using SQLite.Net;
-using BodyReportMobile.Core.Services;
+using BodyReportMobile.Core.ServiceLayers;
 
 namespace BodyReportMobile.Core.Framework
 {

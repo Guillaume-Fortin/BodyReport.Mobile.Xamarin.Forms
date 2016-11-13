@@ -2,7 +2,7 @@
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Message.Binding;
 using BodyReportMobile.Core.ViewModels.Generic;
-using BodyReportMobile.Core.Services;
+using BodyReportMobile.Core.ServiceLayers;
 using BodyReport.Message;
 using SQLite.Net;
 using System;

@@ -15,7 +15,7 @@ namespace BodyReportMobile.Core.Manager
 
         public UserInfoManager(SQLiteConnection dbContext) : base(dbContext)
         {
-            _userInfoModule = new UserInfoModule(_dbContext);
+            _userInfoModule = new UserInfoModule(DbContext);
         }
 
         internal UserInfo GetUserInfo(UserInfoKey key)
@@ -27,15 +27,15 @@ namespace BodyReportMobile.Core.Manager
         {
             return _userInfoModule.Find(userInfoCriteria);
         }
+        
+        internal UserInfo UpdateUserInfo(UserInfo userInfo)
+        {
+            return _userInfoModule.Update(userInfo);
+        }
 
         internal void DeleteUserInfo(UserInfoKey key)
         {
             _userInfoModule.Delete(key);
-        }
-
-        internal UserInfo UpdateUserInfo(UserInfo userInfo)
-        {
-            return _userInfoModule.Update(userInfo);
         }
     }
 }

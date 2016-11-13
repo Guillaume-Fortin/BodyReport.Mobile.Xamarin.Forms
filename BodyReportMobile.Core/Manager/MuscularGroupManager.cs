@@ -16,7 +16,7 @@ namespace BodyReportMobile.Core.Manager
         MuscularGroupModule _module;
         public MuscularGroupManager(SQLiteConnection dbContext) : base(dbContext)
 		{
-            _module = new MuscularGroupModule(_dbContext);
+            _module = new MuscularGroupModule(DbContext);
         }
 
         public List<MuscularGroup> FindMuscularGroups(MuscularGroupCriteria muscularGroupCriteria = null)

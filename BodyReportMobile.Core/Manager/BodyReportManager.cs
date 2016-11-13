@@ -8,7 +8,7 @@ namespace BodyReportMobile.Core.Manager
 		/// <summary>
 		/// DataBase context with transaction
 		/// </summary>
-		protected SQLiteConnection _dbContext = null;
+		private SQLiteConnection _dbContext = null;
 
 		/// <summary>
 		/// Constructor
@@ -18,6 +18,14 @@ namespace BodyReportMobile.Core.Manager
 		{
 			_dbContext = dbContext;
 		}
-	}
+
+        public SQLiteConnection DbContext
+        {
+            get
+            {
+                return _dbContext;
+            }
+        }
+    }
 }
 

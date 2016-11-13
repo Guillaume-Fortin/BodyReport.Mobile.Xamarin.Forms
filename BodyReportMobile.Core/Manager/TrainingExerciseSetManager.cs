@@ -12,7 +12,7 @@ namespace BodyReportMobile.Core.Manager
 
 		public TrainingExerciseSetManager(SQLiteConnection dbContext) : base(dbContext)
 		{
-			_trainingExerciseSetModule = new TrainingExerciseSetModule(_dbContext);
+			_trainingExerciseSetModule = new TrainingExerciseSetModule(DbContext);
 		}
 
 		public TrainingExerciseSet CreateTrainingExerciseSet(TrainingExerciseSet trainingExerciseSet)
@@ -35,9 +35,9 @@ namespace BodyReportMobile.Core.Manager
 			return _trainingExerciseSetModule.Find(trainingExerciseSetCriteria);
 		}
 
-		public void DeleteTrainingExerciseSet(TrainingExerciseSet trainingExerciseSet)
+		public void DeleteTrainingExerciseSet(TrainingExerciseSetKey key)
 		{
-			_trainingExerciseSetModule.Delete(trainingExerciseSet);
+			_trainingExerciseSetModule.Delete(key);
 		}
 	}
 }

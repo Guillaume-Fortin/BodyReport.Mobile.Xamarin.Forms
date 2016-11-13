@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BodyReportMobile.Core.Manager
 {
@@ -17,7 +16,7 @@ namespace BodyReportMobile.Core.Manager
 
         public BodyExerciseManager(SQLiteConnection dbContext) : base(dbContext)
         {
-            _module = new BodyExerciseModule(_dbContext);
+            _module = new BodyExerciseModule(DbContext);
         }
 
         public BodyExercise Get(BodyExerciseKey key)

@@ -15,7 +15,7 @@ namespace BodyReportMobile.Core.Manager
         CountryModule _module;
         public CountryManager(SQLiteConnection dbContext) : base(dbContext)
 		{
-            _module = new CountryModule(_dbContext);
+            _module = new CountryModule(DbContext);
         }
 
         public List<Country> FindCountries(CountryCriteria countryCriteria = null)

@@ -12,7 +12,7 @@ namespace BodyReportMobile.Core.Manager
 
 		public TranslationManager(SQLiteConnection dbContext) : base(dbContext)
 		{
-			_module = new TranslationModule(_dbContext);
+			_module = new TranslationModule(DbContext);
 		}
 
 		internal TranslationVal GetTranslation(TranslationValKey key)

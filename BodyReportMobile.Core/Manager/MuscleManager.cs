@@ -13,7 +13,7 @@ namespace BodyReportMobile.Core.Manager
 		MuscleModule _module;
 		public MuscleManager(SQLiteConnection dbContext) : base(dbContext)
 		{
-			_module = new MuscleModule(_dbContext);
+			_module = new MuscleModule(DbContext);
 		}
 
 		public List<Muscle> Find(MuscleCriteria muscleCriteria = null)

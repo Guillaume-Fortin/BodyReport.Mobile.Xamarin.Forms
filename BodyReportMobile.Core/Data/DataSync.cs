@@ -1,6 +1,6 @@
 ﻿using BodyReport.Message;
 using BodyReportMobile.Core.Framework;
-using BodyReportMobile.Core.Services;
+using BodyReportMobile.Core.ServiceLayers;
 using BodyReportMobile.Core.WebServices;
 using SQLite.Net;
 using System;
@@ -178,7 +178,7 @@ namespace BodyReportMobile.Core.Data
                         {
                             foreach (var onlineTrainingWeek in onlineTrainingWeekList)
                             {
-                                if (TrainingWeek.IsEqualByKey(onlineTrainingWeek, localTrainingWeek))
+                                if (TrainingWeekKey.IsEqualByKey(onlineTrainingWeek, localTrainingWeek))
                                 {
                                     found = true;
                                     break;
@@ -190,8 +190,11 @@ namespace BodyReportMobile.Core.Data
                     }
                     if (deletedTrainingWeekList.Count > 0)
                     {
+                        var deletedTrainingWeekKeyList = new List<TrainingWeekKey>();
+                        foreach (var key in deletedTrainingWeekList)
+                            deletedTrainingWeekKeyList.Add(key);
                         //Delete in local database
-                        trainingWeekService.DeleteTrainingWeekList(deletedTrainingWeekList);
+                        trainingWeekService.DeleteTrainingWeekList(deletedTrainingWeekKeyList);
                         foreach (var deleteTrainingWeek in deletedTrainingWeekList)
                             localTrainingWeekList.Remove(deleteTrainingWeek);
                     }
@@ -208,7 +211,7 @@ namespace BodyReportMobile.Core.Data
                             foreach (var localTrainingWeek in localTrainingWeekList)
                             {
                                 //Same trainingWeek
-                                if (TrainingWeek.IsEqualByKey(onlineTrainingWeek, localTrainingWeek))
+                                if (TrainingWeekKey.IsEqualByKey(onlineTrainingWeek, localTrainingWeek))
                                 {
                                     if (onlineTrainingWeek.ModificationDate.ToUniversalTime() != localTrainingWeek.ModificationDate.ToUniversalTime()) //ToUniversalTime for security...
                                         synchronizeTrainingWeekList.Add(onlineTrainingWeek);

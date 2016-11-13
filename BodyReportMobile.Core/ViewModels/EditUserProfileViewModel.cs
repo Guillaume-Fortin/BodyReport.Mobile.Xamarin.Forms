@@ -3,7 +3,7 @@ using BodyReportMobile.Core.Data;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Message;
 using BodyReportMobile.Core.Message.Binding;
-using BodyReportMobile.Core.Services;
+using BodyReportMobile.Core.ServiceLayers;
 using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Core.WebServices;
 using BodyReport.Message;

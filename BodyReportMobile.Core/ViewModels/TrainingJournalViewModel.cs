@@ -13,7 +13,7 @@ using BodyReportMobile.Core.Framework.Binding;
 using BodyReportMobile.Core.WebServices;
 using BodyReportMobile.Core.Data;
 using BodyReportMobile.Core.Message.Binding;
-using BodyReportMobile.Core.Services;
+using BodyReportMobile.Core.ServiceLayers;
 using System.Globalization;
 using Acr.UserDialogs;
 

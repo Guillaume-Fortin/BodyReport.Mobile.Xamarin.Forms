@@ -7,7 +7,8 @@ using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.MvxMessages;
 using BodyReportMobile.Core.WebServices;
 using BodyReportMobile.Core.Data;
-using BodyReportMobile.Core.Services;
+using BodyReportMobile.Core.ServiceLayers;
+using System.Collections.Generic;
 
 namespace BodyReportMobile.Core.Manager
 {
@@ -50,7 +51,10 @@ namespace BodyReportMobile.Core.Manager
                     var userInfoList = userInfoService.FindUserInfos();
                     if(userInfoList != null && userInfoList.Count > 0)
                     { // delete old userInfo
-                        userInfoService.DeleteUserInfoList(userInfoList);
+                        var userInfoKeyList = new List<UserInfoKey>();
+                        foreach (var key in userInfoList)
+                            userInfoKeyList.Add(key);
+                        userInfoService.DeleteUserInfoList(userInfoKeyList);
                     }
                     userInfoService.UpdateUserInfo(userInfo);
                     UserData.Instance.UserInfo = userInfo;

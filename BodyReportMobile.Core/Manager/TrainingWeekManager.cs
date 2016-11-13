@@ -3,16 +3,21 @@ using SQLite.Net;
 using BodyReport.Message;
 using System.Collections.Generic;
 using BodyReportMobile.Core.Crud.Module;
+using BodyReportMobile.Core.ServiceLayers;
 
 namespace BodyReportMobile.Core.Manager
 {
 	public class TrainingWeekManager : BodyReportManager
     {
 		TrainingWeekModule _trainingWeekModule = null;
-		public TrainingWeekManager(SQLiteConnection dbContext) : base(dbContext)
+
+        TrainingDayService _trainingDayService = null;
+
+        public TrainingWeekManager(SQLiteConnection dbContext) : base(dbContext)
 		{
-			_trainingWeekModule = new TrainingWeekModule(_dbContext);
-		}
+			_trainingWeekModule = new TrainingWeekModule(DbContext);
+            _trainingDayService = new TrainingDayService(DbContext);
+        }
 
 		internal TrainingWeek CreateTrainingWeek(TrainingWeek trainingWeek)
 		{
@@ -21,11 +26,10 @@ namespace BodyReportMobile.Core.Manager
 
 			if (trainingWeek.TrainingDays != null)
 			{
-				var trainingDayManager = new TrainingDayManager(_dbContext);
 				trainingWeekResult.TrainingDays = new List<TrainingDay>();
 				foreach (var trainingDay in trainingWeek.TrainingDays)
 				{
-					trainingWeekResult.TrainingDays.Add(trainingDayManager.CreateTrainingDay(trainingDay));
+                    trainingWeekResult.TrainingDays.Add(_trainingDayService.CreateTrainingDay(trainingDay));
 				}
 			}
 			return trainingWeekResult;
@@ -38,19 +42,17 @@ namespace BodyReportMobile.Core.Manager
 
 			if (trainingWeekScenario!= null && trainingWeekScenario.ManageTrainingDay)
 			{
-                var trainingDayManager = new TrainingDayManager(_dbContext);
-
                 var trainingDayCriteria = new TrainingDayCriteria()
                 {
                     UserId = new StringCriteria() { Equal = trainingWeek.UserId },
                     Year = new IntegerCriteria() { Equal = trainingWeek.Year },
                     WeekOfYear = new IntegerCriteria() { Equal = trainingWeek.WeekOfYear }
                 };
-                var trainingDaysDb = trainingDayManager.FindTrainingDay(trainingDayCriteria, trainingWeekScenario.TrainingDayScenario);
+                var trainingDaysDb = _trainingDayService.FindTrainingDay(trainingDayCriteria, trainingWeekScenario.TrainingDayScenario);
                 if (trainingDaysDb != null && trainingDaysDb.Count > 0)
                 {
                     foreach (var trainingDayDb in trainingDaysDb)
-                        trainingDayManager.DeleteTrainingDay(trainingDayDb);
+                        _trainingDayService.DeleteTrainingDay(trainingDayDb);
                 }
 
                 if (trainingWeek.TrainingDays != null)
@@ -58,7 +60,7 @@ namespace BodyReportMobile.Core.Manager
                     trainingWeekResult.TrainingDays = new List<TrainingDay>();
                     foreach (var trainingDay in trainingWeek.TrainingDays)
                     {
-                        trainingWeekResult.TrainingDays.Add(trainingDayManager.UpdateTrainingDay(trainingDay, trainingWeekScenario.TrainingDayScenario));
+                        trainingWeekResult.TrainingDays.Add(_trainingDayService.UpdateTrainingDay(trainingDay, trainingWeekScenario.TrainingDayScenario));
                     }
                 }
 			}
@@ -80,14 +82,13 @@ namespace BodyReportMobile.Core.Manager
 		{
 			if (trainingWeek != null)
 			{
-				var trainingDayManager = new TrainingDayManager(_dbContext);
 				var trainingDayCriteria = new TrainingDayCriteria()
 				{
 					UserId = new StringCriteria() { Equal = trainingWeek.UserId },
 					Year = new IntegerCriteria() { Equal = trainingWeek.Year },
 					WeekOfYear = new IntegerCriteria() { Equal = trainingWeek.WeekOfYear },
 				};
-				trainingWeek.TrainingDays = trainingDayManager.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
+				trainingWeek.TrainingDays = _trainingDayService.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
 			}
 		}
 
@@ -120,10 +121,9 @@ namespace BodyReportMobile.Core.Manager
 
 				if (trainingWeek.TrainingDays != null)
 				{
-					var trainingDayManager = new TrainingDayManager(_dbContext);
 					foreach (var trainingDay in trainingWeek.TrainingDays)
 					{
-						trainingDayManager.DeleteTrainingDay(trainingDay);
+                        _trainingDayService.DeleteTrainingDay(trainingDay);
 					}
 				}
 			}
