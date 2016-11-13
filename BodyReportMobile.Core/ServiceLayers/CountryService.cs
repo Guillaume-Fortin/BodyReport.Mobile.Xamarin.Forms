@@ -7,18 +7,34 @@ namespace BodyReportMobile.Core.ServiceLayers
 {
     public class CountryService : LocalService
     {
+        private const string _cacheName = "CountriesCache";
+
         public CountryService(SQLiteConnection dbContext) : base(dbContext)
         {
         }
 
-        public List<Country> FindCountries(CountryCriteria countryCriteria = null)
-        {
-            return GetCountryManager().FindCountries(countryCriteria);
-        }
-
         public Country GetCountry(CountryKey key)
         {
-            return GetCountryManager().GetCountry(key);
+            Country country = null;
+            string cacheKey = key == null ? "CountryKey_null" : key.GetCacheKey();
+            if (key != null && !TryGetCacheData(cacheKey, out country, _cacheName))
+            {
+                country = GetCountryManager().GetCountry(key);
+                SetCacheData(_cacheName, cacheKey, country);
+            }
+            return country;
+        }
+
+        public List<Country> FindCountries(CountryCriteria criteria = null)
+        {
+            List<Country> countryList = null;
+            string cacheKey = criteria == null ? "CountryCriteria_null" : criteria.GetCacheKey();
+            if (!TryGetCacheData(cacheKey, out countryList, _cacheName))
+            {
+                countryList = GetCountryManager().FindCountries(criteria);
+                SetCacheData(_cacheName, cacheKey, countryList);
+            }
+            return countryList;
         }
 
         public Country UpdateCountry(Country country)
@@ -29,6 +45,8 @@ namespace BodyReportMobile.Core.ServiceLayers
             {
                 result = GetCountryManager().UpdateCountry(country);
                 CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
             }
             catch
             {
@@ -52,9 +70,14 @@ namespace BodyReportMobile.Core.ServiceLayers
             BeginTransaction();
             try
             {
-                foreach (var country in countries)
+                if (countries != null && countries.Count > 0)
                 {
-                    list.Add(GetCountryManager().UpdateCountry(country));
+                    foreach (var country in countries)
+                    {
+                        list.Add(GetCountryManager().UpdateCountry(country));
+                    }
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
                 CommitTransaction();
             }
@@ -78,6 +101,8 @@ namespace BodyReportMobile.Core.ServiceLayers
             {
                 GetCountryManager().DeleteCountry(country);
                 CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
             }
             catch
             {

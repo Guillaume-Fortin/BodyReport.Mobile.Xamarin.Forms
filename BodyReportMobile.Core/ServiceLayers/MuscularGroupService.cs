@@ -7,18 +7,33 @@ namespace BodyReportMobile.Core.ServiceLayers
 {
     public class MuscularGroupService : LocalService
     {
+        private const string _cacheName = "MuscularGroupsCache";
         public MuscularGroupService(SQLiteConnection dbContext) : base(dbContext)
         {
         }
-
-        public List<MuscularGroup> FindMuscularGroups(MuscularGroupCriteria muscularGroupCriteria = null)
-        {
-            return GetMuscularGroupManager().FindMuscularGroups(muscularGroupCriteria);
-        }
-
+        
         public MuscularGroup GetMuscularGroup(MuscularGroupKey key)
         {
-            return GetMuscularGroupManager().GetMuscularGroup(key);
+            MuscularGroup muscularGroup = null;
+            string cacheKey = key == null ? "MuscularGroupKey_null" : key.GetCacheKey();
+            if (key != null && !TryGetCacheData(cacheKey, out muscularGroup, _cacheName))
+            {
+                muscularGroup = GetMuscularGroupManager().GetMuscularGroup(key);
+                SetCacheData(_cacheName, cacheKey, muscularGroup);
+            }
+            return muscularGroup;
+        }
+
+        public List<MuscularGroup> FindMuscularGroups(MuscularGroupCriteria criteria = null)
+        {
+            List<MuscularGroup> muscularGroupList = null;
+            string cacheKey = criteria == null ? "MuscularGroupCriteria_null" : criteria.GetCacheKey();
+            if (!TryGetCacheData(cacheKey, out muscularGroupList, _cacheName))
+            {
+                muscularGroupList = GetMuscularGroupManager().FindMuscularGroups(criteria);
+                SetCacheData(_cacheName, cacheKey, muscularGroupList);
+            }
+            return muscularGroupList;
         }
 
         public MuscularGroup UpdateMuscularGroup(MuscularGroup muscularGroup)
@@ -29,6 +44,8 @@ namespace BodyReportMobile.Core.ServiceLayers
             {
                 result = GetMuscularGroupManager().UpdateMuscularGroup(muscularGroup);
                 CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
             }
             catch
             {
@@ -42,15 +59,20 @@ namespace BodyReportMobile.Core.ServiceLayers
             return result;
         }
 
-        public List<MuscularGroup> UpdateMuscularGroupList(List<MuscularGroup> muscularGroupList)
+        public List<MuscularGroup> UpdateMuscularGroupList(List<MuscularGroup> muscularGroups)
         {
             List<MuscularGroup> list = new List<MuscularGroup>();
             BeginTransaction();
             try
             {
-                foreach (var muscularGroup in muscularGroupList)
+                if (muscularGroups != null && muscularGroups.Count > 0)
                 {
-                    list.Add(GetMuscularGroupManager().UpdateMuscularGroup(muscularGroup));
+                    foreach (var muscularGroup in muscularGroups)
+                    {
+                        list.Add(GetMuscularGroupManager().UpdateMuscularGroup(muscularGroup));
+                    }
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
                 CommitTransaction();
             }
@@ -74,6 +96,8 @@ namespace BodyReportMobile.Core.ServiceLayers
             {
                 GetMuscularGroupManager().DeleteMuscularGroup(key);
                 CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
             }
             catch
             {

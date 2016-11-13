@@ -1,29 +1,66 @@
 ﻿using BodyReport.Message;
 using BodyReportMobile.Core.Manager;
 using SQLite.Net;
+using System;
 using System.Collections.Generic;
 
 namespace BodyReportMobile.Core.ServiceLayers
 {
     public class BodyExerciseService : LocalService
     {
+        private const string _cacheName = "BodyExercisesCache";
+
         public BodyExerciseService(SQLiteConnection dbContext) : base(dbContext)
         {
+        }
+        
+        public BodyExercise CreateBodyExercise(BodyExercise bodyExercise)
+        {
+            //invalidate cache
+            InvalidateCache(_cacheName);
+            BodyExercise result = null;
+            BeginTransaction();
+            try
+            {
+                result = GetBodyExerciseManager().CreateBodyExercise(bodyExercise);
+                CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
+            }
+            return result;
         }
 
         public BodyExercise GetBodyExercise(BodyExerciseKey key)
         {
-            return GetBodyExerciseManager().Get(key);
+            BodyExercise bodyExercise = null;
+            string cacheKey = key == null ? "BodyExerciseKey_null" : key.GetCacheKey();
+            if (key != null && !TryGetCacheData(cacheKey, out bodyExercise, _cacheName))
+            {
+                bodyExercise = GetBodyExerciseManager().GetBodyExercise(key);
+                SetCacheData(_cacheName, cacheKey, bodyExercise);
+            }
+            return bodyExercise;
         }
 
-        public List<BodyExercise> FindBodyExercises(BodyExerciseCriteria bodyExerciseCriteria = null)
+        public List<BodyExercise> FindBodyExercises(BodyExerciseCriteria criteria = null)
         {
-            return GetBodyExerciseManager().Find(bodyExerciseCriteria);
-        }
-
-        public BodyExercise CreateBodyExercise(BodyExercise bodyExercise)
-        {
-            return GetBodyExerciseManager().Create(bodyExercise);
+            List<BodyExercise> bodyExerciseList = null;
+            string cacheKey = criteria == null ? "BodyExerciseCriteria_null" : criteria.GetCacheKey();
+            if (!TryGetCacheData(cacheKey, out bodyExerciseList, _cacheName))
+            {
+                bodyExerciseList = GetBodyExerciseManager().FindBodyExercises(criteria);
+                SetCacheData(_cacheName, cacheKey, bodyExerciseList);
+            }
+            return bodyExerciseList;
         }
 
         public BodyExercise UpdateBodyExercise(BodyExercise bodyExercise)
@@ -34,6 +71,8 @@ namespace BodyReportMobile.Core.ServiceLayers
             {
                 result = GetBodyExerciseManager().Update(bodyExercise);
                 CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
             }
             catch
             {
@@ -48,15 +87,21 @@ namespace BodyReportMobile.Core.ServiceLayers
             return result;
         }
 
-        public List<BodyExercise> UpdateBodyExerciseList(List<BodyExercise> bodyExerciseList)
+        public List<BodyExercise> UpdateBodyExerciseList(List<BodyExercise> bodyExercises)
         {
-            List<BodyExercise> list = new List<BodyExercise>();
+            List<BodyExercise> results = null;
             BeginTransaction();
             try
             {
-                foreach (var bodyExercise in bodyExerciseList)
+                if (bodyExercises != null && bodyExercises.Count > 0)
                 {
-                    list.Add(GetBodyExerciseManager().Update(bodyExercise));
+                    results = new List<BodyExercise>();
+                    foreach (var bodyExercise in bodyExercises)
+                    {
+                        results.Add(GetBodyExerciseManager().Update(bodyExercise));
+                    }
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
                 CommitTransaction();
             }
@@ -70,7 +115,7 @@ namespace BodyReportMobile.Core.ServiceLayers
                 EndTransaction();
             }
 
-            return list;
+            return results;
         }
         
         public void DeleteBodyExercise(BodyExerciseKey key)
@@ -80,6 +125,8 @@ namespace BodyReportMobile.Core.ServiceLayers
             {
                 GetBodyExerciseManager().Delete(key);
                 CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
             }
             catch
             {

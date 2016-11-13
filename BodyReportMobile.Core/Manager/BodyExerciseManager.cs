@@ -19,7 +19,7 @@ namespace BodyReportMobile.Core.Manager
             _module = new BodyExerciseModule(DbContext);
         }
 
-        public BodyExercise Get(BodyExerciseKey key)
+        public BodyExercise GetBodyExercise(BodyExerciseKey key)
         {
             var bodyExercise = _module.Get(key);
             if (bodyExercise != null)
@@ -27,7 +27,7 @@ namespace BodyReportMobile.Core.Manager
             return bodyExercise;
         }
 
-        public List<BodyExercise> Find(BodyExerciseCriteria bodyExerciseCriteria = null)
+        public List<BodyExercise> FindBodyExercises(BodyExerciseCriteria bodyExerciseCriteria = null)
         {
             var bodyExerciseList = _module.Find(bodyExerciseCriteria);
             if (bodyExerciseList != null)
@@ -42,7 +42,7 @@ namespace BodyReportMobile.Core.Manager
             return bodyExerciseList;
         }
 
-        public BodyExercise Create(BodyExercise bodyExercise)
+        public BodyExercise CreateBodyExercise(BodyExercise bodyExercise)
         {
             string name = bodyExercise.Name;
             bodyExercise = _module.Create(bodyExercise);

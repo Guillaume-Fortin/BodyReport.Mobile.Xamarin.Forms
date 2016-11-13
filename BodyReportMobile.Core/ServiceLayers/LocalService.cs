@@ -1,4 +1,6 @@
-﻿using BodyReportMobile.Core.Manager;
+﻿using BodyReportMobile.Core.Framework;
+using BodyReportMobile.Core.Framework.Caching;
+using BodyReportMobile.Core.Manager;
 using SQLite.Net;
 
 namespace BodyReportMobile.Core.ServiceLayers
@@ -46,6 +48,37 @@ namespace BodyReportMobile.Core.ServiceLayers
         protected void EndTransaction()
         {
             //nothing
+        }
+
+        #endregion
+
+        #region cache
+        private string CompleteCacheKeyWithCulture(string cacheKey, string culture = null)
+        {
+            if (culture == null)
+                culture = Translation.CurrentLang.ToString();
+            return string.Format("{0}_{1}", culture, cacheKey);
+        }
+
+        public bool TryGetCacheData<T>(string cacheKey, out T data, string cacheName)
+        {
+            return MemoryCache.Instance.TryGetData<T>(CompleteCacheKeyWithCulture(cacheKey), out data, cacheName);
+        }
+
+        public void SetCacheData<T>(string cacheName, string cacheKey, T data)
+        {
+            const int minutes = 10;
+            MemoryCache.Instance.SetData<T>( CompleteCacheKeyWithCulture(cacheKey), data, minutes, cacheName);
+        }
+
+        public void InvalidateCache(string cacheName)
+        {
+            MemoryCache.Instance.InvalidateCache(cacheName);
+        }
+
+        public void InvalidateAllCache()
+        {
+            MemoryCache.Instance.InvalidateAllCache();
         }
 
         #endregion

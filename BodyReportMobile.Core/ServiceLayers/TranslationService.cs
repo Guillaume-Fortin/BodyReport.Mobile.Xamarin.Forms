@@ -7,18 +7,33 @@ namespace BodyReportMobile.Core.ServiceLayers
 {
     public class TranslationService : LocalService
     {
+        private const string _cacheName = "TranslationsCache";
         public TranslationService(SQLiteConnection dbContext) : base(dbContext)
         {
         }
 
         public TranslationVal GetTranslation(TranslationValKey key)
         {
-            return GetTranslationManager().GetTranslation(key);
+            TranslationVal translationVal = null;
+            string cacheKey = key == null ? "TranslationValKey_null" : key.GetCacheKey();
+            if (key != null && !TryGetCacheData(cacheKey, out translationVal, _cacheName))
+            {
+                translationVal = GetTranslationManager().GetTranslation(key);
+                SetCacheData(_cacheName, cacheKey, translationVal);
+            }
+            return translationVal;
         }
 
-        public List<TranslationVal> FindTranslation(TranslationValCriteria translationValCriteria = null)
+        public List<TranslationVal> FindTranslation(TranslationValCriteria criteria = null)
         {
-            return GetTranslationManager().FindTranslation(translationValCriteria);
+            List<TranslationVal> translationList = null;
+            string cacheKey = string.Format("TranslationValCriteria_null");
+            if (!TryGetCacheData(cacheKey, out translationList, _cacheName))
+            {
+                translationList = GetTranslationManager().FindTranslation(criteria);
+                SetCacheData(_cacheName, cacheKey, translationList);
+            }
+            return translationList;
         }
 
         public TranslationVal UpdateTranslation(TranslationVal translation)
@@ -29,6 +44,8 @@ namespace BodyReportMobile.Core.ServiceLayers
             {
                 result = GetTranslationManager().UpdateTranslation(translation);
                 CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
             }
             catch
             {
@@ -43,15 +60,20 @@ namespace BodyReportMobile.Core.ServiceLayers
             return result;
         }
 
-        public List<TranslationVal> UpdateTranslationList(List<TranslationVal> translationList)
+        public List<TranslationVal> UpdateTranslationList(List<TranslationVal> translations)
         {
             List<TranslationVal> result = new List<TranslationVal>();
             BeginTransaction();
             try
             {
-                foreach (var translation in translationList)
+                if (translations != null && translations.Count > 0)
                 {
-                    result.Add(GetTranslationManager().UpdateTranslation(translation));
+                    foreach (var translation in translations)
+                    {
+                        result.Add(GetTranslationManager().UpdateTranslation(translation));
+                    }
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
                 CommitTransaction();
             }

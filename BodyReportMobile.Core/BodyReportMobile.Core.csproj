@@ -87,6 +87,8 @@
     <Compile Include="Framework\AppMessenger.cs" />
     <Compile Include="Framework\AppTools.cs" />
     <Compile Include="Framework\Binding\GenericMultiGroupModel.cs" />
+    <Compile Include="Framework\Caching\CacheEntry.cs" />
+    <Compile Include="Framework\Caching\MemoryCache.cs" />
     <Compile Include="Framework\ILogger.cs" />
     <Compile Include="Framework\IMedia.cs" />
     <Compile Include="Framework\ViewModelCommand.cs" />

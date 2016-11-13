@@ -16,7 +16,7 @@ namespace BodyReportMobile.Core.Manager
 			_module = new MuscleModule(DbContext);
 		}
 
-		public List<Muscle> Find(MuscleCriteria muscleCriteria = null)
+		public List<Muscle> FindMuscles(MuscleCriteria muscleCriteria = null)
 		{
 			var muscleList = _module.Find(muscleCriteria);
             if (muscleList != null)
@@ -31,7 +31,7 @@ namespace BodyReportMobile.Core.Manager
             return muscleList;
         }
 
-		internal Muscle Get(MuscleKey key)
+		internal Muscle GetMuscle(MuscleKey key)
 		{
 			var muscle = _module.Get(key);
             if(muscle != null)
