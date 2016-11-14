@@ -1,4 +1,5 @@
-﻿using BodyReport.Message;
+﻿using Acr.UserDialogs;
+using BodyReport.Message;
 using BodyReportMobile.Core.Crud.Transformer;
 using BodyReportMobile.Core.Data;
 using BodyReportMobile.Core.Framework;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XLabs.Ioc;
@@ -19,7 +21,6 @@ namespace BodyReportMobile.Core.ViewModels
     public class EditTrainingExerciseViewModelResult
     {
         public bool Result = false;
-        public TrainingExercise TrainingExercise;
     }
 
     public class EditTrainingExerciseViewModel : BaseViewModel
@@ -27,11 +28,14 @@ namespace BodyReportMobile.Core.ViewModels
         private SQLiteConnection _dbContext;
         private UserInfo _userInfo;
         private TrainingExercise _trainingExercise;
-        private TrainingExercise _completedTrainingExercise;
+        TrainingDayService _trainingDayService;
+        private IUserDialogs _userDialog;
 
         public EditTrainingExerciseViewModel() : base()
         {
             _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
+            _trainingDayService = new TrainingDayService(_dbContext);
+            _userDialog = Resolver.Resolve<IUserDialogs>();
         }
 
         public static async Task<EditTrainingExerciseViewModelResult> ShowAsync(TrainingExercise trainingExercise, BaseViewModel parent = null)
@@ -43,7 +47,6 @@ namespace BodyReportMobile.Core.ViewModels
 
             var editTrainingExerciseViewModelResult = new EditTrainingExerciseViewModelResult();
             editTrainingExerciseViewModelResult.Result = result;
-            editTrainingExerciseViewModelResult.TrainingExercise = viewModel._completedTrainingExercise;
             return editTrainingExerciseViewModelResult;
         }
 
@@ -233,18 +236,11 @@ namespace BodyReportMobile.Core.ViewModels
                 if(BindingTrainingExerciseSetReps != null && BindingTrainingExerciseSetReps.Count > 0 &&
                    _trainingExercise != null)
                 {
-                    var trainingExercise = new TrainingExercise()
-                    {
-                        UserId = _trainingExercise.UserId,
-                        Year = _trainingExercise.Year,
-                        WeekOfYear = _trainingExercise.WeekOfYear,
-                        DayOfWeek = _trainingExercise.DayOfWeek,
-                        TrainingDayId = _trainingExercise.TrainingDayId,
-                        Id = _trainingExercise.Id,
-                        RestTime = RestTime,
-                        BodyExerciseId = _trainingExercise.BodyExerciseId,
-                        TrainingExerciseSets = new List<TrainingExerciseSet>()
-                    };
+                    var trainingExercise = _trainingExercise.Clone();
+                    if (trainingExercise.TrainingExerciseSets == null)
+                        trainingExercise.TrainingExerciseSets = new List<TrainingExerciseSet>();
+                    else
+                        trainingExercise.TrainingExerciseSets.Clear(); // empty sets for replacing
 
                     int nbSet = 0, currentRepValue = 0;
                     var tupleSetRepList = new List<Tuple<int, int, double>>();
@@ -294,13 +290,38 @@ namespace BodyReportMobile.Core.ViewModels
                         id++;
                     }
 
-                    _completedTrainingExercise = trainingExercise;
-                    CloseViewModel();
+                    //Save in server
+                    var trainingDayKey = new TrainingDayKey()
+                    {
+                        UserId = trainingExercise.UserId,
+                        Year = trainingExercise.Year,
+                        WeekOfYear = trainingExercise.WeekOfYear,
+                        DayOfWeek = trainingExercise.DayOfWeek,
+                        TrainingDayId = trainingExercise.TrainingDayId
+                    };
+                    var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
+                    var trainingDay = await TrainingDayWebService.GetTrainingDayAsync(trainingDayKey, trainingDayScenario);
+
+                    //modify datas
+                    var trainingExerciseTmp = trainingDay.TrainingExercises.Where(t => TrainingExerciseKey.IsEqualByKey(t, trainingExercise)).FirstOrDefault();
+                    var indexOf = trainingDay.TrainingExercises.IndexOf(trainingExerciseTmp);
+                    if (indexOf != -1)
+                    {
+                        //Replace exercise and sets
+                        trainingDay.TrainingExercises[indexOf] = trainingExercise;
+                        //update to server
+                        trainingDay = await TrainingDayWebService.UpdateTrainingDayAsync(trainingDay, trainingDayScenario);
+                        //Save modified data in local database
+                        _trainingDayService.UpdateTrainingDay(trainingDay, trainingDayScenario);
+
+                        CloseViewModel();
+                    }
                 }
             }
             catch (Exception except)
             {
                 ILogger.Instance.Error("Unable to validate training rep/set", except);
+                await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
         }
 

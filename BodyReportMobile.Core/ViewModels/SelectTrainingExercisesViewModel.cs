@@ -35,6 +35,10 @@ namespace BodyReportMobile.Core.ViewModels
 
         private object _locker = new object();
         private CancellationTokenSource _cachingImageCancellationTokenSource = null;
+        
+        public delegate Task<bool> ValidateInputDataDelegate(TrainingDayKey trainingDayKey, List<BodyExercise> bodyExerciseList);
+        private ValidateInputDataDelegate _onValidateInputData = null;
+        private TrainingDayKey _trainingDayKey = null;
 
         public SelectTrainingExercisesViewModel() : base()
         {
@@ -70,15 +74,18 @@ namespace BodyReportMobile.Core.ViewModels
             { }
         }
 
-        public static async Task<SelectTrainingExercisesViewModelResut> ShowAsync(BaseViewModel parent = null)
+        public static async Task<SelectTrainingExercisesViewModelResut> ShowAsync(TrainingDayKey trainingDayKey, BaseViewModel parent = null, ValidateInputDataDelegate onValidateInputData = null)
         {
             var selectTrainingExercisesViewModelResut = new SelectTrainingExercisesViewModelResut();
             var viewModel = new SelectTrainingExercisesViewModel();
-            if(await ShowModalViewModelAsync(viewModel, parent))
+            viewModel._onValidateInputData = onValidateInputData;
+            viewModel._trainingDayKey = trainingDayKey;
+            if (await ShowModalViewModelAsync(viewModel, parent))
             {
                 selectTrainingExercisesViewModelResut.Result = true;
                 selectTrainingExercisesViewModelResut.BodyExerciseList = viewModel.SelectedBodyExerciseList;
             }
+            viewModel._onValidateInputData = null;
 
             return selectTrainingExercisesViewModelResut;
         }
@@ -309,7 +316,10 @@ namespace BodyReportMobile.Core.ViewModels
                     {
                         SelectedBodyExerciseList.Clear();
                         SelectedBodyExerciseList.AddRange(bodyExerciseSelectedList);
-                        CloseViewModel();
+                        if(_onValidateInputData != null && await _onValidateInputData(_trainingDayKey, SelectedBodyExerciseList))
+                            CloseViewModel(); //Validate data
+                        else
+                            CloseViewModel();
                     }
                 }
             }

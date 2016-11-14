@@ -386,41 +386,48 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 int indexOfTrainingDay = _trainingDays.IndexOf(trainingDay);
                 if (indexOfTrainingDay != -1)
-                {   
-                    var selectTrainingExercisesViewModelResut = await SelectTrainingExercisesViewModel.ShowAsync(this);
-                    if (selectTrainingExercisesViewModelResut.Result && selectTrainingExercisesViewModelResut.BodyExerciseList != null)
-                    {
-                        if (trainingDay.TrainingExercises == null)
-                            trainingDay.TrainingExercises = new List<TrainingExercise>();
-
-                        int nextIdTrainingExercise = 1;
-                        if (trainingDay.TrainingExercises.Count > 0)
-                            nextIdTrainingExercise = trainingDay.TrainingExercises.Max(te => te.Id) + 1;
-                        foreach (var bodyExercise in selectTrainingExercisesViewModelResut.BodyExerciseList)
+                {
+                    var selectTrainingExercisesViewModelResut = await SelectTrainingExercisesViewModel.ShowAsync(trainingDay, this, async (trainingDayKey, selectedBodyExerciseList) => {
+                        // Validate by upload data on server
+                        if (trainingDayKey != null && selectedBodyExerciseList != null)
                         {
-                            var trainingExercise = new TrainingExercise()
+                            var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
+                            var modifiedTrainingDay = await TrainingDayWebService.GetTrainingDayAsync(trainingDayKey, trainingDayScenario);
+
+                            //AddExerciseActionAsync new exercises
+                            int nextIdTrainingExercise = 1;
+                            if (modifiedTrainingDay.TrainingExercises.Count > 0)
+                                nextIdTrainingExercise = modifiedTrainingDay.TrainingExercises.Max(te => te.Id) + 1;
+                            foreach (var bodyExercise in selectedBodyExerciseList)
                             {
-                                Year = trainingDay.Year,
-                                WeekOfYear = trainingDay.WeekOfYear,
-                                DayOfWeek = trainingDay.DayOfWeek,
-                                UserId = trainingDay.UserId,
-                                TrainingDayId = trainingDay.TrainingDayId,
-                                BodyExerciseId = bodyExercise.Id,
-                                Id = nextIdTrainingExercise
-                            };
-                            trainingDay.TrainingExercises.Add(trainingExercise);
-                            nextIdTrainingExercise++;
+                                var trainingExercise = new TrainingExercise()
+                                {
+                                    Year = modifiedTrainingDay.Year,
+                                    WeekOfYear = modifiedTrainingDay.WeekOfYear,
+                                    DayOfWeek = modifiedTrainingDay.DayOfWeek,
+                                    UserId = modifiedTrainingDay.UserId,
+                                    TrainingDayId = modifiedTrainingDay.TrainingDayId,
+                                    BodyExerciseId = bodyExercise.Id,
+                                    Id = nextIdTrainingExercise
+                                };
+                                modifiedTrainingDay.TrainingExercises.Add(trainingExercise);
+                                nextIdTrainingExercise++;
+                            }
+                            //synchronise to server
+                            modifiedTrainingDay = await TrainingDayWebService.UpdateTrainingDayAsync(modifiedTrainingDay, trainingDayScenario);
+                            //local update
+                            _trainingDayService.UpdateTrainingDay(modifiedTrainingDay, trainingDayScenario);
+                            return true;
                         }
-                        //synchronise with webservice
+                        return false;
+                    });
+                    if (selectTrainingExercisesViewModelResut.Result)
+                    {
+                        //reload local data
                         var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
-                        trainingDay = await TrainingDayWebService.UpdateTrainingDayAsync(trainingDay, trainingDayScenario);
-                        
-                        //local update
-                        _trainingDayService.UpdateTrainingDay(trainingDay, trainingDayScenario);
-
-                        //Update trainingDay in list
+                        trainingDay = _trainingDayService.GetTrainingDay(trainingDay, trainingDayScenario);
+                        //Change modified trainingday in list of trainingdays
                         _trainingDays[indexOfTrainingDay] = trainingDay;
-
                         //Binding trainingDay for refresh view
                         CreateOrReplaceBindingTrainingDay(trainingDay);
                     }
@@ -442,10 +449,8 @@ namespace BodyReportMobile.Core.ViewModels
             {
                 var trainingExercise = bindingTrainingExercise.TrainingExercise;
                 var editTrainingExerciseViewModelResult = await EditTrainingExerciseViewModel.ShowAsync(trainingExercise, this);
-                if (editTrainingExerciseViewModelResult != null && editTrainingExerciseViewModelResult.Result &&
-                    editTrainingExerciseViewModelResult.TrainingExercise != null)
+                if (editTrainingExerciseViewModelResult != null && editTrainingExerciseViewModelResult.Result)
                 {
-                    trainingExercise = editTrainingExerciseViewModelResult.TrainingExercise;
                     var trainingDayKey = new TrainingDayKey()
                     {
                         UserId = trainingExercise.UserId,
@@ -458,23 +463,13 @@ namespace BodyReportMobile.Core.ViewModels
                     if (trainingDay != null)
                     {
                         var indexOfTrainingDay = _trainingDays.IndexOf(trainingDay);
-                        var trainingExerciseTmp = trainingDay.TrainingExercises.Where(t => TrainingExerciseKey.IsEqualByKey(t, trainingExercise)).FirstOrDefault();
-                        var indexOf = trainingDay.TrainingExercises.IndexOf(trainingExerciseTmp);
-                        if (indexOf != -1)
-                        {
-                            //Replace exercise and sets
-                            trainingDay.TrainingExercises[indexOf] = trainingExercise;
-
-                            //Save in server
-                            var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
-                            trainingDay = await TrainingDayWebService.UpdateTrainingDayAsync(trainingDay, trainingDayScenario);
-                            //Save in local database
-                            _trainingDayService.UpdateTrainingDay(trainingDay, trainingDayScenario);
-                            //Update trainingDay in list
-                            _trainingDays[indexOfTrainingDay] = trainingDay;
-                            //Update UI
-                            CreateOrReplaceBindingTrainingDay(trainingDay);
-                        }
+                        //Reload local data
+                        var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
+                        trainingDay = _trainingDayService.GetTrainingDay(trainingDayKey, trainingDayScenario);
+                        //Update trainingDay in list
+                        _trainingDays[indexOfTrainingDay] = trainingDay;
+                        //Update UI
+                        CreateOrReplaceBindingTrainingDay(trainingDay);
                     }
                 }
             }
