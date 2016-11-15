@@ -133,13 +133,13 @@ namespace BodyReportMobile.Core.Framework
                 if (string.IsNullOrWhiteSpace(_userName) || string.IsNullOrWhiteSpace(_password))
                 {
                     AppMessenger.AppInstance.Send(new MvxMessageLoginEntry());
-                    throw new Exception("Can't connect to server");
+                    throw new Exception(Translation.Get(TRS.UNABLE_TO_CONNECT_TO_SERVER_P_PLEASE_RETRY_P));
                 }
                 else
                     _connected = await ConnectUserAsync();
             }
             if (!_connected)
-                throw new Exception("Can't connect to server");
+                throw new Exception(Translation.Get(TRS.UNABLE_TO_CONNECT_TO_SERVER_P_PLEASE_RETRY_P));
         }
 
         public async Task<T> GetAsync<T>(string relativeUrl, Dictionary<string, string> datas = null)
@@ -200,13 +200,13 @@ namespace BodyReportMobile.Core.Framework
             }
             catch (TaskCanceledException timeoutException)
             {
-                throw new HttpException("Timeout", timeoutException);
+                throw new HttpException(Translation.Get(TRS.TIMEOUT), timeoutException);
             }
             catch (Exception exception)
             {
                 if (exception is HttpException || exception is WebApiException)
                     throw exception;
-                throw new HttpException("Can't connect to server", exception);
+                throw new HttpException(Translation.Get(TRS.UNABLE_TO_CONNECT_TO_SERVER_P_PLEASE_RETRY_P), exception);
             }
 
             return result;
@@ -262,13 +262,13 @@ namespace BodyReportMobile.Core.Framework
             }
             catch (TaskCanceledException timeoutException)
             {
-                throw new HttpException("Timeout", timeoutException);
+                throw new HttpException(Translation.Get(TRS.TIMEOUT), timeoutException);
             }
             catch (Exception exception)
             {
                 if (exception is HttpException || exception is WebApiException)
                     throw exception;
-                throw new HttpException("Can't connect to server", exception);
+                throw new HttpException(Translation.Get(TRS.UNABLE_TO_CONNECT_TO_SERVER_P_PLEASE_RETRY_P), exception);
             }
 
             return result;
@@ -332,13 +332,13 @@ namespace BodyReportMobile.Core.Framework
             }
             catch (TaskCanceledException timeoutException)
             {
-                throw new HttpException("Timeout", timeoutException);
+                throw new HttpException(Translation.Get(TRS.TIMEOUT), timeoutException);
             }
             catch (Exception exception)
             {
                 if (exception is HttpException || exception is WebApiException)
                     throw exception;
-                throw new HttpException("Can't connect to server", exception);
+                throw new HttpException(Translation.Get(TRS.UNABLE_TO_CONNECT_TO_SERVER_P_PLEASE_RETRY_P), exception);
             }
             return null;
         }
