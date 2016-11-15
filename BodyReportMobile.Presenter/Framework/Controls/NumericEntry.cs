@@ -9,6 +9,9 @@ namespace BodyReportMobile.Presenter.Framework.Controls
 	{
         public static readonly BindableProperty MinValueProperty = BindableProperty.Create ("MinValue", typeof(double), typeof(NumericEntry), double.MinValue);
 
+        private string _oldText = null;
+        private bool _focused = false;
+
 		public double MinValue {
 			get { return (double)GetValue (MinValueProperty); }
 			set { SetValue (MinValueProperty, value); }
@@ -35,27 +38,60 @@ namespace BodyReportMobile.Presenter.Framework.Controls
             this.SetBinding(Entry.TextProperty, new Binding(path: "Text", source: this));
 
             Completed += NumericEntry_Completed;
+            Focused += NumericEntry_Focused;
             Unfocused += NumericEntry_Unfocused;
+        }
+
+        private void NumericEntry_Focused(object sender, FocusEventArgs e)
+        {
+            if (sender == this)
+            {
+                if(!_focused)
+                    _focused = true;
+                _oldText = this.Text;
+            }       
         }
 
         private void NumericEntry_Unfocused(object sender, FocusEventArgs e)
         {
-            CheckValue();
+            if(sender == this && _focused)
+            {
+                _focused = false;
+                CheckValue();
+            }   
         }
 
         void NumericEntry_Completed(object sender, EventArgs e)
         {
-            CheckValue();
+            if (sender == this)
+                CheckValue();
         }
 
         private void CheckValue()
         {
-            double newValue;
-            if (IsInteger)
-                this.Text = ParseIntegerValue().ToString();
-            else if (ParseDoubleValue(this.Text, out newValue))
+            if (_oldText != this.Text)
             {
-                this.Text = newValue.ToString(CultureInfo.InvariantCulture);
+                string newText;
+                double newValue;
+                if (IsInteger)
+                {
+                    newText = ParseIntegerValue().ToString();
+                    if (newText != this.Text)
+                    {
+                        this.Text = "";
+                        this.Text = newText;
+                    }
+                }
+                else if (ParseDoubleValue(this.Text, out newValue))
+                {
+                    newText = newValue.ToString(CultureInfo.InvariantCulture);
+                    if (newText != this.Text)
+                    {
+                        this.Text = "";
+                        this.Text = newText;
+                    }
+                }
+                _oldText = this.Text;
             }
 		}
 
