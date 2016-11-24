@@ -11,6 +11,7 @@ namespace BodyReportMobile.Presenter.Pages
 {
 	public class BaseContentPage : ContentPage
 	{
+		private bool _closingPage = false;
         private bool _firstViewAppear = true;
         protected BaseViewModel _viewModel = null;
 
@@ -57,12 +58,26 @@ namespace BodyReportMobile.Presenter.Pages
 
         private async Task AllowClosingPageAsync(bool backPressed)
         {
-            var closingTask = new TaskCompletionSource<bool>();
-            AppMessenger.AppInstance.Send(new MvxMessageViewModelEvent(_viewModel.ViewModelGuid) { Closing = true, ForceClose = false, BackPressed = backPressed, ClosingTask = closingTask });
-            if (await closingTask.Task && closingTask.Task.Result)
-            {
-                await CloseViewAsync(backPressed);
-            }
+			if (_closingPage)
+				return;
+			
+			_closingPage = true;
+			try
+			{
+				var closingTask = new TaskCompletionSource<bool>();
+				AppMessenger.AppInstance.Send(new MvxMessageViewModelEvent(_viewModel.ViewModelGuid) { Closing = true, ForceClose = false, BackPressed = backPressed, ClosingTask = closingTask });
+				if (await closingTask.Task && closingTask.Task.Result)
+				{
+					await CloseViewAsync(backPressed);
+				}
+			}
+			catch
+			{
+			}
+			finally
+			{
+				_closingPage = false;
+			}
         }
 
         /// <summary>
@@ -76,8 +91,8 @@ namespace BodyReportMobile.Presenter.Pages
 
             if (Device.OS == TargetPlatform.Android && this.Navigation.NavigationStack.Count <= 1)
                 Resolver.Resolve<IAndroidAPI>().CloseApp();
-
-            var t = AllowClosingPageAsync(true); // var for supress warning
+			
+			var t = AllowClosingPageAsync(true); // var for supress warning
 
             // If you want to stop the back button
             return true;
