@@ -11,7 +11,7 @@ namespace BodyReportMobile.Presenter.Pages
 {
 	public class BaseContentPage : ContentPage
 	{
-		private bool _closingPage = false;
+		private static bool _closingPage = false;
         private bool _firstViewAppear = true;
         protected BaseViewModel _viewModel = null;
 
