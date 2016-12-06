@@ -242,6 +242,7 @@ namespace BodyReportMobile.Core.ViewModels
                     else
                         trainingExercise.TrainingExerciseSets.Clear(); // empty sets for replacing
 
+                    trainingExercise.RestTime = RestTime; // don't forget restime...
                     int nbSet = 0, currentRepValue = 0;
                     var tupleSetRepList = new List<Tuple<int, int, double>>();
                     int repValue;
