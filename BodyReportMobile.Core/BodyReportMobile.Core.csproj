@@ -74,6 +74,9 @@
     <Compile Include="..\..\BodyReport\src\BodyReport.Message\Web\RegisterAccount.cs">
       <Link>Message\Web\RegisterAccount.cs</Link>
     </Compile>
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\Web\TrainingDayReport.cs">
+      <Link>Message\Web\TrainingDayReport.cs</Link>
+    </Compile>
     <Compile Include="..\..\BodyReport\src\BodyReport.Message\Web\WebApiException.cs">
       <Link>Message\Web\WebApiException.cs</Link>
     </Compile>
@@ -225,6 +228,7 @@
     <Compile Include="WebServices\CountryWebService.cs" />
     <Compile Include="WebServices\MuscleWebService.cs" />
     <Compile Include="WebServices\MuscularGroupWebService.cs" />
+    <Compile Include="WebServices\ReportWebService.cs" />
     <Compile Include="WebServices\TrainingDayWebService.cs" />
     <Compile Include="WebServices\TrainingExerciseWebService.cs" />
     <Compile Include="WebServices\TranslationWebService.cs" />

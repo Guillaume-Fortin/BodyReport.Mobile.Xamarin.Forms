@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BodyReportMobile.Core.Framework
 {
@@ -16,6 +17,7 @@ namespace BodyReportMobile.Core.Framework
 		string[] ReadAllLinesFile(string filePath, Encoding encoding);
 		string ReadAllTextFile(string filePath, Encoding encoding);
         void WriteAllTextFile(string filePath, string contents, Encoding encoding);
+        Task<bool> WriteBinaryFileAsync(string filePath, MemoryStream memoryStream);
         bool DeleteFile(string filePath);
         bool DirectoryExist(string path);
         bool CreateDirectory(string path);

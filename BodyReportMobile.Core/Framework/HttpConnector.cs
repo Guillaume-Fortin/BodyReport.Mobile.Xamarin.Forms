@@ -227,10 +227,25 @@ namespace BodyReportMobile.Core.Framework
                 {
                     if (httpResponse.StatusCode == HttpStatusCode.OK)
                     {
-                        var jsonStringResult = httpResponse.Content.ReadAsStringAsync().Result;
-                        if (!string.IsNullOrEmpty(jsonStringResult))
+                        if (httpResponse.Content.Headers != null && httpResponse.Content.Headers.ContentType != null &&
+                            httpResponse.Content.Headers.ContentType.MediaType == "application/pdf" &&
+                            typeof(TResultData) == typeof(MemoryStream))
                         {
-                            result = JsonConvert.DeserializeObject<TResultData>(jsonStringResult);
+                            result = (TResultData)Activator.CreateInstance(typeof(TResultData));
+                            var memoryStream = result as MemoryStream;
+                            using (Stream streamToReadFrom = await httpResponse.Content.ReadAsStreamAsync())
+                            {
+                                await streamToReadFrom.CopyToAsync(memoryStream);
+                                httpResponse.Content = null;
+                            }
+                        }
+                        else
+                        {
+                            var jsonStringResult = httpResponse.Content.ReadAsStringAsync().Result;
+                            if (!string.IsNullOrEmpty(jsonStringResult))
+                            {
+                                result = JsonConvert.DeserializeObject<TResultData>(jsonStringResult);
+                            }
                         }
                     }
                     else if (httpResponse.StatusCode == HttpStatusCode.NoContent)

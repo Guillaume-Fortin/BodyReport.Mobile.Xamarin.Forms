@@ -17,6 +17,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XLabs.Ioc;
+using BodyReport.Message.Web;
+using Xamarin.Forms;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -63,6 +65,7 @@ namespace BodyReportMobile.Core.ViewModels
             _trainingDayService = new TrainingDayService(_dbContext);
             _userDialog = Resolver.Resolve<IUserDialogs>();
 			CreateTrainingLabel = Translation.Get(TRS.CREATE); //necessary for ios Toolbaritem binding failed
+            PrintLabel = Translation.Get(TRS.PRINT); //necessary for ios Toolbaritem binding failed
         }
 
         protected override void Closed(bool backPressed)
@@ -299,6 +302,48 @@ namespace BodyReportMobile.Core.ViewModels
                 List<BindingTrainingExercise> bindingList = new List<BindingTrainingExercise>();
                 bindingList.AddRange(newGroupedTrainingExercises);
                 Task t = CachingImagesAsync(bindingList);
+            }
+        }
+
+        private async Task PrintAsync()
+        {
+            try
+            {
+                if (_trainingDays == null)
+                {
+                    await _userDialog.AlertAsync(Translation.Get(TRS.IMPOSSIBLE_ACTION), Translation.Get(TRS.PRINT), Translation.Get(TRS.OK));
+                }
+                else
+                {
+                    bool withImages = await _userDialog.ConfirmAsync(Translation.Get(TRS.PRINT_WITH_IMAGES) + " ?", Translation.Get(TRS.PRINT), Translation.Get(TRS.YES), Translation.Get(TRS.NO));
+                    var trainingDayReport = new TrainingDayReport()
+                    {
+                        UserId = this.UserId,
+                        Year = this.Year,
+                        WeekOfYear = this.WeekOfYear,
+                        DayOfWeek = this.DayOfWeek,
+                        DisplayImages = withImages,
+                        TrainingDayId = null
+                    };
+                    var memoryStream = await ReportWebService.TrainingDayReportAsync(trainingDayReport);
+                    if(memoryStream != null)
+                    {
+                        var pdfName = Guid.NewGuid().ToString() + ".pdf";
+                        var fileManager = Resolver.Resolve<IFileManager>();
+                        string pdfPath = Path.Combine(AppTools.TempDirectory, pdfName);
+
+                        bool writeSuccess = await fileManager.WriteBinaryFileAsync(pdfPath, memoryStream);
+                        if(writeSuccess)
+                        {
+                            if (Device.OS == TargetPlatform.Android)
+                                Resolver.Resolve<IAndroidAPI>().OpenPdf(pdfPath);
+                        }
+                    }
+                }
+            }
+            catch (Exception except)
+            {
+                ILogger.Instance.Error("Unable to print trainingDay", except);
             }
         }
 
@@ -611,6 +656,17 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
+        private string _printLabel;
+        public string PrintLabel
+        {
+            get { return _printLabel; }
+            set
+            {
+                _printLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
         private string _editTrainingDayLabel;
         public string EditTrainingDayLabel
         {
@@ -680,6 +736,22 @@ namespace BodyReportMobile.Core.ViewModels
         #endregion
 
         #region Command
+
+        private ICommand _printCommand = null;
+        public ICommand PrintCommand
+        {
+            get
+            {
+                if (_printCommand == null)
+                {
+                    _printCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await PrintAsync();
+                    });
+                }
+                return _printCommand;
+            }
+        }
 
         private ICommand _createTrainingDayCommand = null;
         public ICommand CreateTrainingDayCommand

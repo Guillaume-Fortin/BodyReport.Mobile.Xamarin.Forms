@@ -7,6 +7,7 @@ using System.Text;
 using System.Linq;
 using Android.App;
 using BodyReportMobile.Core.Framework;
+using System.Threading.Tasks;
 
 namespace BodyReport.Droid
 {
@@ -65,6 +66,29 @@ namespace BodyReport.Droid
             if (File.Exists(filePath))
                 File.Delete(filePath);
             File.WriteAllText(filePath, contents, encoding);
+        }
+
+        public async Task<bool> WriteBinaryFileAsync(string filePath, MemoryStream memoryStream)
+        {
+            bool result = false;
+            try
+            {
+                if (memoryStream == null || memoryStream.Length == 0)
+                    return false;
+                if (memoryStream.Position != 0)
+                    memoryStream.Position = 0;
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
+                using (var fs = File.OpenWrite(filePath))
+                {
+                    await memoryStream.CopyToAsync(fs);
+                }
+                return true;
+            }
+            catch(Exception except)
+            {
+            }
+            return result;
         }
 
         public bool DeleteFile(string filePath)

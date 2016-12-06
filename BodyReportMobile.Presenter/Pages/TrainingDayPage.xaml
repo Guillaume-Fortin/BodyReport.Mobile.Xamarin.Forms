@@ -16,6 +16,7 @@
   
   <ContentPage.ToolbarItems>
     <ToolbarItem Name="CreateTrainingDayToolbarItem" Text="{Binding BindingContext.CreateTrainingLabel, Source={x:Reference trainingDayPage}}" Command="{Binding CreateTrainingDayCommand}" Order="Primary" Priority="0" />
+    <ToolbarItem Name="PrintTrainingDayToolbarItem" Text="{Binding BindingContext.PrintLabel, Source={x:Reference trainingDayPage}}" Command="{Binding PrintCommand}" Order="Secondary" Priority="0" />
     <!--ToolbarItem Name="TrainingModeToolbarItem" Text="{Binding TrainingModeLabel}" Command="{Binding TrainingModeCommand}" Order="Secondary" Priority="0" /-->
   </ContentPage.ToolbarItems>
   
