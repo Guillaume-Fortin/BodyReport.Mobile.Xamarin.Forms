@@ -394,6 +394,11 @@ namespace BodyReportMobile.Core.ViewModels
                             var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
                             var modifiedTrainingDay = await TrainingDayWebService.GetTrainingDayAsync(trainingDayKey, trainingDayScenario);
 
+                            if (modifiedTrainingDay.TrainingExercises == null)
+                            { // New training exercises
+                                modifiedTrainingDay.TrainingExercises = new List<TrainingExercise>();
+                            }
+
                             //AddExerciseActionAsync new exercises
                             int nextIdTrainingExercise = 1;
                             if (modifiedTrainingDay.TrainingExercises.Count > 0)
