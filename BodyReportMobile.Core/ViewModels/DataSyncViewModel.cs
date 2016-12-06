@@ -45,7 +45,7 @@ namespace BodyReportMobile.Core.ViewModels
                 InitTranslation(); //Reload for language
 
                 SynchronizationProgress = 0;
-                await SynchronizeData();
+                await SynchronizeDataAsync();
             }
             catch (Exception except)
             {
@@ -63,19 +63,20 @@ namespace BodyReportMobile.Core.ViewModels
             return await ShowModalViewModelAsync(viewModel, parent, false);
         }
 
-        private async Task SynchronizeData()
+        private async Task SynchronizeDataAsync()
         {
             try
             {
                 ActionIsInProgress = true;
                 
                 var baseUrl = "http://163.172.13.105:5000/"; // prefer use ip of www.bodyreport.org
+                baseUrl = "http://192.168.1.27:5000/";
                 if (HttpConnector.Instance.BaseUrl != baseUrl)
                     HttpConnector.Instance.BaseUrl = baseUrl;
 
                 await ManageUserConnectionAsync();
 
-                await SynchronizeWebData();
+                await SynchronizeWebDataAsync();
             }
             catch (Exception except)
             {
@@ -116,7 +117,7 @@ namespace BodyReportMobile.Core.ViewModels
 
         
 
-        private async Task SynchronizeWebData()
+        private async Task SynchronizeWebDataAsync()
         {
             try
             {
