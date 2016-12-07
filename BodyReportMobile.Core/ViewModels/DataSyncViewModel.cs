@@ -70,7 +70,6 @@ namespace BodyReportMobile.Core.ViewModels
                 ActionIsInProgress = true;
                 
                 var baseUrl = "http://163.172.13.105:5000/"; // prefer use ip of www.bodyreport.org
-                baseUrl = "http://192.168.1.27:5000/";
                 if (HttpConnector.Instance.BaseUrl != baseUrl)
                     HttpConnector.Instance.BaseUrl = baseUrl;
 
