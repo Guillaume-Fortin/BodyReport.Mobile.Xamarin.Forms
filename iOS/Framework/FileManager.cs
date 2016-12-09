@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using BodyReportMobile.Core.Framework;
 
 namespace BodyReport.iOS.Framework
@@ -63,6 +64,29 @@ namespace BodyReport.iOS.Framework
                 File.Delete(filePath);
             File.WriteAllText(filePath, contents, encoding);
         }
+
+		public async Task<bool> WriteBinaryFileAsync(string filePath, MemoryStream memoryStream)
+		{
+			bool result = false;
+			try
+			{
+				if (memoryStream == null || memoryStream.Length == 0)
+					return false;
+				if (memoryStream.Position != 0)
+					memoryStream.Position = 0;
+				if (File.Exists(filePath))
+					File.Delete(filePath);
+				using (var fs = File.OpenWrite(filePath))
+				{
+					await memoryStream.CopyToAsync(fs);
+				}
+				return true;
+			}
+			catch (Exception except)
+			{
+			}
+			return result;
+		}
 
         public bool DeleteFile(string filePath)
         {
