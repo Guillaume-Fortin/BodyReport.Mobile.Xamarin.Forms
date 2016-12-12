@@ -11,7 +11,7 @@ namespace BodyReportMobile.Presenter.Pages
 {
 	public class BaseContentPage : ContentPage
 	{
-		private static bool _closingPage = false;
+		private bool _closingPage = false;
         private bool _firstViewAppear = true;
         protected BaseViewModel _viewModel = null;
 
@@ -69,6 +69,7 @@ namespace BodyReportMobile.Presenter.Pages
 				if (await closingTask.Task && closingTask.Task.Result)
 				{
 					await CloseViewAsync(backPressed);
+					await Task.Delay (50); // Async closing security
 				}
 			}
 			catch
