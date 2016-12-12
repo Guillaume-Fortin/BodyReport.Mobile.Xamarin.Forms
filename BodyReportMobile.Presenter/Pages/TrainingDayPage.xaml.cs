@@ -16,6 +16,15 @@ namespace BodyReportMobile.Presenter.Pages
         public TrainingDayPage(TrainingDayViewModel viewModel) : base(viewModel)
         {
             InitializeComponent();
+			if (this.ToolbarItems != null && Device.OS == TargetPlatform.iOS)
+			{
+				for (int i = 0; i < ToolbarItems.Count; i++) {
+					if (ToolbarItems[i].Text == viewModel.PrintLabel) {
+						this.ToolbarItems.Remove (ToolbarItems[i]);
+						break;
+					}
+				}
+			}
         }
 
         private void ItemTapped(object sender, ItemTappedEventArgs e)
