@@ -25,5 +25,6 @@ namespace BodyReportMobile.Core.Framework
         }
 
         public abstract void CompressImageAsPng(string imagePath, string compressedImagePath, int? maxSize);
+		public abstract bool PrintDocumentFromWebView (object webView);
     }
 }

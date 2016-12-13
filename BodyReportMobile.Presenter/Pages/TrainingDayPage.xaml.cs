@@ -16,7 +16,7 @@ namespace BodyReportMobile.Presenter.Pages
         public TrainingDayPage(TrainingDayViewModel viewModel) : base(viewModel)
         {
             InitializeComponent();
-			if (this.ToolbarItems != null && Device.OS == TargetPlatform.iOS)
+			/*if (this.ToolbarItems != null && Device.OS == TargetPlatform.iOS)
 			{
 				for (int i = 0; i < ToolbarItems.Count; i++) {
 					if (ToolbarItems[i].Text == viewModel.PrintLabel) {
@@ -24,7 +24,7 @@ namespace BodyReportMobile.Presenter.Pages
 						break;
 					}
 				}
-			}
+			}*/
         }
 
         private void ItemTapped(object sender, ItemTappedEventArgs e)

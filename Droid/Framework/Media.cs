@@ -13,6 +13,9 @@ using Android.Graphics;
 using static Android.Graphics.Bitmap;
 using System.IO;
 using BodyReportMobile.Core.Framework;
+using BodyReportMobile.Presenter.Framework.Controls;
+using Android.Print;
+using Xamarin.Forms;
 
 namespace BodyReport.Droid.Framework
 {
@@ -98,5 +101,20 @@ namespace BodyReport.Droid.Framework
                 }
             }
         }
+
+		public override bool PrintDocumentFromWebView (object webView)
+		{
+			try {
+				PrintManager printManager = (PrintManager)Forms.Context.GetSystemService (Context.PrintService);
+
+				Android.Webkit.WebView platformWebView = (Android.Webkit.WebView)(webView as CustomWebView).PlatformControl;
+
+				printManager.Print ("BodyReportJob", platformWebView.CreatePrintDocumentAdapter ("BodyReportJob"), null);
+
+				return true;
+			} catch (Exception) {
+				return false;
+			}
+		}
     }
 }

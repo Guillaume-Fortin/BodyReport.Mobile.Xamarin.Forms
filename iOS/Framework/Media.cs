@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UIKit;
+using BodyReportMobile.Presenter.Framework.Controls;
+using Xamarin.Forms;
 
 namespace BodyReport.iOS.Framework
 {
@@ -50,5 +52,36 @@ namespace BodyReport.iOS.Framework
 			convertedImageData = convertedImage.AsPNG();
 			convertedImageData.Save(compressedImagePath, true);
         }
+
+		public override bool PrintDocumentFromWebView (object webView)
+		{
+			try {
+				UIWebView platformWebView = (UIWebView)(webView as CustomWebView).PlatformControl;
+
+				UIPrintInteractionController printer = UIPrintInteractionController.SharedPrintController;
+
+				printer.ShowsPageRange = true;
+
+				printer.PrintInfo = UIPrintInfo.PrintInfo;
+				printer.PrintInfo.OutputType = UIPrintInfoOutputType.General;
+				printer.PrintInfo.JobName = "BodyReportJob";
+
+				printer.PrintPageRenderer = new UIPrintPageRenderer () {
+					HeaderHeight = 40,
+					FooterHeight = 40
+				};
+				printer.PrintPageRenderer.AddPrintFormatter (platformWebView.ViewPrintFormatter, 0);
+
+				if (Device.Idiom == TargetIdiom.Phone) {
+					printer.PresentAsync (true);
+				} else if (Device.Idiom == TargetIdiom.Tablet) {
+					printer.PresentFromRectInViewAsync (new CGRect (200, 200, 0, 0), platformWebView, true);
+				}
+
+				return true;
+			} catch (Exception) {
+				return false;
+			}
+		}
     }
 }

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+		xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+		xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages"
+		xmlns:controls="clr-namespace:BodyReportMobile.Presenter.Framework.Controls"
+		x:Class="BodyReportMobile.Presenter.WebViewPage"
+		x:Name="webViewPage">
+
+	<ContentPage.ToolbarItems>
+    	<ToolbarItem Name="PrintToolbarItem" Text="{Binding BindingContext.PrintLabel, Source={x:Reference webViewPage}}" Clicked="PrintButton_Clicked" Order="Primary" Priority="0" />
+	</ContentPage.ToolbarItems>
+	
+	<ContentPage.Content>
+		<controls:CustomWebView x:Name="webView" Uri="{Binding Url}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" />
+	</ContentPage.Content>
+</local:BaseContentPage>

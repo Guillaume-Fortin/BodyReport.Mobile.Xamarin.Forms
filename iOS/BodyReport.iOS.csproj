@@ -208,6 +208,7 @@
     <Compile Include="Framework\Renderers\DatePickerRenderer.cs" />
     <Compile Include="Framework\Renderers\TimePickerRenderer.cs" />
     <Compile Include="Framework\Extensions\UITextFieldExtension.cs" />
+    <Compile Include="Framework\Renderers\CustomWebViewRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

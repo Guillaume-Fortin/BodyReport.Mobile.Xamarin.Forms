@@ -141,6 +141,7 @@ namespace BodyReportMobile.Core.ViewModels
             AddExerciseLabel = Translation.Get(TRS.ADD_EXERCISES);
             EditLabel = Translation.Get(TRS.EDIT);
             DeleteLabel = Translation.Get(TRS.DELETE);
+			PrintLabel = Translation.Get (TRS.PRINT); //necessary for ios Toolbaritem binding failed
         }
 
         private GenericGroupModelCollection<BindingTrainingExercise> PopulateBindingTrainingDay(TrainingDay trainingDay)
@@ -335,8 +336,14 @@ namespace BodyReportMobile.Core.ViewModels
                         bool writeSuccess = await fileManager.WriteBinaryFileAsync(pdfPath, memoryStream);
                         if(writeSuccess)
                         {
-                            if (Device.OS == TargetPlatform.Android)
-                                Resolver.Resolve<IAndroidAPI>().OpenPdf(pdfPath);
+							await WebViewViewModel.ShowAsync (pdfPath, this);
+							/*
+							if (Device.OS == TargetPlatform.Android)
+								Resolver.Resolve<IAndroidAPI> ().OpenPdf (pdfPath);
+							else if (Device.OS == TargetPlatform.iOS)
+							{
+								await WebViewViewModel.ShowAsync (pdfPath, this);
+							}*/
                         }
                     }
                 }

@@ -257,6 +257,7 @@
     <Compile Include="Manager\LoginManager.cs" />
     <Compile Include="Framework\ISecurity.cs" />
     <Compile Include="WebServices\UserProfileWebService.cs" />
+    <Compile Include="ViewModels\WebViewViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Acr.UserDialogs, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
