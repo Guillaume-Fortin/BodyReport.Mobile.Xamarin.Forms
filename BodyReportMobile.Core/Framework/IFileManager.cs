@@ -12,6 +12,7 @@ namespace BodyReportMobile.Core.Framework
         bool ResourceFileExist (string filePath);
         Stream OpenResourceFile(string filePath);
         bool FileExist(string filePath);
+		long FileLength(string filePath);
         Stream OpenFile (string filePath);
 		void CloseFile (StreamReader stream);
 		string[] ReadAllLinesFile(string filePath, Encoding encoding);

@@ -362,9 +362,11 @@ namespace BodyReportMobile.Core.Framework
         {
             bool result = false;
 
+            var fileManager = Resolver.Resolve<IFileManager> ();
             try
             {
-                var fileManager = Resolver.Resolve<IFileManager>();
+				if (fileManager.FileExist (filePath))
+					fileManager.DeleteFile (filePath);
 
                 HttpClient httpClient = _httpClient;
                 if (anonymousCalling)
@@ -376,9 +378,6 @@ namespace BodyReportMobile.Core.Framework
 
                 using (Stream contentStream = await httpClient.GetStreamAsync(relativeUrl))
                 {
-                    if (fileManager.FileExist(filePath))
-                        fileManager.DeleteFile(filePath);
-
                     using (Stream fileStream = fileManager.OpenFile(filePath))
                     {
                         await contentStream.CopyToAsync(fileStream);
@@ -388,6 +387,8 @@ namespace BodyReportMobile.Core.Framework
             }
             catch (Exception except)
             {
+				if (fileManager.FileExist (filePath)) // security empty file
+					fileManager.DeleteFile (filePath);
                 ILogger.Instance.Error("Unable to download file", except);
             }
             return result;

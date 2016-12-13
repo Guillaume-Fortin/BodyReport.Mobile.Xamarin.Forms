@@ -38,6 +38,15 @@ namespace BodyReport.Droid
             return File.Exists(filePath);
         }
 
+		public long FileLength (string filePath)
+		{
+			if (FileExist (filePath)) {
+				FileInfo fi = new FileInfo (filePath);
+				return fi.Length;
+			}
+			return 0;
+		}
+
         public Stream OpenFile (string filePath)
 		{
             return System.IO.File.Open (filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);

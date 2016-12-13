@@ -100,20 +100,27 @@ namespace BodyReportMobile.Core.Framework
 
             if (bindingObject != null && !string.IsNullOrWhiteSpace(urlImage) && !string.IsNullOrWhiteSpace(localImagePath))
             {
+				var fileManager = Resolver.Resolve<IFileManager> ();
                 try
                 {
-                    var fileManager = Resolver.Resolve<IFileManager>();
-                    if (fileManager.FileExist(localImagePath))
+					if (fileManager.FileExist(localImagePath) && fileManager.FileLength(localImagePath) > 0)
                         cachingImageResult.ImageLoaded = true;
                     else
                     {
-                        if (await HttpConnector.Instance.DownloadFileAsync(urlImage, localImagePath, true))
-                            cachingImageResult.ImageLoaded = true;
+						if (await HttpConnector.Instance.DownloadFileAsync (urlImage, localImagePath, true))
+						{
+							if (fileManager.FileExist (localImagePath) && fileManager.FileLength (localImagePath) == 0)
+								fileManager.DeleteFile (localImagePath);
+							else
+								cachingImageResult.ImageLoaded = true;
+						}
                     }
                     cachingImageResultEvent?.Invoke(cachingImageResult);
                 }
                 catch (Exception except)
                 {
+					if (fileManager.FileExist (localImagePath) && fileManager.FileLength (localImagePath) == 0)
+						fileManager.DeleteFile (localImagePath);
                     ILogger.Instance.Error("Unable caching image", except);
                 }
             }

@@ -3,6 +3,8 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using BodyReportMobile.Core.Framework;
+using Foundation;
+using UIKit;
 
 namespace BodyReport.iOS.Framework
 {
@@ -27,13 +29,22 @@ namespace BodyReport.iOS.Framework
 
         public String GetDocumentPath()
         {
-            return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			return Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
         }
 
         public bool FileExist(string filePath)
         {
             return File.Exists(filePath);
         }
+
+		public long FileLength (string filePath)
+		{
+			if (FileExist (filePath)) {
+				FileInfo fi = new FileInfo (filePath);
+				return fi.Length;
+			}
+			return 0;
+		}
 
         public Stream OpenFile(string filePath)
         {
