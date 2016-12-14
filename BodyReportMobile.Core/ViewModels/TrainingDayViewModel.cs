@@ -336,14 +336,12 @@ namespace BodyReportMobile.Core.ViewModels
                         bool writeSuccess = await fileManager.WriteBinaryFileAsync(pdfPath, memoryStream);
                         if(writeSuccess)
                         {
-							await WebViewViewModel.ShowAsync (pdfPath, this);
-							/*
 							if (Device.OS == TargetPlatform.Android)
 								Resolver.Resolve<IAndroidAPI> ().OpenPdf (pdfPath);
 							else if (Device.OS == TargetPlatform.iOS)
 							{
 								await WebViewViewModel.ShowAsync (pdfPath, this);
-							}*/
+							}
                         }
                     }
                 }

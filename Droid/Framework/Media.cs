@@ -102,14 +102,17 @@ namespace BodyReport.Droid.Framework
             }
         }
 
-		public override bool PrintDocumentFromWebView (object webView)
+
+        public override bool PrintDocumentFromWebView (object webView)
 		{
 			try {
 				PrintManager printManager = (PrintManager)Forms.Context.GetSystemService (Context.PrintService);
 
 				Android.Webkit.WebView platformWebView = (Android.Webkit.WebView)(webView as CustomWebView).PlatformControl;
+                
 
-				printManager.Print ("BodyReportJob", platformWebView.CreatePrintDocumentAdapter ("BodyReportJob"), null);
+                var printAttributes = new Android.Print.PrintAttributes.Builder().Build();
+                printManager.Print ("BodyReportJob", platformWebView.CreatePrintDocumentAdapter ("BodyReportJob"), printAttributes);
 
 				return true;
 			} catch (Exception) {

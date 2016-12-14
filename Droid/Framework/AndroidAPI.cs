@@ -30,7 +30,7 @@ namespace BodyReport.Droid
                     return;
 
                 string newPath = Path.Combine(Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, Path.GetFileName(filePath));
-                File.Copy(filePath, newPath);
+                File.Copy(filePath, newPath, true);
 
                 Java.IO.File file = new Java.IO.File(newPath);
                 Android.Net.Uri path = Android.Net.Uri.FromFile(file);
