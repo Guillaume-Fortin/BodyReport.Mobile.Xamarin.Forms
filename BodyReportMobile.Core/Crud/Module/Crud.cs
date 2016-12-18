@@ -87,6 +87,10 @@ namespace BodyReportMobile.Core.Crud.Module
 						  Id INTEGER NOT NULL,
 						  BodyExerciseId INTEGER,
 						  RestTime INTEGER,
+                          EccentricContractionTempo INTEGER,
+                          StretchPositionTempo INTEGER,
+                          ConcentricContractionTempo INTEGER,
+                          ContractedPositionTempo INTEGER,
                           ModificationDate NUMERIC,
 						  PRIMARY KEY (UserId, Year, WeekOfYear, DayOfWeek, TrainingDayId, Id))");
             //TrainingExerciseSet table
@@ -115,7 +119,7 @@ namespace BodyReportMobile.Core.Crud.Module
             if (string.IsNullOrWhiteSpace(version) || version == "0")
             {
                 CreateTables(dbContext);
-                version = "2";
+                version = "3";
                 SetDatabaseVerion(dbContext, version);
             }
             //Migrate version 1 to version 2
@@ -127,6 +131,17 @@ namespace BodyReportMobile.Core.Crud.Module
                 ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN ModificationDate TEXT");
                 ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExerciseSet ADD COLUMN ModificationDate TEXT");
                 version = "2";
+                SetDatabaseVerion(dbContext, version);
+            }
+
+            if(version == "2")
+            {
+                dbContext.CreateTable<CountryRow>();
+                ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN EccentricContractionTempo INTEGER");
+                ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN StretchPositionTempo INTEGER");
+                ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN ConcentricContractionTempo INTEGER");
+                ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN ContractedPositionTempo INTEGER");
+                version = "3";
                 SetDatabaseVerion(dbContext, version);
             }
         }

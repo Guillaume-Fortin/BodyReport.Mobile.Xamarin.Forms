@@ -49,6 +49,21 @@ namespace BodyReportMobile.Core.Message.Binding
             }
         }
 
+        /// <summary>
+        /// Tempo (second)
+        /// Ex : 1 - 0 - 1 - 0
+        /// </summary>
+        private string _tempo;
+        public string Tempo
+        {
+            get { return _tempo; }
+            set
+            {
+                _tempo = value;
+                OnPropertyChanged();
+            }
+        }
+
         private string _setReps;
         public string SetReps
         {

@@ -43,8 +43,8 @@
           <DataTemplate>
             <ViewCell x:Name="groupViewCell">
               <ViewCell.Height>
-			    <OnPlatform x:TypeArguments="x:Double" iOS="80"/>
-		  	  </ViewCell.Height>
+			          <OnPlatform x:TypeArguments="x:Double" iOS="90"/>
+		  	      </ViewCell.Height>
               <ViewCell.View>
                 <StackLayout Orientation="Vertical">
                   <StackLayout Orientation="Horizontal" Padding="10,0,0,0" >
@@ -97,11 +97,18 @@
                       <ColumnDefinition Width="*"/>
                       <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <StackLayout Grid.Column="0">
+                    <Grid.RowDefinitions>
+                      <RowDefinition Height="*"/>
+                      <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <StackLayout Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
                       <Label Text="{Binding BodyExerciseName}" />
                     </StackLayout>
-                    <StackLayout Grid.Column="1">
+                    <StackLayout Grid.Column="1" Grid.Row="0">
                       <Label Text="{Binding RestTime, StringFormat='{0} sec'}" />
+                    </StackLayout>
+                    <StackLayout Grid.Column="1" Grid.Row="1">
+                      <Label Text="{Binding Tempo, StringFormat='{0}'}" />
                     </StackLayout>
                   </Grid>
                   <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">

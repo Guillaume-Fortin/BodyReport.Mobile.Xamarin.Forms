@@ -72,7 +72,11 @@ namespace BodyReportMobile.Core.ViewModels
             base.InitTranslation();
             TitleLabel = Translation.Get(TRS.TRAINING_EXERCISE);
             ExerciseTitleLabel = Translation.Get(TRS.NAME);
-            RestTimeLabel = Translation.Get(TRS.REST_TIME) + "(s)";
+            RestTimeLabel = Translation.Get(TRS.REST_TIME) + " (sec)";
+            EccentricContractionTempoLabel = Translation.Get(TRS.ECCENTRIC_CONTRACTION);
+            StretchPositionTempoLabel = Translation.Get(TRS.STRETCH_POSITION);
+            ConcentricContractionTempoLabel = Translation.Get(TRS.CONCENTRIC_CONTRACTION);
+            ContractedPositionTempoLabel = Translation.Get(TRS.CONTRACTED_POSITION);
             AddRepsLabel = Translation.Get(TRS.ADD_REPS);
             ValidateLabel = Translation.Get(TRS.VALIDATE);
         }
@@ -121,6 +125,10 @@ namespace BodyReportMobile.Core.ViewModels
 
             ExerciseTitle = Translation.GetInDB(BodyExerciseTransformer.GetTranslationKey(_trainingExercise.BodyExerciseId));
             RestTime = _trainingExercise.RestTime;
+            EccentricContractionTempo = _trainingExercise.EccentricContractionTempo;
+            StretchPositionTempo = _trainingExercise.StretchPositionTempo;
+            ConcentricContractionTempo = _trainingExercise.ConcentricContractionTempo;
+            ContractedPositionTempo = _trainingExercise.ContractedPositionTempo;
 
             string urlImages = HttpConnector.Instance.BaseUrl + "images/bodyexercises/{0}";
             var imageName = string.Format("{0}.png", _trainingExercise.BodyExerciseId);
@@ -243,6 +251,10 @@ namespace BodyReportMobile.Core.ViewModels
                         trainingExercise.TrainingExerciseSets.Clear(); // empty sets for replacing
 
                     trainingExercise.RestTime = RestTime; // don't forget restime...
+                    trainingExercise.EccentricContractionTempo = EccentricContractionTempo;
+                    trainingExercise.StretchPositionTempo = StretchPositionTempo;
+                    trainingExercise.ConcentricContractionTempo = ConcentricContractionTempo;
+                    trainingExercise.ContractedPositionTempo = ContractedPositionTempo;
                     int nbSet = 0, currentRepValue = 0;
                     var tupleSetRepList = new List<Tuple<int, int, double>>();
                     int repValue;
@@ -382,7 +394,95 @@ namespace BodyReportMobile.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-        
+
+        private string _eccentricContractionTempoLabel;
+        public string EccentricContractionTempoLabel
+        {
+            get { return _eccentricContractionTempoLabel; }
+            set
+            {
+                _eccentricContractionTempoLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private int _eccentricContractionTempo;
+        public int EccentricContractionTempo
+        {
+            get { return _eccentricContractionTempo; }
+            set
+            {
+                _eccentricContractionTempo = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _stretchPositionTempoLabel;
+        public string StretchPositionTempoLabel
+        {
+            get { return _stretchPositionTempoLabel; }
+            set
+            {
+                _stretchPositionTempoLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private int _stretchPositionTempo;
+        public int StretchPositionTempo
+        {
+            get { return _stretchPositionTempo; }
+            set
+            {
+                _stretchPositionTempo = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _concentricContractionTempoLabel;
+        public string ConcentricContractionTempoLabel
+        {
+            get { return _concentricContractionTempoLabel; }
+            set
+            {
+                _concentricContractionTempoLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private int _concentricContractionTempo;
+        public int ConcentricContractionTempo
+        {
+            get { return _concentricContractionTempo; }
+            set
+            {
+                _concentricContractionTempo = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _contractedPositionTempoLabel;
+        public string ContractedPositionTempoLabel
+        {
+            get { return _contractedPositionTempoLabel; }
+            set
+            {
+                _contractedPositionTempoLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private int _contractedPositionTempo;
+        public int ContractedPositionTempo
+        {
+            get { return _contractedPositionTempo; }
+            set
+            {
+                _contractedPositionTempo = value;
+                OnPropertyChanged();
+            }
+        }
+
         private string _exerciseImageSource;
         public string ExerciseImageSource
         {

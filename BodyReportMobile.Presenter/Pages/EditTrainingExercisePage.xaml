@@ -25,15 +25,19 @@
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
         <RowDefinition Height="*"/>
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
 
-      <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
+      <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="6"
               Source="{Binding ExerciseImageSource, Converter={StaticResource stringToImageConverter}}"
              Aspect="Fill" WidthRequest="100" HeightRequest="140" HorizontalOptions="Center" VerticalOptions="Start" />
 
@@ -46,10 +50,50 @@
 
       <localcontrol:NumericEntry x:Name="RestTimeEntry" Grid.Row="1" Grid.Column="2" VerticalOptions="StartAndExpand"
                                  Text="{Binding RestTime, Converter={StaticResource intConverter}}"
-                                 MinValue="0" MaxValue="1000"
+                                 WidthRequest="60" MinValue="0" MaxValue="1000"
                                  IsInteger="True"/>
 
-      <ListView Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" x:Name="ExerciseSetsListView"
+      <Label Grid.Row="2" Grid.Column="1" 
+             Text="{Binding EccentricContractionTempoLabel}"
+             LineBreakMode="MiddleTruncation" HorizontalOptions="StartAndExpand" VerticalOptions="FillAndExpand"
+             VerticalTextAlignment="Center" />
+
+      <localcontrol:NumericEntry x:Name="EccentricContractionTempoEntry" Grid.Row="2" Grid.Column="2" VerticalOptions="StartAndExpand"
+                                 Text="{Binding EccentricContractionTempo, Converter={StaticResource intConverter}}"
+                                 WidthRequest="60" MinValue="0" MaxValue="1000"
+                                 IsInteger="True"/>
+
+      <Label Grid.Row="3" Grid.Column="1"
+             Text="{Binding StretchPositionTempoLabel}"
+             LineBreakMode="MiddleTruncation" HorizontalOptions="StartAndExpand" VerticalOptions="FillAndExpand"
+             VerticalTextAlignment="Center" />
+
+      <localcontrol:NumericEntry x:Name="StretchPositionTempoEntry" Grid.Row="3" Grid.Column="2" VerticalOptions="StartAndExpand"
+                                 Text="{Binding StretchPositionTempo, Converter={StaticResource intConverter}}"
+                                 WidthRequest="60" MinValue="0" MaxValue="1000"
+                                 IsInteger="True"/>
+
+      <Label Grid.Row="4" Grid.Column="1"
+             Text="{Binding ConcentricContractionTempoLabel}"
+             LineBreakMode="MiddleTruncation" HorizontalOptions="StartAndExpand" VerticalOptions="FillAndExpand"
+             VerticalTextAlignment="Center" />
+
+      <localcontrol:NumericEntry x:Name="ConcentricContractionTempoEntry" Grid.Row="4" Grid.Column="2" VerticalOptions="StartAndExpand"
+                                 Text="{Binding ConcentricContractionTempo, Converter={StaticResource intConverter}}"
+                                 WidthRequest="60" MinValue="0" MaxValue="1000"
+                                 IsInteger="True"/>
+
+      <Label Grid.Row="5" Grid.Column="1"
+             Text="{Binding ContractedPositionTempoLabel}"
+             LineBreakMode="MiddleTruncation" HorizontalOptions="StartAndExpand" VerticalOptions="FillAndExpand"
+             VerticalTextAlignment="Center" />
+
+      <localcontrol:NumericEntry x:Name="ContractedPositionTempoEntry" Grid.Row="5" Grid.Column="2" VerticalOptions="StartAndExpand"
+                                 Text="{Binding ContractedPositionTempo, Converter={StaticResource intConverter}}"
+                                 WidthRequest="60" MinValue="0" MaxValue="1000"
+                                 IsInteger="True"/>
+
+      <ListView Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" x:Name="ExerciseSetsListView"
                 ItemsSource="{Binding BindingTrainingExerciseSetReps}"
                 ItemTapped="ListViewItemTapped"
                 HasUnevenRows="True" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">

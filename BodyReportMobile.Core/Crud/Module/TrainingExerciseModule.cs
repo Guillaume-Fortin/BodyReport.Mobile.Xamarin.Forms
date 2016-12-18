@@ -32,15 +32,36 @@ namespace BodyReportMobile.Core.Crud.Module
 			var row = new TrainingExerciseRow();
 			TrainingExerciseTransformer.ToRow(trainingJournalDayExercise, row);
 			_dbContext.Insert(row);
-			return TrainingExerciseTransformer.ToBean(row);
+			return GetBean(row);
 		}
 
-		/// <summary>
-		/// Get data in database
-		/// </summary>
-		/// <param name="key">Primary Key</param>
-		/// <returns>read data</returns>
-		public TrainingExercise Get(TrainingExerciseKey key)
+        private TrainingExercise GetBean(TrainingExerciseRow row)
+        {
+            if (row == null)
+                return null;
+
+            var trainingExercise = TrainingExerciseTransformer.ToBean(row);
+            if (row != null && trainingExercise != null)
+            {
+                if (!row.EccentricContractionTempo.HasValue)
+                    trainingExercise.EccentricContractionTempo = 1;
+                if (!row.StretchPositionTempo.HasValue)
+                    trainingExercise.StretchPositionTempo = 0;
+                if (!row.ConcentricContractionTempo.HasValue)
+                    trainingExercise.ConcentricContractionTempo = 1;
+                if (!row.ContractedPositionTempo.HasValue)
+                    trainingExercise.ContractedPositionTempo = 0;
+            }
+
+            return trainingExercise;
+        }
+
+        /// <summary>
+        /// Get data in database
+        /// </summary>
+        /// <param name="key">Primary Key</param>
+        /// <returns>read data</returns>
+        public TrainingExercise Get(TrainingExerciseKey key)
 		{
 			if (key == null || string.IsNullOrWhiteSpace(key.UserId) ||
 				key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.Id == 0)
@@ -52,7 +73,7 @@ namespace BodyReportMobile.Core.Crud.Module
 			var row = rowQuery.FirstOrDefault();
 			if (row != null)
 			{
-				return TrainingExerciseTransformer.ToBean(row);
+				return GetBean(row);
 			}
 			return null;
 		}
@@ -73,7 +94,7 @@ namespace BodyReportMobile.Core.Crud.Module
 				resultList = new List<TrainingExercise>();
 				foreach (var row in rowList)
 				{
-					resultList.Add(TrainingExerciseTransformer.ToBean(row));
+					resultList.Add(GetBean(row));
 				}
 			}
 			return resultList;
@@ -106,7 +127,7 @@ namespace BodyReportMobile.Core.Crud.Module
 				TrainingExerciseTransformer.ToRow(trainingJournalDayExercise, row);
                 _dbContext.Delete(row); //Update don't work... need delete and insert
                 _dbContext.Insert(row);
-                return TrainingExerciseTransformer.ToBean(row);
+                return GetBean(row);
 			}
 		}
 

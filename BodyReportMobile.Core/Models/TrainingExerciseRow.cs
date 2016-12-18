@@ -45,6 +45,22 @@ namespace BodyReportMobile.Core.Models
 		/// </summary>
 		public int RestTime { get; set; }
         /// <summary>
+        /// Eccentric Contraction Tempo (second)
+        /// </summary>
+        public int? EccentricContractionTempo { get; set; }
+        /// <summary>
+        /// Stretch Position Tempo (second)
+        /// </summary>
+        public int? StretchPositionTempo { get; set; }
+        /// <summary>
+        /// Concentric Contraction Tempo (second)
+        /// </summary>
+        public int? ConcentricContractionTempo { get; set; }
+        /// <summary>
+        /// Contracted Position Tempo (second)
+        /// </summary>
+        public int? ContractedPositionTempo { get; set; }
+        /// <summary>
 		/// Modification Date
 		/// </summary>
 		public DateTime ModificationDate

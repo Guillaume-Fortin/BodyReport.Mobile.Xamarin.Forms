@@ -23,6 +23,10 @@ namespace BodyReportMobile.Core.Crud.Transformer
             row.BodyExerciseId = bean.BodyExerciseId;
             row.RestTime = bean.RestTime;
             row.ModificationDate = bean.ModificationDate;
+            row.EccentricContractionTempo = bean.EccentricContractionTempo;
+            row.StretchPositionTempo = bean.StretchPositionTempo;
+            row.ConcentricContractionTempo = bean.ConcentricContractionTempo;
+            row.ContractedPositionTempo = bean.ContractedPositionTempo;
         }
 
         internal static TrainingExercise ToBean(TrainingExerciseRow row)
@@ -40,6 +44,10 @@ namespace BodyReportMobile.Core.Crud.Transformer
             bean.BodyExerciseId = row.BodyExerciseId;
             bean.RestTime = row.RestTime;
             bean.ModificationDate = row.ModificationDate;
+            bean.EccentricContractionTempo = row.EccentricContractionTempo.HasValue ? row.EccentricContractionTempo.Value : 0;
+            bean.StretchPositionTempo = row.StretchPositionTempo.HasValue ? row.StretchPositionTempo.Value : 0;
+            bean.ConcentricContractionTempo = row.ConcentricContractionTempo.HasValue ? row.ConcentricContractionTempo.Value : 0;
+            bean.ContractedPositionTempo = row.ContractedPositionTempo.HasValue ? row.ContractedPositionTempo.Value : 0;
             return bean;
         }
     }

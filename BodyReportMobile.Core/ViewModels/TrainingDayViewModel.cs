@@ -181,6 +181,10 @@ namespace BodyReportMobile.Core.ViewModels
                         TrainingExercise = trainingExercise,
                         BodyExerciseId = trainingExercise.BodyExerciseId,
                         RestTime = trainingExercise.RestTime,
+                        Tempo = string.Format("{0} - {1} - {2} - {3}", trainingExercise.EccentricContractionTempo,
+                                                                       trainingExercise.StretchPositionTempo,
+                                                                       trainingExercise.ConcentricContractionTempo,
+                                                                       trainingExercise.ContractedPositionTempo),
                         UpOrderVisible = i != 0,
                         DownOrderVisible = i != (trainingDay.TrainingExercises.Count -1)
                     };
