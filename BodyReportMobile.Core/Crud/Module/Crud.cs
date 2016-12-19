@@ -87,10 +87,10 @@ namespace BodyReportMobile.Core.Crud.Module
 						  Id INTEGER NOT NULL,
 						  BodyExerciseId INTEGER,
 						  RestTime INTEGER,
-                          EccentricContractionTempo INTEGER,
-                          StretchPositionTempo INTEGER,
-                          ConcentricContractionTempo INTEGER,
-                          ContractedPositionTempo INTEGER,
+                          EccentricContractionTempo INTEGER DEFAULT NULL,
+                          StretchPositionTempo INTEGER DEFAULT NULL,
+                          ConcentricContractionTempo INTEGER DEFAULT NULL,
+                          ContractedPositionTempo INTEGER DEFAULT NULL,
                           ModificationDate NUMERIC,
 						  PRIMARY KEY (UserId, Year, WeekOfYear, DayOfWeek, TrainingDayId, Id))");
             //TrainingExerciseSet table
@@ -137,10 +137,10 @@ namespace BodyReportMobile.Core.Crud.Module
             if(version == "2")
             {
                 dbContext.CreateTable<CountryRow>();
-                ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN EccentricContractionTempo INTEGER");
-                ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN StretchPositionTempo INTEGER");
-                ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN ConcentricContractionTempo INTEGER");
-                ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN ContractedPositionTempo INTEGER");
+                ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN EccentricContractionTempo INTEGER DEFAULT NULL");
+                ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN StretchPositionTempo INTEGER DEFAULT NULL");
+                ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN ConcentricContractionTempo INTEGER DEFAULT NULL");
+                ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN ContractedPositionTempo INTEGER DEFAULT NULL");
                 version = "3";
                 SetDatabaseVerion(dbContext, version);
             }

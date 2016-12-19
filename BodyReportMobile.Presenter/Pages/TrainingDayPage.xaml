@@ -43,11 +43,11 @@
           <DataTemplate>
             <ViewCell x:Name="groupViewCell">
               <ViewCell.Height>
-			          <OnPlatform x:TypeArguments="x:Double" iOS="90"/>
+			          <OnPlatform x:TypeArguments="x:Double" iOS="50"/>
 		  	      </ViewCell.Height>
               <ViewCell.View>
                 <StackLayout Orientation="Vertical">
-                  <StackLayout Orientation="Horizontal" Padding="10,0,0,0" >
+                  <StackLayout Orientation="Horizontal" Padding="0,0,0,0" >
                     <Label Text="{Binding LongName}"/>
                     <Label TextColor="#3366BB"
                       Text="{Binding Path=BindingContext.EditTrainingDayLabel, Source={x:Reference trainingDayPage}}">
@@ -102,13 +102,13 @@
                       <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <StackLayout Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
-                      <Label Text="{Binding BodyExerciseName}" />
+                      <Label Text="{Binding BodyExerciseName}" FontAttributes="Bold" FontSize="12" />
                     </StackLayout>
                     <StackLayout Grid.Column="1" Grid.Row="0">
-                      <Label Text="{Binding RestTime, StringFormat='{0} sec'}" />
+                      <Label Text="{Binding RestTime, StringFormat='{0} sec'}" FontSize="12" HorizontalTextAlignment="End" />
                     </StackLayout>
                     <StackLayout Grid.Column="1" Grid.Row="1">
-                      <Label Text="{Binding Tempo, StringFormat='{0}'}" />
+                      <Label Text="{Binding Tempo, StringFormat='{0}'}" FontSize="12" />
                     </StackLayout>
                   </Grid>
                   <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
@@ -122,14 +122,14 @@
                       <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackLayout Grid.Row="0" Grid.Column="0">
-                      <Label Text="{Binding SetRepsTitle}" />
+                      <Label Text="{Binding SetRepsTitle}" FontAttributes="Italic" FontSize="12"/>
                     </StackLayout>
                     <StackLayout Grid.Row="0" Grid.Column="1">
-                      <Label Text="{Binding SetRepWeightsTitle}" />
+                      <Label Text="{Binding SetRepWeightsTitle}" FontAttributes="Italic" FontSize="12"/>
                     </StackLayout>
                     <Label Grid.Row="1" Grid.Column="0" Text="{Binding SetReps}"/>
                     <Label Grid.Row="1" Grid.Column="1" Text="{Binding SetRepWeights}"/>
-                    <StackLayout Spacing="10" Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Orientation="Vertical" HorizontalOptions="Center">
+                    <StackLayout Spacing="4" Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Orientation="Vertical" HorizontalOptions="Center">
                       <Image Source="btn_up.png" IsVisible="{Binding UpOrderVisible}" WidthRequest="25" HeightRequest="25">
                         <Image.GestureRecognizers>
                           <TapGestureRecognizer 
