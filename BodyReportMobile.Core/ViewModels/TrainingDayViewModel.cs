@@ -470,6 +470,11 @@ namespace BodyReportMobile.Core.ViewModels
                                     BodyExerciseId = bodyExercise.Id,
                                     Id = nextIdTrainingExercise
                                 };
+                                trainingExercise.RestTime = 0;
+                                trainingExercise.EccentricContractionTempo = 1;
+                                trainingExercise.StretchPositionTempo = 0;
+                                trainingExercise.ConcentricContractionTempo = 1;
+                                trainingExercise.ContractedPositionTempo = 0;
                                 modifiedTrainingDay.TrainingExercises.Add(trainingExercise);
                                 nextIdTrainingExercise++;
                             }
