@@ -9,7 +9,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.1.4</string>
 	<key>CFBundleVersion</key>
-	<string>1.1.4.0</string>
+	<string>1.1.4.1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
@@ -44,6 +44,10 @@
 	<key>UIStatusBarHidden</key>
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Need for complete user profile inside application</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Need for complete user profile inside application</string>
+	<key>kTCCServiceMediaLibrary</key>
 	<string>Need for complete user profile inside application</string>
 </dict>
 </plist>
