@@ -16,6 +16,9 @@
           <localcontrol:TouchViewCell x:Name="LogOffCell" Tapped="OnCellTapped"
             Value="{Binding LogoffLabel}"
             IsIndicatorVisible="true" />
+          <localcontrol:TouchViewCell x:Name="ConfidentialityRulesCell" Tapped="OnCellTapped"
+            Value="{Binding ConfidentialityRulesLabel}"
+            IsIndicatorVisible="true" />
         </TableSection>
         <TableSection Title="{Binding ConfigurationLabel}">
           <localcontrol:TouchViewCell x:Name="ChangeLanguageCell" Tapped="OnCellTapped"

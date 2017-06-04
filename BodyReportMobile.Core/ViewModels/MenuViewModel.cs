@@ -26,6 +26,7 @@ namespace BodyReportMobile.Core.ViewModels
             UserLabel = Translation.Get(TRS.USER);
             EditUserProfileLabel = Translation.Get(TRS.ACCOUNT_INFORMATION);
             LogoffLabel = Translation.Get(TRS.LOG_OFF);
+            ConfidentialityRulesLabel = Translation.Get(TRS.CONFIDENTIALITY_RULES);
             LanguageFlagImageSource = LanguageViewModel.GeLanguageFlagImageSource(Translation.CurrentLang);
         }
 
@@ -83,8 +84,20 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
+        private async Task DisplayConfidentialityRulesActionAsync()
+        {
+            try
+            {
+                await ConfidentialityRulesViewModel.ShowAsync(this);
+            }
+            catch (Exception except)
+            {
+                ILogger.Instance.Error("Unable to display confidential rules", except);
+            }
+        }
+
         #region properties
-        
+
         private string _configurationLabel;
         public string ConfigurationLabel
         {
@@ -154,6 +167,17 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
+        private string _confidentialityRulesLabel;
+        public string ConfidentialityRulesLabel
+        {
+            get { return _confidentialityRulesLabel; }
+            set
+            {
+                _confidentialityRulesLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Commands
@@ -206,6 +230,23 @@ namespace BodyReportMobile.Core.ViewModels
                 }
 
                 return _changeLanguageCommand;
+            }
+        }
+
+        private ICommand _displayConfidentialityRulesCommand = null;
+        public ICommand DisplayConfidentialityRulesCommand
+        {
+            get
+            {
+                if (_displayConfidentialityRulesCommand == null)
+                {
+                    _displayConfidentialityRulesCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await DisplayConfidentialityRulesActionAsync();
+                    });
+                }
+
+                return _displayConfidentialityRulesCommand;
             }
         }
 

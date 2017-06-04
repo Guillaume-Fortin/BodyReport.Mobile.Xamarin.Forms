@@ -131,6 +131,7 @@
     <Compile Include="ServiceLayers\TrainingWeekService.cs" />
     <Compile Include="ServiceLayers\TranslationService.cs" />
     <Compile Include="ServiceLayers\UserInfoService.cs" />
+    <Compile Include="ViewModels\ConfidentialityRulesViewModel.cs" />
     <Compile Include="ViewModels\DataSyncViewModel.cs" />
     <Compile Include="ViewModels\EditTrainingExerciseViewModel.cs" />
     <Compile Include="ViewModels\MenuViewModel.cs" />

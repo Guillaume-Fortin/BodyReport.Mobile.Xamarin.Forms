@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BodyReportMobile.Presenter.Pages"
+             x:Class="BodyReportMobile.Presenter.Pages.ConfidentialityRulesPage"
+             Title="{Binding TitleLabel}">
+    <ContentPage.Content>
+        <StackLayout  HorizontalOptions="Center" VerticalOptions="Start">
+            <Label Text="{Binding Rules1Label}"></Label>
+            <Label Text="{Binding Rules2Label}"></Label>
+            <Label Text="{Binding Rules3Label}"></Label>
+        </StackLayout>
+    </ContentPage.Content>
+</local:BaseContentPage>

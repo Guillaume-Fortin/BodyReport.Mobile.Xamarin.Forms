@@ -63,6 +63,9 @@
     <Compile Include="Framework\Converter\TextToDoubleConverter.cs" />
     <Compile Include="Framework\PresenterManager.cs" />
     <Compile Include="Pages\BaseContentPage.cs" />
+    <Compile Include="Pages\ConfidentialityRulesPage.xaml.cs">
+      <DependentUpon>ConfidentialityRulesPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\CopyTrainingWeekPage.xaml.cs">
       <DependentUpon>CopyTrainingWeekPage.xaml</DependentUpon>
     </Compile>

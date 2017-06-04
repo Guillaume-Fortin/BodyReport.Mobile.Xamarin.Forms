@@ -27,6 +27,8 @@ namespace BodyReportMobile.Presenter.Pages
                 viewModel.LogOffCommand.Execute(null);
             else if (sender == ChangeLanguageCell)
                 viewModel.ChangeLanguageCommand.Execute(null);
+            else if (sender == ConfidentialityRulesCell)
+                viewModel.DisplayConfidentialityRulesCommand.Execute(null);
         }
     }
 }
