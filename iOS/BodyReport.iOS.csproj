@@ -43,7 +43,8 @@
     <MtouchUseSGen>true</MtouchUseSGen>
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
-    <CodesignProvision></CodesignProvision>
+    <CodesignProvision>
+    </CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>full</DebugType>
@@ -170,18 +171,42 @@
     <ImageAsset Include="Resources\Images.xcassets\LaunchImage.launchimage\Contents.json">
       <InProject>false</InProject>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_180x180.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_29x29.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_58x58.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_80x80.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_40x40.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_50x50.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_100x100.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_72x72.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_144x144.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_76x76.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_152x152.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_167x167.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_180x180.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_29x29.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_58x58.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_80x80.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_40x40.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_50x50.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_100x100.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_72x72.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_144x144.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_76x76.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_152x152.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_167x167.png">
+      <InProject>false</InProject>
+    </ImageAsset>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />

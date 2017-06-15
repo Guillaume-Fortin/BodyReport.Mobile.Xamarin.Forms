@@ -35,6 +35,7 @@ namespace BodyReport.Droid
                 resolverContainer.Register<IDependencyContainer>(resolverContainer);
                 Resolver.SetResolver(resolverContainer.GetResolver());
 
+                UserDialogs.Init(this);
                 AddIocDependencies();
             }
             
