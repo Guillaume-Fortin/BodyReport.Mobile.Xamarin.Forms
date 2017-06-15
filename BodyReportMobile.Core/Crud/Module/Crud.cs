@@ -92,6 +92,7 @@ namespace BodyReportMobile.Core.Crud.Module
                           ConcentricContractionTempo INTEGER DEFAULT NULL,
                           ContractedPositionTempo INTEGER DEFAULT NULL,
                           ModificationDate NUMERIC,
+                          ExerciseUnitType INTEGER DEFAULT NULL,
 						  PRIMARY KEY (UserId, Year, WeekOfYear, DayOfWeek, TrainingDayId, Id))");
             //TrainingExerciseSet table
             dbContext.Execute(@"CREATE TABLE IF NOT EXISTS TrainingExerciseSet (
@@ -107,6 +108,7 @@ namespace BodyReportMobile.Core.Crud.Module
 						  Weight INTEGER,
 						  Unit INTEGER,
                           ModificationDate NUMERIC,
+                          ExecutionTime INTEGER DEFAULT NULL,
 						  PRIMARY KEY (UserId, Year, WeekOfYear, DayOfWeek, TrainingDayId, TrainingExerciseId, Id))");
             //Country table
             dbContext.CreateTable<CountryRow>();
@@ -119,7 +121,7 @@ namespace BodyReportMobile.Core.Crud.Module
             if (string.IsNullOrWhiteSpace(version) || version == "0")
             {
                 CreateTables(dbContext);
-                version = "3";
+                version = "4";
                 SetDatabaseVerion(dbContext, version);
             }
             //Migrate version 1 to version 2
@@ -134,7 +136,7 @@ namespace BodyReportMobile.Core.Crud.Module
                 SetDatabaseVerion(dbContext, version);
             }
 
-            if(version == "2")
+            if (version == "2")
             {
                 dbContext.CreateTable<CountryRow>();
                 ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN EccentricContractionTempo INTEGER DEFAULT NULL");
@@ -143,6 +145,33 @@ namespace BodyReportMobile.Core.Crud.Module
                 ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN ContractedPositionTempo INTEGER DEFAULT NULL");
                 version = "3";
                 SetDatabaseVerion(dbContext, version);
+            }
+
+            if (version == "3")
+            {
+                // Need delete record for resynchronize data with server modification
+                ExecuteMigrateQuery(dbContext, @"DELETE FROM BodyExercise");
+                ExecuteMigrateQuery(dbContext, @"DELETE FROM TrainingWeek");
+                ExecuteMigrateQuery(dbContext, @"DELETE FROM TrainingDay");
+                ExecuteMigrateQuery(dbContext, @"DELETE FROM TrainingExercise");
+                ExecuteMigrateQuery(dbContext, @"DELETE FROM TrainingExerciseSet");
+                //Modify database schema
+                ExecuteMigrateQuery(dbContext, @"ALTER TABLE BodyExercise ADD COLUMN ExerciseCategoryType INTEGER DEFAULT NULL");
+                ExecuteMigrateQuery(dbContext, @"ALTER TABLE BodyExercise ADD COLUMN ExerciseUnitType INTEGER DEFAULT NULL");
+                ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExercise ADD COLUMN ExerciseUnitType INTEGER DEFAULT NULL");
+                ExecuteMigrateQuery(dbContext, @"ALTER TABLE TrainingExerciseSet ADD COLUMN ExecutionTime INTEGER DEFAULT NULL");
+                version = "4";
+                SetDatabaseVerion(dbContext, version);
+            }
+
+            if (version == "4")
+            {
+                // For test
+                ExecuteMigrateQuery(dbContext, @"DELETE FROM BodyExercise");
+                ExecuteMigrateQuery(dbContext, @"DELETE FROM TrainingWeek");
+                ExecuteMigrateQuery(dbContext, @"DELETE FROM TrainingDay");
+                ExecuteMigrateQuery(dbContext, @"DELETE FROM TrainingExercise");
+                ExecuteMigrateQuery(dbContext, @"DELETE FROM TrainingExerciseSet");
             }
         }
 

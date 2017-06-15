@@ -27,6 +27,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
             row.Weight = bean.Weight;
             row.Unit = (int)bean.Unit;
             row.ModificationDate = bean.ModificationDate;
+            row.ExecutionTime = bean.ExecutionTime;
         }
 
         internal static TrainingExerciseSet ToBean(TrainingExerciseSetRow row)
@@ -47,6 +48,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
             bean.Weight = row.Weight;
             bean.Unit = Utils.IntToEnum<TUnitType>(row.Unit);
             bean.ModificationDate = row.ModificationDate;
+            bean.ExecutionTime = row.ExecutionTime.HasValue ? row.ExecutionTime.Value : 0;
             return bean;
         }
     }

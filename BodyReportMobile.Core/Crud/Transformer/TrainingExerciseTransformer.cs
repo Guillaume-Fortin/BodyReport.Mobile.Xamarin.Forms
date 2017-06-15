@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BodyReport.Framework;
 
 namespace BodyReportMobile.Core.Crud.Transformer
 {
@@ -27,6 +28,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
             row.StretchPositionTempo = bean.StretchPositionTempo;
             row.ConcentricContractionTempo = bean.ConcentricContractionTempo;
             row.ContractedPositionTempo = bean.ContractedPositionTempo;
+            row.ExerciseUnitType = (int)bean.ExerciseUnitType;
         }
 
         internal static TrainingExercise ToBean(TrainingExerciseRow row)
@@ -48,6 +50,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
             bean.StretchPositionTempo = row.StretchPositionTempo.HasValue ? row.StretchPositionTempo.Value : 0;
             bean.ConcentricContractionTempo = row.ConcentricContractionTempo.HasValue ? row.ConcentricContractionTempo.Value : 0;
             bean.ContractedPositionTempo = row.ContractedPositionTempo.HasValue ? row.ContractedPositionTempo.Value : 0;
+            bean.ExerciseUnitType = Utils.IntToEnum<TExerciseUnitType>(row.ExerciseUnitType ?? (int)TExerciseUnitType.RepetitionNumber);
             return bean;
         }
     }

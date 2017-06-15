@@ -16,6 +16,16 @@ namespace BodyReportMobile.Core.Models
 		/// Muscle Id
 		/// </summary>
 		public int MuscleId { get; set; }
-	}
+
+        /// <summary>
+        /// Exercise Category Type
+        /// </summary>
+        public int? ExerciseCategoryType { get; set; }
+
+        /// <summary>
+        /// Exercise Unit Type
+        /// </summary>
+        public int? ExerciseUnitType { get; set; }
+    }
 }
 

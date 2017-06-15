@@ -68,6 +68,10 @@ namespace BodyReportMobile.Core.Models
             get;
             set;
         }
+        /// <summary>
+        /// Exercise Unit Type
+        /// </summary>
+        public int? ExerciseUnitType { get; set; }
     }
 }
 

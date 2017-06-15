@@ -79,6 +79,7 @@ namespace BodyReportMobile.Core.ViewModels
             ContractedPositionTempoLabel = Translation.Get(TRS.CONTRACTED_POSITION);
             AddRepsLabel = Translation.Get(TRS.ADD_REPS);
             ValidateLabel = Translation.Get(TRS.VALIDATE);
+            UnitLabel = Translation.Get(TRS.EXERCISE_UNIT_TYPE);
         }
 
         private async Task<TUnitType> GetExerciseUnit()
@@ -148,9 +149,9 @@ namespace BodyReportMobile.Core.ViewModels
                 if (_trainingExercise.TrainingExerciseSets == null || _trainingExercise.TrainingExerciseSets.Count == 0)
                 {
                     bindingSetRep = new BindingTrainingExerciseSetRep();
-                    bindingSetRep.RepsLabel = Translation.Get(TRS.REPS);
-                    bindingSetRep.WeightsLabel = Translation.Get(TRS.WEIGHT) + "(" + weightUnit + ")";
-                    bindingSetRep.Reps = 8;
+                    bindingSetRep.RepsLabel = _trainingExercise.ExerciseUnitType == TExerciseUnitType.RepetitionNumber ? Translation.Get(TRS.REPS) : ($"{Translation.Get(TRS.EXECUTION_TIME)} (sec)");
+                    bindingSetRep.WeightsLabel = $"{Translation.Get(TRS.WEIGHT)} ({weightUnit})";
+                    bindingSetRep.RepsOrExecTimes = _trainingExercise.ExerciseUnitType == TExerciseUnitType.RepetitionNumber ? 8 : 30;
                     bindingSetRep.Weights = 0;
                     BindingTrainingExerciseSetReps.Add(bindingSetRep);
                 }
@@ -164,12 +165,12 @@ namespace BodyReportMobile.Core.ViewModels
                             bindingSetRep = new BindingTrainingExerciseSetRep();
                             if (count == 0)
                             {
-                                bindingSetRep.RepsLabel = Translation.Get(TRS.REPS);
-                                bindingSetRep.WeightsLabel = Translation.Get(TRS.WEIGHT) + "(" + weightUnit + ")";
+                                bindingSetRep.RepsLabel = _trainingExercise.ExerciseUnitType == TExerciseUnitType.RepetitionNumber ? Translation.Get(TRS.REPS) : ($"{Translation.Get(TRS.EXECUTION_TIME)} (sec)");
+                                bindingSetRep.WeightsLabel = $"{Translation.Get(TRS.WEIGHT)} ({weightUnit})";
                             }
                             else
                                 bindingSetRep.RepsLabel = bindingSetRep.WeightsLabel = string.Empty; // necessary for trigger Text.Length
-                            bindingSetRep.Reps = trainingExerciseSet.NumberOfReps;
+                            bindingSetRep.RepsOrExecTimes = _trainingExercise.ExerciseUnitType == TExerciseUnitType.RepetitionNumber ? trainingExerciseSet.NumberOfReps : trainingExerciseSet.ExecutionTime;
                             bindingSetRep.Weights = trainingExerciseSet.Weight;
                             BindingTrainingExerciseSetReps.Add(bindingSetRep);
                             count++;
@@ -185,11 +186,11 @@ namespace BodyReportMobile.Core.ViewModels
         {
             try
             {
-                int previousRep = 0;
+                int previousRepOrExecTime = 0;
                 double previousWeight = 0;
                 if (BindingTrainingExerciseSetReps.Count > 0)
                 {
-                    previousRep = BindingTrainingExerciseSetReps[BindingTrainingExerciseSetReps.Count-1].Reps;
+                    previousRepOrExecTime = BindingTrainingExerciseSetReps[BindingTrainingExerciseSetReps.Count-1].RepsOrExecTimes;
                     previousWeight = BindingTrainingExerciseSetReps[BindingTrainingExerciseSetReps.Count-1].Weights;
                 }
 
@@ -201,7 +202,7 @@ namespace BodyReportMobile.Core.ViewModels
 
                 BindingTrainingExerciseSetReps.Add(new BindingTrainingExerciseSetRep()
                 {
-                    Reps = previousRep,
+                    RepsOrExecTimes = previousRepOrExecTime,
                     Weights = previousWeight,
                     BtnPlusVisible = true,
                     RepsLabel = string.Empty,// necessary for trigger Text.Length
@@ -255,24 +256,24 @@ namespace BodyReportMobile.Core.ViewModels
                     trainingExercise.StretchPositionTempo = StretchPositionTempo;
                     trainingExercise.ConcentricContractionTempo = ConcentricContractionTempo;
                     trainingExercise.ContractedPositionTempo = ContractedPositionTempo;
-                    int nbSet = 0, currentRepValue = 0;
+                    int nbSet = 0, currentRepOrExecTimeValue = 0;
                     var tupleSetRepList = new List<Tuple<int, int, double>>();
-                    int repValue;
+                    int repOrExecTimeValue;
                     double weightValue, currentWeightValue = 0;
                     for (int i = 0; i < BindingTrainingExerciseSetReps.Count; i++)
                     {
-                        repValue = BindingTrainingExerciseSetReps[i].Reps;
+                        repOrExecTimeValue = BindingTrainingExerciseSetReps[i].RepsOrExecTimes;
                         weightValue = BindingTrainingExerciseSetReps[i].Weights;
-                        if (repValue == 0)
+                        if (repOrExecTimeValue == 0)
                             continue;
 
-                        if (weightValue == currentWeightValue && repValue == currentRepValue)
+                        if (weightValue == currentWeightValue && repOrExecTimeValue == currentRepOrExecTimeValue)
                             nbSet++;
                         else
                         {
                             if (nbSet != 0)
-                                tupleSetRepList.Add(new Tuple<int, int, double>(nbSet, currentRepValue, currentWeightValue));
-                            currentRepValue = repValue;
+                                tupleSetRepList.Add(new Tuple<int, int, double>(nbSet, currentRepOrExecTimeValue, currentWeightValue));
+                            currentRepOrExecTimeValue = repOrExecTimeValue;
                             currentWeightValue = weightValue;
                             nbSet = 1;
                         }
@@ -280,7 +281,7 @@ namespace BodyReportMobile.Core.ViewModels
 
                     //last data
                     if (nbSet != 0)
-                        tupleSetRepList.Add(new Tuple<int, int, double>(nbSet, currentRepValue, currentWeightValue));
+                        tupleSetRepList.Add(new Tuple<int, int, double>(nbSet, currentRepOrExecTimeValue, currentWeightValue));
 
                     var unit = await GetExerciseUnit();
                     int id = 1;
@@ -296,7 +297,8 @@ namespace BodyReportMobile.Core.ViewModels
                             TrainingExerciseId = trainingExercise.Id,
                             Id = id,
                             NumberOfSets = tupleSetRep.Item1,
-                            NumberOfReps = tupleSetRep.Item2,
+                            NumberOfReps = (trainingExercise.ExerciseUnitType == TExerciseUnitType.RepetitionNumber) ? tupleSetRep.Item2 : 0,
+                            ExecutionTime = (trainingExercise.ExerciseUnitType == TExerciseUnitType.Time) ? tupleSetRep.Item2 : 0,
                             Weight = tupleSetRep.Item3,
                             Unit = unit
                         });
@@ -334,6 +336,23 @@ namespace BodyReportMobile.Core.ViewModels
             catch (Exception except)
             {
                 ILogger.Instance.Error("Unable to validate training rep/set", except);
+                await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
+            }
+        }
+
+        private async Task ChangeExerciseUnitCommandAction()
+        {
+            try
+            {
+                if (_trainingExercise != null)
+                {
+                    _trainingExercise.ExerciseUnitType = _trainingExercise.ExerciseUnitType == TExerciseUnitType.RepetitionNumber ? TExerciseUnitType.Time : TExerciseUnitType.RepetitionNumber;
+                    await SynchronizeDataAsync();
+                }
+            }
+            catch (Exception except)
+            {
+                ILogger.Instance.Error("Unable to change exercise unit", except);
                 await _userDialog.AlertAsync(except.Message, Translation.Get(TRS.ERROR), Translation.Get(TRS.OK));
             }
         }
@@ -516,6 +535,17 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
+        private string _unitLabel;
+        public string UnitLabel
+        {
+            get { return _unitLabel; }
+            set
+            {
+                _unitLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Command
@@ -565,6 +595,22 @@ namespace BodyReportMobile.Core.ViewModels
                     });
                 }
                 return _validateCommand;
+            }
+        }
+
+        private ICommand _changeExerciseUnitCommand = null;
+        public ICommand ChangeExerciseUnitCommand
+        {
+            get
+            {
+                if (_changeExerciseUnitCommand == null)
+                {
+                    _changeExerciseUnitCommand = new ViewModelCommandAsync(this, async () =>
+                    {
+                        await ChangeExerciseUnitCommandAction();
+                    });
+                }
+                return _changeExerciseUnitCommand;
             }
         }
 

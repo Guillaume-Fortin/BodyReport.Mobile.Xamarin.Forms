@@ -69,6 +69,10 @@ namespace BodyReportMobile.Core.Models
             get;
             set;
         }
+        /// <summary>
+        /// Execution time in second
+        /// </summary>
+        public int? ExecutionTime { get; set; }
     }
 }
 

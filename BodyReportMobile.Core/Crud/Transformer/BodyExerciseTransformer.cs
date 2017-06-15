@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BodyReport.Framework;
 
 namespace BodyReportMobile.Core.Crud.Transformer
 {
@@ -21,6 +22,8 @@ namespace BodyReportMobile.Core.Crud.Transformer
 
             row.Id = bean.Id;
             row.MuscleId = bean.MuscleId;
+            row.ExerciseCategoryType = (int)bean.ExerciseCategoryType;
+            row.ExerciseUnitType = (int)bean.ExerciseUnitType;
         }
 
         internal static BodyExercise ToBean(BodyExerciseRow row)
@@ -34,6 +37,9 @@ namespace BodyReportMobile.Core.Crud.Transformer
             //Image name is "{id}.png"
             bean.ImageName = string.Format("{0}.png", row.Id);
             bean.MuscleId = row.MuscleId;
+            bean.ExerciseCategoryType = Utils.IntToEnum<TExerciseCategoryType>(row.ExerciseCategoryType ?? (int)TExerciseCategoryType.Bodybuilding);
+            bean.ExerciseUnitType = Utils.IntToEnum<TExerciseUnitType>(row.ExerciseUnitType ?? (int)TExerciseUnitType.RepetitionNumber);
+
 
             return bean;
         }

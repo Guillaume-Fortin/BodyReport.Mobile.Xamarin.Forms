@@ -10,6 +10,20 @@
 
   <ContentPage.ToolbarItems>
     <ToolbarItem Text="{Binding ValidateLabel}" Command="{Binding ValidateCommand}" Order="Primary" Priority="0" />
+    <ToolbarItem Name="ChangeExerciseUnitToolbarItem" Text="{Binding BindingContext.UnitLabel, Source={x:Reference myPage}}" Command="{Binding ChangeExerciseUnitCommand}" >
+      <ToolbarItem.Order>
+        <OnPlatform x:TypeArguments="ToolbarItemOrder"
+                  iOS="Primary"
+                  Android="Secondary"
+                  WinPhone="Secondary" />
+      </ToolbarItem.Order>
+      <ToolbarItem.Priority>
+        <OnPlatform x:TypeArguments="x:Int32"
+                  iOS="1"
+                  Android="0"
+                  WinPhone="0" />
+      </ToolbarItem.Priority>
+    </ToolbarItem>
   </ContentPage.ToolbarItems>
 
   <ContentPage.Content>
@@ -142,7 +156,7 @@
                 </Label>
 
                 <localcontrol:NumericEntry Grid.Row="1" Grid.Column="0" VerticalOptions="FillAndExpand"
-                                       Text="{Binding Reps, Converter={StaticResource intConverter}}"
+                                       Text="{Binding RepsOrExecTimes, Converter={StaticResource intConverter}}"
                                        MinValue="0" MaxValue="10000"
                                        IsInteger="True" />
 

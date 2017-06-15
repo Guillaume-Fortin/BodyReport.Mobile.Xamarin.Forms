@@ -156,14 +156,13 @@ namespace BodyReportMobile.Core.ViewModels
 
             StringBuilder setRepSb = new StringBuilder();
             StringBuilder setRepWeightSb = new StringBuilder();
-            string formatSetRep = "{0} x {1}";
             string beginHourStr, endHourStr;
             BindingTrainingExercise bindingTrainingExercise;
 
             var collection = new GenericGroupModelCollection<BindingTrainingExercise>(); ;
             beginHourStr = trainingDay.BeginHour.ToLocalTime().ToString("HH:mm");
             endHourStr = trainingDay.EndHour.ToLocalTime().ToString("HH:mm");
-            collection.LongName = string.Format("{0} {1} {2} {3}", Translation.Get(TRS.FROM), beginHourStr, Translation.Get(TRS.TO), endHourStr);
+            collection.LongName = $"{Translation.Get(TRS.FROM)} {beginHourStr} {Translation.Get(TRS.TO)} {endHourStr}";
             collection.ShortName = collection.LongName;
             collection.ReferenceObject = trainingDay;
             collection.Clear();
@@ -192,14 +191,14 @@ namespace BodyReportMobile.Core.ViewModels
                     bindingTrainingExercise.BodyExerciseName = bodyExercise != null ? bodyExercise.Name : Translation.Get(TRS.UNKNOWN);
                     if (trainingExercise.TrainingExerciseSets != null)
                     {
-                        bindingTrainingExercise.SetRepsTitle = string.Format(formatSetRep, Translation.Get(TRS.SETS), Translation.Get(TRS.REPS));
+                        bindingTrainingExercise.SetRepsTitle = $"{Translation.Get(TRS.SETS)} x {(trainingExercise.ExerciseUnitType == TExerciseUnitType.RepetitionNumber ? Translation.Get(TRS.REPS) : Translation.Get(TRS.EXECUTION_TIME))}";
                         bindingTrainingExercise.SetRepWeightsTitle = Translation.Get(TRS.WEIGHT) + " (" + weightUnit + ")";
                         setRepSb.Clear();
                         setRepWeightSb.Clear();
-                        foreach (var trainingExerciseSet in trainingExercise.TrainingExerciseSets)
+                        foreach (var set in trainingExercise.TrainingExerciseSets)
                         {
-                            setRepSb.AppendLine(string.Format(formatSetRep, trainingExerciseSet.NumberOfSets, trainingExerciseSet.NumberOfReps));
-                            setRepWeightSb.AppendLine(trainingExerciseSet.Weight.ToString());
+                            setRepSb.AppendLine($"{set.NumberOfSets} x {(trainingExercise.ExerciseUnitType == TExerciseUnitType.RepetitionNumber ? set.NumberOfReps.ToString() : FormatExecutionTime(set.ExecutionTime))}");
+                            setRepWeightSb.AppendLine(set.Weight.ToString());
                         }
                         bindingTrainingExercise.SetReps = setRepSb.ToString();
                         bindingTrainingExercise.SetRepWeights = setRepWeightSb.ToString();
@@ -209,6 +208,18 @@ namespace BodyReportMobile.Core.ViewModels
             }
 
             return collection;
+        }
+
+        private string FormatExecutionTime(int executiontimeSec)
+        {
+            int nbMinute = executiontimeSec / 60;
+            int nbSecond = executiontimeSec - nbMinute * 60;
+            if (nbMinute > 0 && nbSecond == 0)
+                return $"{nbMinute} min";
+            if (nbMinute > 0 && nbSecond > 0)
+                return $"{nbMinute} min {nbSecond}";
+            else
+                return $"{nbSecond} sec";
         }
         
         private async Task CachingImagesAsync(List<BindingTrainingExercise> bindingGenericTrainingExercises)

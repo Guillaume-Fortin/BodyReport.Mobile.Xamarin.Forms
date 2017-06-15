@@ -31,15 +31,15 @@ namespace BodyReportMobile.Core.Message.Binding
             }
         }
 
-        private int _reps;
-        public int Reps
+        private int _repsOrExecTimes;
+        public int RepsOrExecTimes
         {
-            get { return _reps; }
+            get { return _repsOrExecTimes; }
             set
             {
-                if (_reps != value)
+                if (_repsOrExecTimes != value)
                 {
-                    _reps = value;
+                    _repsOrExecTimes = value;
                     OnPropertyChanged();
                 }
             }
