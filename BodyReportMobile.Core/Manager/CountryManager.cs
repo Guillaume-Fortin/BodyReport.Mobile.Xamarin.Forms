@@ -1,19 +1,16 @@
 ﻿using BodyReportMobile.Core.Crud.Module;
 using BodyReportMobile.Core.Framework;
 using BodyReport.Message;
-using SQLite.Net;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Manager
 {
     public class CountryManager : BodyReportManager
     {
         CountryModule _module;
-        public CountryManager(SQLiteConnection dbContext) : base(dbContext)
+        public CountryManager(ApplicationDbContext dbContext) : base(dbContext)
 		{
             _module = new CountryModule(DbContext);
         }

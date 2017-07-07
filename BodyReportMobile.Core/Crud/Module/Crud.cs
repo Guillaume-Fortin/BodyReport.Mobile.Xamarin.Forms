@@ -1,7 +1,9 @@
 ﻿using System;
-using SQLite.Net;
 using BodyReportMobile.Core.Models;
 using BodyReportMobile.Core.Framework;
+using BodyReportMobile.Core.Data;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace BodyReportMobile.Core.Crud.Module
 {
@@ -12,19 +14,19 @@ namespace BodyReportMobile.Core.Crud.Module
         /// <summary>
         /// DataBase context with transaction
         /// </summary>
-        protected SQLiteConnection _dbContext = null;
+        protected ApplicationDbContext _dbContext = null;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="dbContext">db context</param>
-        public Crud(SQLiteConnection dbContext)
+        public Crud(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
             MigrateTable(_dbContext);
         }
 
-        public static void MigrateTable(SQLiteConnection dbContext)
+        public static void MigrateTable(ApplicationDbContext dbContext)
         {
             lock (MigrationLocker)
             {
@@ -35,17 +37,17 @@ namespace BodyReportMobile.Core.Crud.Module
                 }
             }
         }
-
-        public static void EmptyUserTables(SQLiteConnection dbContext)
+        
+        public static void EmptyUserTables(ApplicationDbContext dbContext)
         {
-            dbContext.DeleteAll<UserInfoRow>();
+           /* dbContext.DeleteAll<UserInfoRow>();
             dbContext.DeleteAll<TrainingWeekRow>();
             dbContext.DeleteAll<TrainingDayRow>();
             dbContext.DeleteAll<TrainingExerciseRow>();
-            dbContext.DeleteAll<TrainingExerciseSetRow>();
+            dbContext.DeleteAll<TrainingExerciseSetRow>();*/
         }
-
-        private static void CreateTables(SQLiteConnection dbContext)
+        /*
+        private static void CreateTables(ApplicationDbContext dbContext)
         {
             dbContext.CreateTable<UserInfoRow>();
             dbContext.CreateTable<BodyExerciseRow>();
@@ -112,11 +114,22 @@ namespace BodyReportMobile.Core.Crud.Module
 						  PRIMARY KEY (UserId, Year, WeekOfYear, DayOfWeek, TrainingDayId, TrainingExerciseId, Id))");
             //Country table
             dbContext.CreateTable<CountryRow>();
-        }
+        }*/
 
-        private static void MigrateTables(SQLiteConnection dbContext)
+        private static bool MigrateTables(ApplicationDbContext dbContext)
         {
-            var version = GetDatabaseVerion(dbContext);
+            try
+            {
+                dbContext.Database.Migrate();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+            }
+            return false;
+
+            /*var version = GetDatabaseVerion(dbContext);
             //new database
             if (string.IsNullOrWhiteSpace(version) || version == "0")
             {
@@ -172,10 +185,10 @@ namespace BodyReportMobile.Core.Crud.Module
                 ExecuteMigrateQuery(dbContext, @"DELETE FROM TrainingDay");
                 ExecuteMigrateQuery(dbContext, @"DELETE FROM TrainingExercise");
                 ExecuteMigrateQuery(dbContext, @"DELETE FROM TrainingExerciseSet");
-            }
+            }*/
         }
-
-        private static void ExecuteMigrateQuery(SQLiteConnection dbContext, string query)
+        /*
+        private static void ExecuteMigrateQuery(ApplicationDbContext dbContext, string query)
         {
             try
             {
@@ -185,17 +198,29 @@ namespace BodyReportMobile.Core.Crud.Module
             {
                 ILogger.Instance.Error("Unable to execute migrate table query", except);
             }
-        }
-
-        private static string GetDatabaseVerion(SQLiteConnection dbContext)
+        }*/
+        /*
+        private static string GetDatabaseVerion(ApplicationDbContext dbContext)
         {
             return dbContext.ExecuteScalar<string>("PRAGMA user_version");
         }
 
-        private static void SetDatabaseVerion(SQLiteConnection dbContext, string versionNumber)
+        private static void SetDatabaseVerion(ApplicationDbContext dbContext, string versionNumber)
         {
             dbContext.ExecuteScalar<string>(string.Format("PRAGMA user_version={0};", versionNumber.ToString()));
-        }
+        }*/
+        /*
+        public static void TestRework(ApplicationDbContext dbContext)
+        {
+            dbContext.DeleteAll<BodyExerciseRow>();
+            dbContext.DeleteAll<MuscleRow>();
+            dbContext.DeleteAll<MuscularGroupRow>();
+            dbContext.DeleteAll<CountryRow>();
+            dbContext.DeleteAll<TrainingWeekRow>();
+            dbContext.DeleteAll<TrainingDayRow>();
+            dbContext.DeleteAll<TrainingExerciseRow>();
+            dbContext.DeleteAll<TrainingExerciseSetRow>();
+        }*/
     }
 }
 

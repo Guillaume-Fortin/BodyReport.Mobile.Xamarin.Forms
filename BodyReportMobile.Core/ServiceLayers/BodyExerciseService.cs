@@ -1,6 +1,5 @@
 ﻿using BodyReport.Message;
-using BodyReportMobile.Core.Manager;
-using SQLite.Net;
+using BodyReportMobile.Core.Data;
 using System;
 using System.Collections.Generic;
 
@@ -10,7 +9,7 @@ namespace BodyReportMobile.Core.ServiceLayers
     {
         private const string _cacheName = "BodyExercisesCache";
 
-        public BodyExerciseService(SQLiteConnection dbContext) : base(dbContext)
+        public BodyExerciseService(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
         

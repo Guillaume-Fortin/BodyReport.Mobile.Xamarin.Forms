@@ -7,11 +7,9 @@ using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Core.Message;
 using BodyReport.Framework;
 using BodyReport.Message;
-using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XLabs.Ioc;
@@ -22,7 +20,7 @@ namespace BodyReportMobile.Core.ViewModels
 {
     public class TrainingWeekViewModel : BaseViewModel
     {
-        private SQLiteConnection _dbContext;
+        private ApplicationDbContext _dbContext;
         private IUserDialogs _userDialog;
         
         public TrainingWeek TrainingWeek { get; set; }
@@ -30,7 +28,7 @@ namespace BodyReportMobile.Core.ViewModels
         public TrainingWeekViewModel() : base()
         {
             ShowDelayInMs = 0;
-            _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
+            DbContext = Resolver.Resolve<ISQLite>().GetConnection();
             _userDialog = Resolver.Resolve<IUserDialogs>();
             
             for (int i=0; i < BindingWeekTrainingDays.Length; i++)
@@ -184,7 +182,7 @@ namespace BodyReportMobile.Core.ViewModels
                     var updatedTrainingWeek = await TrainingWeekWebService.GetTrainingWeekAsync(TrainingWeek, true);
                     if(updatedTrainingWeek != null)
                     {
-                        var trainingWeekService = new TrainingWeekService(_dbContext);
+                        var trainingWeekService = new TrainingWeekService(DbContext);
                         var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = true };
                         trainingWeekService.UpdateTrainingWeek(updatedTrainingWeek, trainingWeekScenario);
                         //Update UI
@@ -218,7 +216,8 @@ namespace BodyReportMobile.Core.ViewModels
                         WeekOfYear = TrainingWeek.WeekOfYear,
                         DayOfWeek = (int)dayOfWeek,
                         TrainingDayId = 0,
-                        UserId = UserData.Instance.UserInfo.UserId
+                        UserId = UserData.Instance.UserInfo.UserId,
+                        Unit = UserData.Instance.UserInfo.Unit
                     };
                     if(await CreateTrainingDayViewModel.ShowAsync(newTrainingDay, TEditMode.Create, this))
                     {
@@ -312,6 +311,8 @@ namespace BodyReportMobile.Core.ViewModels
                 return _switchTrainingDayCommand;
             }
         }
+
+        public ApplicationDbContext DbContext { get => _dbContext; set => _dbContext = value; }
 
         #endregion
     }

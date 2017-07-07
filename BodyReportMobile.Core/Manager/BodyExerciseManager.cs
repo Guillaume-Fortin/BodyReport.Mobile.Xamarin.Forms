@@ -2,11 +2,9 @@
 using BodyReportMobile.Core.Crud.Transformer;
 using BodyReportMobile.Core.Framework;
 using BodyReport.Message;
-using SQLite.Net;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Manager
 {
@@ -14,7 +12,7 @@ namespace BodyReportMobile.Core.Manager
     {
         BodyExerciseModule _module = null;
 
-        public BodyExerciseManager(SQLiteConnection dbContext) : base(dbContext)
+        public BodyExerciseManager(ApplicationDbContext dbContext) : base(dbContext)
         {
             _module = new BodyExerciseModule(DbContext);
         }

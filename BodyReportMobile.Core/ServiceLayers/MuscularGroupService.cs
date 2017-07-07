@@ -1,6 +1,5 @@
 ﻿using BodyReport.Message;
-using BodyReportMobile.Core.Manager;
-using SQLite.Net;
+using BodyReportMobile.Core.Data;
 using System.Collections.Generic;
 
 namespace BodyReportMobile.Core.ServiceLayers
@@ -8,7 +7,7 @@ namespace BodyReportMobile.Core.ServiceLayers
     public class MuscularGroupService : LocalService
     {
         private const string _cacheName = "MuscularGroupsCache";
-        public MuscularGroupService(SQLiteConnection dbContext) : base(dbContext)
+        public MuscularGroupService(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
         

@@ -1,9 +1,10 @@
 ﻿using System;
-using SQLite.Net;
 using BodyReport.Message;
 using BodyReportMobile.Core.Crud.Transformer;
 using System.Collections.Generic;
 using BodyReportMobile.Core.Models;
+using BodyReportMobile.Core.Data;
+using System.Linq;
 
 namespace BodyReportMobile.Core.Crud.Module
 {
@@ -13,26 +14,27 @@ namespace BodyReportMobile.Core.Crud.Module
 		/// Constructor
 		/// </summary>
 		/// <param name="dbContext">database context</param>
-		public TrainingDayModule(SQLiteConnection dbContext) : base(dbContext)
+		public TrainingDayModule(ApplicationDbContext dbContext) : base(dbContext)
 		{
 		}
 
 		/// <summary>
 		/// Create data in database
 		/// </summary>
-		/// <param name="trainingJournalDay">Data</param>
+		/// <param name="trainingDay">Data</param>
 		/// <returns>insert data</returns>
-		public TrainingDay Create(TrainingDay trainingJournalDay)
+		public TrainingDay Create(TrainingDay trainingDay, TUnitType userUnit)
 		{
-			if (trainingJournalDay == null || string.IsNullOrWhiteSpace(trainingJournalDay.UserId) ||
-				trainingJournalDay.Year == 0 || trainingJournalDay.WeekOfYear == 0 ||
-				trainingJournalDay.DayOfWeek < 0 || trainingJournalDay.DayOfWeek > 6 || trainingJournalDay.TrainingDayId == 0)
+			if (trainingDay == null || string.IsNullOrWhiteSpace(trainingDay.UserId) ||
+				trainingDay.Year == 0 || trainingDay.WeekOfYear == 0 ||
+				trainingDay.DayOfWeek < 0 || trainingDay.DayOfWeek > 6 || trainingDay.TrainingDayId == 0)
 				return null;
 
 			var row = new TrainingDayRow();
-			TrainingDayTransformer.ToRow(trainingJournalDay, row);
-			_dbContext.Insert(row);
-			return TrainingDayTransformer.ToBean(row);
+			TrainingDayTransformer.ToRow(trainingDay, row);
+			_dbContext.TrainingDay.Add(row);
+            _dbContext.SaveChanges();
+            return TrainingDayTransformer.ToBean(row, userUnit);
 		}
 
 		/// <summary>
@@ -40,20 +42,20 @@ namespace BodyReportMobile.Core.Crud.Module
 		/// </summary>
 		/// <param name="key">Primary Key</param>
 		/// <returns>read data</returns>
-		public TrainingDay Get(TrainingDayKey key)
+		public TrainingDay Get(TrainingDayKey key, TUnitType userUnit)
 		{
 			if (key == null || string.IsNullOrWhiteSpace(key.UserId) ||
 				key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.TrainingDayId == 0)
 				return null;
 
-			var row = _dbContext.Table<TrainingDayRow>().Where(t => t.UserId == key.UserId &&
+			var row = _dbContext.TrainingDay.Where(t => t.UserId == key.UserId &&
 				t.Year == key.Year &&
 				t.WeekOfYear == key.WeekOfYear &&
 				t.DayOfWeek == key.DayOfWeek &&
 				t.TrainingDayId == key.TrainingDayId).FirstOrDefault();
 			if (row != null)
 			{
-				return TrainingDayTransformer.ToBean(row);
+				return TrainingDayTransformer.ToBean(row, userUnit);
 			}
 			return null;
 		}
@@ -62,19 +64,20 @@ namespace BodyReportMobile.Core.Crud.Module
 		/// Find datas
 		/// </summary>
 		/// <returns></returns>
-		public List<TrainingDay> Find(TrainingDayCriteria trainingDayCriteria = null)
+		public List<TrainingDay> Find(TUnitType userUnit, TrainingDayCriteria trainingDayCriteria = null)
 		{
 			List<TrainingDay> resultList = null;
-			TableQuery<TrainingDayRow> rowList = _dbContext.Table<TrainingDayRow>();
+            IQueryable<TrainingDayRow> rowList = _dbContext.TrainingDay;
 			CriteriaTransformer.CompleteQuery(ref rowList, trainingDayCriteria);
 			rowList = rowList.OrderBy(t => t.DayOfWeek).OrderBy(t => t.BeginHour);
 
-			if (rowList != null && rowList.Count() > 0)
+			if (rowList != null)
 			{
-				resultList = new List<TrainingDay>();
 				foreach (var trainingJournalDayRow in rowList)
 				{
-					resultList.Add(TrainingDayTransformer.ToBean(trainingJournalDayRow));
+                    if (resultList == null)
+                        resultList = new List<TrainingDay>();
+                    resultList.Add(TrainingDayTransformer.ToBean(trainingJournalDayRow, userUnit));
 				}
 			}
 			return resultList;
@@ -83,30 +86,29 @@ namespace BodyReportMobile.Core.Crud.Module
 		/// <summary>
 		/// Update data in database
 		/// </summary>
-		/// <param name="trainingJournalDay">data</param>
+		/// <param name="trainingDay">data</param>
 		/// <returns>updated data</returns>
-		public TrainingDay Update(TrainingDay trainingJournalDay)
+		public TrainingDay Update(TrainingDay trainingDay, TUnitType userUnit)
 		{
-			if (trainingJournalDay == null || string.IsNullOrWhiteSpace(trainingJournalDay.UserId) ||
-				trainingJournalDay.Year == 0 || trainingJournalDay.WeekOfYear == 0 ||
-				trainingJournalDay.DayOfWeek < 0 || trainingJournalDay.DayOfWeek > 6 || trainingJournalDay.TrainingDayId == 0)
+			if (trainingDay == null || string.IsNullOrWhiteSpace(trainingDay.UserId) ||
+				trainingDay.Year == 0 || trainingDay.WeekOfYear == 0 ||
+				trainingDay.DayOfWeek < 0 || trainingDay.DayOfWeek > 6 || trainingDay.TrainingDayId == 0)
 				return null;
 
-			var trainingJournalRow = _dbContext.Table<TrainingDayRow>().Where(t=>t.UserId == trainingJournalDay.UserId &&
-				t.Year == trainingJournalDay.Year &&
-				t.WeekOfYear == trainingJournalDay.WeekOfYear &&
-				t.DayOfWeek == trainingJournalDay.DayOfWeek &&
-				t.TrainingDayId == trainingJournalDay.TrainingDayId).FirstOrDefault();
+			var trainingJournalRow = _dbContext.TrainingDay.Where(t=>t.UserId == trainingDay.UserId &&
+				t.Year == trainingDay.Year &&
+				t.WeekOfYear == trainingDay.WeekOfYear &&
+				t.DayOfWeek == trainingDay.DayOfWeek &&
+				t.TrainingDayId == trainingDay.TrainingDayId).FirstOrDefault();
 			if (trainingJournalRow == null)
 			{ // No data in database
-				return Create(trainingJournalDay);
+				return Create(trainingDay, userUnit);
 			}
 			else
 			{ //Modify Data in database
-				TrainingDayTransformer.ToRow(trainingJournalDay, trainingJournalRow);
-                _dbContext.Delete(trainingJournalRow); //Update don't work... need delete and insert
-                _dbContext.Insert(trainingJournalRow);
-                return TrainingDayTransformer.ToBean(trainingJournalRow);
+				TrainingDayTransformer.ToRow(trainingDay, trainingJournalRow);
+                _dbContext.SaveChanges();
+                return TrainingDayTransformer.ToBean(trainingJournalRow, userUnit);
 			}
 		}
 
@@ -120,13 +122,14 @@ namespace BodyReportMobile.Core.Crud.Module
 				key.WeekOfYear == 0 || key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.TrainingDayId == 0)
 				return;
 
-			var row = _dbContext.Table<TrainingDayRow>().Where(t => t.UserId == key.UserId && t.Year == key.Year &&
+			var row = _dbContext.TrainingDay.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
 				t.WeekOfYear == key.WeekOfYear && t.DayOfWeek == key.DayOfWeek &&
 				t.TrainingDayId == key.TrainingDayId).FirstOrDefault();
 			if (row != null)
 			{
-				_dbContext.Delete(row);
-			}
+				_dbContext.TrainingDay.Remove(row);
+                _dbContext.SaveChanges();
+            }
 		}
 	}
 }

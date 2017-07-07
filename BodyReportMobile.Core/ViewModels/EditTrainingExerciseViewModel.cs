@@ -6,7 +6,6 @@ using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Message.Binding;
 using BodyReportMobile.Core.ServiceLayers;
 using BodyReportMobile.Core.WebServices;
-using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,7 +24,7 @@ namespace BodyReportMobile.Core.ViewModels
 
     public class EditTrainingExerciseViewModel : BaseViewModel
     {
-        private SQLiteConnection _dbContext;
+        private ApplicationDbContext _dbContext;
         private UserInfo _userInfo;
         private TrainingExercise _trainingExercise;
         TrainingDayService _trainingDayService;
@@ -33,8 +32,8 @@ namespace BodyReportMobile.Core.ViewModels
 
         public EditTrainingExerciseViewModel() : base()
         {
-            _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
-            _trainingDayService = new TrainingDayService(_dbContext);
+            DbContext = Resolver.Resolve<ISQLite>().GetConnection();
+            _trainingDayService = new TrainingDayService(DbContext);
             _userDialog = Resolver.Resolve<IUserDialogs>();
         }
 
@@ -82,42 +81,30 @@ namespace BodyReportMobile.Core.ViewModels
             UnitLabel = Translation.Get(TRS.EXERCISE_UNIT_TYPE);
         }
 
-        private async Task<TUnitType> GetExerciseUnit()
+        private TUnitType GetExerciseUnit()
         {
             TUnitType unit = TUnitType.Metric;
-            try
+            if (_trainingExercise != null)
             {
-                if (_trainingExercise != null && _trainingExercise.TrainingExerciseSets != null &&
-                    _trainingExercise.TrainingExerciseSets.Count > 0)
+                var trainingDayKey = new TrainingDayKey()
                 {
-                    unit = _trainingExercise.TrainingExerciseSets[0].Unit;
-                }
-                else
-                {
-                    if (_userInfo == null)
-                    {
-                        var userInfoKey = new UserInfoKey() { UserId = _trainingExercise.UserId };
-                        if (_trainingExercise.UserId == UserData.Instance.UserInfo.UserId)
-                        {
-                            var userInfoService = new UserInfoService(_dbContext);
-                            _userInfo = userInfoService.GetUserInfo(userInfoKey);
-                        }
-                        else
-                            _userInfo = await UserInfoWebService.GetUserInfoAsync(userInfoKey);
-                    }
-                    if (_userInfo != null)
-                        unit = _userInfo.Unit;
-                }
-            }
-            catch
-            {
+                    UserId = _trainingExercise.UserId,
+                    Year = _trainingExercise.Year,
+                    WeekOfYear = _trainingExercise.WeekOfYear,
+                    DayOfWeek = _trainingExercise.DayOfWeek,
+                    TrainingDayId = _trainingExercise.TrainingDayId
+                };
+                var trainingDayScenario = new TrainingDayScenario() { ManageExercise = false };
+                var trainingDay = _trainingDayService.GetTrainingDay(trainingDayKey, trainingDayScenario);
+                if (trainingDay != null)
+                    unit = trainingDay.Unit;
             }
             return unit;
         }
 
         private async Task SynchronizeDataAsync()
         {
-            var unit = await GetExerciseUnit();
+            var unit = GetExerciseUnit();
             string weightUnit = "kg";
             if (unit == TUnitType.Imperial)
             {
@@ -282,8 +269,7 @@ namespace BodyReportMobile.Core.ViewModels
                     //last data
                     if (nbSet != 0)
                         tupleSetRepList.Add(new Tuple<int, int, double>(nbSet, currentRepOrExecTimeValue, currentWeightValue));
-
-                    var unit = await GetExerciseUnit();
+                    
                     int id = 1;
                     foreach (Tuple<int, int, double> tupleSetRep in tupleSetRepList)
                     {
@@ -299,8 +285,7 @@ namespace BodyReportMobile.Core.ViewModels
                             NumberOfSets = tupleSetRep.Item1,
                             NumberOfReps = (trainingExercise.ExerciseUnitType == TExerciseUnitType.RepetitionNumber) ? tupleSetRep.Item2 : 0,
                             ExecutionTime = (trainingExercise.ExerciseUnitType == TExerciseUnitType.Time) ? tupleSetRep.Item2 : 0,
-                            Weight = tupleSetRep.Item3,
-                            Unit = unit
+                            Weight = tupleSetRep.Item3
                         });
                         id++;
                     }
@@ -613,6 +598,8 @@ namespace BodyReportMobile.Core.ViewModels
                 return _changeExerciseUnitCommand;
             }
         }
+
+        public ApplicationDbContext DbContext { get => _dbContext; set => _dbContext = value; }
 
         #endregion
     }

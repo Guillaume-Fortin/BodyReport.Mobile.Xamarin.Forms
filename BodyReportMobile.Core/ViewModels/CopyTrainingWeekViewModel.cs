@@ -4,17 +4,17 @@ using BodyReportMobile.Core.WebServices;
 using BodyReportMobile.Core.ServiceLayers;
 using BodyReport.Message;
 using BodyReport.Message.Web;
-using SQLite.Net;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XLabs.Ioc;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.ViewModels
 {
     public class CopyTrainingWeekViewModel : BaseViewModel
     {
-        private SQLiteConnection _dbContext;
+        private ApplicationDbContext _dbContext;
         private TrainingWeekService _trainingWeekService;
 
         private TrainingWeek _originTrainingWeek;

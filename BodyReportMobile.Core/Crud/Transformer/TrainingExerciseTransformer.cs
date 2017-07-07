@@ -23,7 +23,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
             row.Id = bean.Id;
             row.BodyExerciseId = bean.BodyExerciseId;
             row.RestTime = bean.RestTime;
-            row.ModificationDate = bean.ModificationDate;
+            row.ModificationDate = DbUtils.DbDateToUtc(bean.ModificationDate);
             row.EccentricContractionTempo = bean.EccentricContractionTempo;
             row.StretchPositionTempo = bean.StretchPositionTempo;
             row.ConcentricContractionTempo = bean.ConcentricContractionTempo;
@@ -45,7 +45,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
             bean.Id = row.Id;
             bean.BodyExerciseId = row.BodyExerciseId;
             bean.RestTime = row.RestTime;
-            bean.ModificationDate = row.ModificationDate;
+            bean.ModificationDate = DbUtils.DbDateToUtc(row.ModificationDate);
             bean.EccentricContractionTempo = row.EccentricContractionTempo.HasValue ? row.EccentricContractionTempo.Value : 0;
             bean.StretchPositionTempo = row.StretchPositionTempo.HasValue ? row.StretchPositionTempo.Value : 0;
             bean.ConcentricContractionTempo = row.ConcentricContractionTempo.HasValue ? row.ConcentricContractionTempo.Value : 0;

@@ -1,9 +1,10 @@
 ﻿using System;
-using SQLite.Net;
 using BodyReport.Message;
 using BodyReportMobile.Core.Crud.Transformer;
 using System.Collections.Generic;
 using BodyReportMobile.Core.Models;
+using BodyReportMobile.Core.Data;
+using System.Linq;
 
 namespace BodyReportMobile.Core.Crud.Module
 {
@@ -13,7 +14,7 @@ namespace BodyReportMobile.Core.Crud.Module
 		/// Constructor
 		/// </summary>
 		/// <param name="dbContext">database context</param>
-		public TrainingWeekModule(SQLiteConnection dbContext) : base(dbContext)
+		public TrainingWeekModule(ApplicationDbContext dbContext) : base(dbContext)
 		{
 		}
 
@@ -30,8 +31,9 @@ namespace BodyReportMobile.Core.Crud.Module
 
 			var row = new TrainingWeekRow();
 			TrainingWeekTransformer.ToRow(trainingJournal, row);
-			_dbContext.Insert(row);
-			return TrainingWeekTransformer.ToBean(row);
+			_dbContext.TrainingWeek.Add(row);
+            _dbContext.SaveChanges();
+            return TrainingWeekTransformer.ToBean(row);
 		}
 
 		/// <summary>
@@ -45,7 +47,7 @@ namespace BodyReportMobile.Core.Crud.Module
 				key.Year == 0 || key.WeekOfYear == 0)
 				return null;
 
-			var row = _dbContext.Table<TrainingWeekRow>().Where(t => t.UserId == key.UserId && t.Year == key.Year &&
+			var row = _dbContext.TrainingWeek.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
 				t.WeekOfYear == key.WeekOfYear).FirstOrDefault();
 			if (row != null)
 			{
@@ -61,16 +63,17 @@ namespace BodyReportMobile.Core.Crud.Module
 		public List<TrainingWeek> Find(TrainingWeekCriteria trainingWeekCriteria = null)
 		{
 			List<TrainingWeek> resultList = null;
-			TableQuery<TrainingWeekRow> rowList = _dbContext.Table<TrainingWeekRow>();
+			IQueryable<TrainingWeekRow> rowList = _dbContext.TrainingWeek;
 			CriteriaTransformer.CompleteQuery(ref rowList, trainingWeekCriteria);
 			rowList = rowList.OrderBy(t => t.UserId).OrderByDescending(t => t.Year).ThenByDescending(t => t.WeekOfYear);
 
-			if (rowList != null && rowList.Count() > 0)
+			if (rowList != null)
 			{
-				resultList = new List<TrainingWeek>();
 				foreach (var trainingJournalRow in rowList)
 				{
-					resultList.Add(TrainingWeekTransformer.ToBean(trainingJournalRow));
+                    if (resultList == null)
+                        resultList = new List<TrainingWeek>();
+                    resultList.Add(TrainingWeekTransformer.ToBean(trainingJournalRow));
 				}
 			}
 			return resultList;
@@ -87,7 +90,7 @@ namespace BodyReportMobile.Core.Crud.Module
 				trainingWeek.Year == 0 || trainingWeek.WeekOfYear == 0)
 				return null;
 
-			var trainingWeekRow = _dbContext.Table<TrainingWeekRow>().Where(t => t.UserId == trainingWeek.UserId && t.Year == trainingWeek.Year &&
+			var trainingWeekRow = _dbContext.TrainingWeek.Where(t => t.UserId == trainingWeek.UserId && t.Year == trainingWeek.Year &&
 				t.WeekOfYear == trainingWeek.WeekOfYear).FirstOrDefault();
 			if (trainingWeekRow == null)
 			{ // No data in database
@@ -96,8 +99,7 @@ namespace BodyReportMobile.Core.Crud.Module
 			else
 			{ //Modify Data in database
 				TrainingWeekTransformer.ToRow(trainingWeek, trainingWeekRow);
-                _dbContext.Delete(trainingWeekRow); //Update don't work... need delete and insert
-                _dbContext.Insert(trainingWeekRow);
+                _dbContext.SaveChanges();
                 return TrainingWeekTransformer.ToBean(trainingWeekRow);
 			}
 		}
@@ -111,12 +113,13 @@ namespace BodyReportMobile.Core.Crud.Module
 			if (key == null || string.IsNullOrWhiteSpace(key.UserId) || key.Year == 0 || key.WeekOfYear == 0)
 				return;
 
-			var row = _dbContext.Table<TrainingWeekRow>().Where(t => t.UserId == key.UserId && t.Year == key.Year &&
+			var row = _dbContext.TrainingWeek.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
 				t.WeekOfYear == key.WeekOfYear).FirstOrDefault();
 			if (row != null)
 			{
-				_dbContext.Delete(row);
-			}
+				_dbContext.TrainingWeek.Remove(row);
+                _dbContext.SaveChanges();
+            }
 		}
 	}
 }

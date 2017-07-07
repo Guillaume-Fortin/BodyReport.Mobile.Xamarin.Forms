@@ -16,14 +16,25 @@
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
         <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
-      <Label Grid.Row="0" TextColor="Black" Text="{Binding TitleLabel}" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center"/>
-      <Label Grid.Row="1" TextColor="Black" Text="{Binding SynchronizationLabel}" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center"/>
-      <ProgressBar Grid.Row="2" Progress="{Binding SynchronizationProgress}" HorizontalOptions="FillAndExpand" />
+      <Label Grid.Row="0" TextColor="Black" Text="{Binding SynchronizationLabel}" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center"/>
+      <ProgressBar x:Name="secondaryProgressBar" Grid.Row="1" Progress="{Binding SecondaryProgress}" IsVisible="True"  HorizontalOptions="FillAndExpand" >
+        <ProgressBar.Triggers>
+          <DataTrigger TargetType="ProgressBar"
+                       Binding="{Binding Path=Progress, Source={x:Reference secondaryProgressBar}}"
+                       Value="0">
+            <Setter Property="IsVisible" Value="False" />
+          </DataTrigger>
+        </ProgressBar.Triggers>
+      </ProgressBar>
 
-      <Image Grid.Row="3" Source="splash.png" HorizontalOptions="Center"/>
+      <Image Grid.Row="2" Source="splash.png" HorizontalOptions="Center"/>
+      
+      <Label Grid.Row="3" TextColor="Black" Text="{Binding ProgressionLabel}" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center"/>
+      <ProgressBar Grid.Row="4" Progress="{Binding PrimaryProgress}" HorizontalOptions="FillAndExpand" />      
     </Grid>
   </ContentPage.Content>
 </local:BaseContentPage>

@@ -11,13 +11,12 @@ using BodyReportMobile.Core.WebServices;
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Data;
 using BodyReportMobile.Core.ServiceLayers;
-using SQLite.Net;
 
 namespace BodyReportMobile.Core.ViewModels
 {
 	public class EditTrainingWeekViewModel : BaseViewModel
 	{
-        private SQLiteConnection _dbContext;
+        private ApplicationDbContext _dbContext;
         private TrainingWeekService _trainingWeekService;
 
         public TEditMode EditMode { get; set; }
@@ -66,7 +65,7 @@ namespace BodyReportMobile.Core.ViewModels
 		public EditTrainingWeekViewModel () : base ()
 		{
             _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
-            _trainingWeekService = new TrainingWeekService(_dbContext);
+            _trainingWeekService = new TrainingWeekService(DbContext);
         }
 
 		protected override async Task ShowAsync ()
@@ -278,6 +277,8 @@ namespace BodyReportMobile.Core.ViewModels
                 return _changeWeekOfYearCommand;
             }
         }
+
+        public ApplicationDbContext DbContext { get => _dbContext; set => _dbContext = value; }
 
         #endregion
     }

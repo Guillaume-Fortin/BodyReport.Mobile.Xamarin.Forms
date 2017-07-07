@@ -1,13 +1,12 @@
 ﻿using BodyReport.Message;
-using BodyReportMobile.Core.Manager;
-using SQLite.Net;
+using BodyReportMobile.Core.Data;
 using System.Collections.Generic;
 
 namespace BodyReportMobile.Core.ServiceLayers
 {
     public class TrainingExerciseService : LocalService
     {
-        public TrainingExerciseService(SQLiteConnection dbContext) : base(dbContext)
+        public TrainingExerciseService(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
 

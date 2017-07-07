@@ -3,18 +3,18 @@ using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Message.Binding;
 using BodyReportMobile.Core.WebServices;
 using BodyReport.Message;
-using SQLite.Net;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XLabs.Ioc;
 using BodyReportMobile.Core.ServiceLayers;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.ViewModels
 {
     public class CreateTrainingDayViewModel : BaseViewModel
     {
-        private SQLiteConnection _dbContext;
+        private ApplicationDbContext _dbContext;
         private TrainingDayService _trainingDayService;
         private IUserDialogs _userDialog;
         private TEditMode _editMode;

@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\BodyReportMobile.Core\Data\ApplicationDbContext.cs" Link="ApplicationDbContext.cs" />
+    <Compile Include="..\BodyReportMobile.Core\Models\BodyExerciseRow.cs" Link="BodyExerciseRow.cs" />
+    <Compile Include="..\BodyReportMobile.Core\Models\CountryRow.cs" Link="CountryRow.cs" />
+    <Compile Include="..\BodyReportMobile.Core\Models\MuscleRow.cs" Link="MuscleRow.cs" />
+    <Compile Include="..\BodyReportMobile.Core\Models\MuscularGroupRow.cs" Link="MuscularGroupRow.cs" />
+    <Compile Include="..\BodyReportMobile.Core\Models\TrainingDayRow.cs" Link="TrainingDayRow.cs" />
+    <Compile Include="..\BodyReportMobile.Core\Models\TrainingExerciseRow.cs" Link="TrainingExerciseRow.cs" />
+    <Compile Include="..\BodyReportMobile.Core\Models\TrainingExerciseSetRow.cs" Link="TrainingExerciseSetRow.cs" />
+    <Compile Include="..\BodyReportMobile.Core\Models\TrainingWeekRow.cs" Link="TrainingWeekRow.cs" />
+    <Compile Include="..\BodyReportMobile.Core\Models\TranslationRow.cs" Link="TranslationRow.cs" />
+    <Compile Include="..\BodyReportMobile.Core\Models\UserInfoRow.cs" Link="UserInfoRow.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="1.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="1.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="1.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="1.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.1" />
+  </ItemGroup>
+
+</Project>

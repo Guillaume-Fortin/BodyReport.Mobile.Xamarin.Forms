@@ -1,13 +1,12 @@
 ﻿using BodyReport.Message;
-using BodyReportMobile.Core.Manager;
-using SQLite.Net;
+using BodyReportMobile.Core.Data;
 using System.Collections.Generic;
 
 namespace BodyReportMobile.Core.ServiceLayers
 {
     public class TrainingDayService : LocalService
     {
-        public TrainingDayService(SQLiteConnection dbContext) : base(dbContext)
+        public TrainingDayService(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
 
@@ -53,13 +52,13 @@ namespace BodyReportMobile.Core.ServiceLayers
             return result;
         }
 
-        public List<TrainingDay> FindTrainingDay(TrainingDayCriteria trainingDayCriteria, TrainingDayScenario trainingDayScenario)
+        public List<TrainingDay> FindTrainingDay(TUnitType userUnit, TrainingDayCriteria trainingDayCriteria, TrainingDayScenario trainingDayScenario)
         {
             List<TrainingDay> result;
             BeginTransaction();
             try
             {
-                result = GetTrainingDayManager().FindTrainingDay(trainingDayCriteria, trainingDayScenario);
+                result = GetTrainingDayManager().FindTrainingDay(userUnit, trainingDayCriteria, trainingDayScenario);
                 CommitTransaction();
             }
             catch

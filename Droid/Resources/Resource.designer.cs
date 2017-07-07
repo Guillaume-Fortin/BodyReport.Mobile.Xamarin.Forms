@@ -64,8 +64,6 @@ namespace BodyReport.Droid
 			global::AndroidHUD.Resource.Styleable.ProgressWheel_ahTextColor = global::BodyReport.Droid.Resource.Styleable.ProgressWheel_ahTextColor;
 			global::AndroidHUD.Resource.Styleable.ProgressWheel_ahTextSize = global::BodyReport.Droid.Resource.Styleable.ProgressWheel_ahTextSize;
 			global::Splat.Resource.String.library_name = global::BodyReport.Droid.Resource.String.library_name;
-			global::SQLite.Net.Platform.XamarinAndroid.Resource.String.ApplicationName = global::BodyReport.Droid.Resource.String.ApplicationName;
-			global::SQLite.Net.Platform.XamarinAndroid.Resource.String.Hello = global::BodyReport.Droid.Resource.String.Hello;
 			global::Xamarin.Forms.Platform.Android.Resource.Attribute.actionBarSize = global::BodyReport.Droid.Resource.Attribute.actionBarSize;
 		}
 		
@@ -4064,12 +4062,6 @@ namespace BodyReport.Droid
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f080050
-			public const int ApplicationName = 2131230800;
-			
-			// aapt resource value: 0x7f08004f
-			public const int Hello = 2131230799;
-			
 			// aapt resource value: 0x7f080026
 			public const int abc_action_bar_home_description = 2131230758;
 			
@@ -4223,8 +4215,8 @@ namespace BodyReport.Droid
 			// aapt resource value: 0x7f080010
 			public const int common_signin_button_text_long = 2131230736;
 			
-			// aapt resource value: 0x7f080051
-			public const int library_name = 2131230801;
+			// aapt resource value: 0x7f08004f
+			public const int library_name = 2131230799;
 			
 			// aapt resource value: 0x7f080011
 			public const int mr_button_content_description = 2131230737;

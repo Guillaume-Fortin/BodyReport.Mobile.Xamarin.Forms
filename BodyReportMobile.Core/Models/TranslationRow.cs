@@ -1,15 +1,12 @@
 ﻿using System;
-using SQLite.Net.Attributes;
 
 namespace BodyReportMobile.Core.Models
 {
-	[Table("Translation")]
 	public class TranslationRow
 	{
 		/// <summary>
 		/// Regionn Culture id
 		/// </summary>
-		[PrimaryKey, Column("CultureId")]
 		public int CultureId
 		{
 			get;
@@ -19,8 +16,6 @@ namespace BodyReportMobile.Core.Models
 		/// <summary>
 		/// Translation key
 		/// </summary>
-		//[PrimaryKey, Column("Key"), MaxLength(256)] //Multiple Key not supported?? oO
-		[Indexed, Column("Key"), MaxLength(256)] 
 		public string Key
 		{
 			get;
@@ -30,7 +25,6 @@ namespace BodyReportMobile.Core.Models
 		/// <summary>
 		/// Translation value
 		/// </summary>
-		[MaxLength(2000)]
 		public string Value
 		{
 			get;

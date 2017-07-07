@@ -4,8 +4,8 @@ using BodyReport.Message;
 using System.IO;
 using Newtonsoft.Json;
 using XLabs.Ioc;
-using SQLite.Net;
 using BodyReportMobile.Core.ServiceLayers;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Framework
 {
@@ -25,7 +25,7 @@ namespace BodyReportMobile.Core.Framework
         /// </summary>
         public readonly static string[] SupportedCultureNames = new string[] { "en-US", "fr-FR" };
         
-        private static SQLiteConnection _dbContext = null;
+        private static ApplicationDbContext _dbContext = null;
 
         static Translation ()
         {

@@ -1,14 +1,13 @@
 ﻿using BodyReport.Message;
 using System.Collections.Generic;
-using SQLite.Net;
-using BodyReportMobile.Core.Manager;
 using System;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.ServiceLayers
 {
     public class TrainingWeekService : LocalService
     {
-        public TrainingWeekService(SQLiteConnection dbContext) : base(dbContext)
+        public TrainingWeekService(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
 
@@ -74,7 +73,9 @@ namespace BodyReportMobile.Core.ServiceLayers
             try
             {
                 foreach (var trainingWeek in trainingWeekList)
+                {
                     result.Add(GetTrainingWeekManager().UpdateTrainingWeek(trainingWeek, trainingWeekScenario));
+                }
                 CommitTransaction();
             }
             catch(Exception exception)

@@ -1,12 +1,10 @@
 ﻿using BodyReportMobile.Core.Crud.Transformer;
 using BodyReportMobile.Core.Models;
 using BodyReport.Message;
-using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Crud.Module
 {
@@ -16,7 +14,7 @@ namespace BodyReportMobile.Core.Crud.Module
         /// Constructor
         /// </summary>
         /// <param name="dbContext">database context</param>
-        public CountryModule(SQLiteConnection dbContext) : base(dbContext)
+        public CountryModule(ApplicationDbContext dbContext) : base(dbContext)
 		{
         }
 
@@ -32,8 +30,8 @@ namespace BodyReportMobile.Core.Crud.Module
 
             var row = new CountryRow();
             CountryTransformer.ToRow(country, row);
-            _dbContext.Insert(row);
-
+            _dbContext.Country.Add(row);
+            _dbContext.SaveChanges();
             return CountryTransformer.ToBean(row);
         }
 
@@ -47,7 +45,7 @@ namespace BodyReportMobile.Core.Crud.Module
             if (key == null || key.Id == 0)
                 return null;
 
-            var row = _dbContext.Table<CountryRow>().Where(m => m.Id == key.Id).FirstOrDefault();
+            var row = _dbContext.Country.Where(m => m.Id == key.Id).FirstOrDefault();
             if (row != null)
             {
                 return CountryTransformer.ToBean(row);
@@ -62,14 +60,16 @@ namespace BodyReportMobile.Core.Crud.Module
         public List<Country> Find(CountryCriteria countryCriteria = null)
         {
             List<Country> resultList = null;
-            TableQuery<CountryRow> rowList = _dbContext.Table<CountryRow>();
+            IQueryable<CountryRow> rowList = _dbContext.Country;
             CriteriaTransformer.CompleteQuery(ref rowList, countryCriteria);
 
-            if (rowList != null && rowList.Count() > 0)
+            if (rowList != null)
             {
                 resultList = new List<Country>();
                 foreach (var row in rowList)
                 {
+                    if (resultList == null)
+                        resultList = new List<Country>();
                     resultList.Add(CountryTransformer.ToBean(row));
                 }
             }
@@ -86,7 +86,7 @@ namespace BodyReportMobile.Core.Crud.Module
             if (muscle == null || muscle.Id == 0)
                 return null;
 
-            var row = _dbContext.Table<CountryRow>().Where(m => m.Id == muscle.Id).FirstOrDefault();
+            var row = _dbContext.Country.Where(m => m.Id == muscle.Id).FirstOrDefault();
             if (row == null)
             { // No data in database
                 return Create(muscle);
@@ -94,8 +94,7 @@ namespace BodyReportMobile.Core.Crud.Module
             else
             { //Modify Data in database
                 CountryTransformer.ToRow(muscle, row);
-                _dbContext.Delete(row); //Update don't work... need delete and insert
-                _dbContext.Insert(row);
+                _dbContext.SaveChanges();
                 return CountryTransformer.ToBean(row);
             }
         }
@@ -109,10 +108,11 @@ namespace BodyReportMobile.Core.Crud.Module
             if (key == null || key.Id == 0)
                 return;
 
-            var row = _dbContext.Table<CountryRow>().Where(m => m.Id == key.Id).FirstOrDefault();
+            var row = _dbContext.Country.Where(m => m.Id == key.Id).FirstOrDefault();
             if (row != null)
             {
-                _dbContext.Delete(row);
+                _dbContext.Country.Remove(row);
+                _dbContext.SaveChanges();
             }
         }
     }

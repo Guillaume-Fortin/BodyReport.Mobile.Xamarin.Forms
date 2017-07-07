@@ -2,7 +2,6 @@
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Manager;
 using BodyReport.Message;
-using SQLite.Net;
 using System;
 using System.Threading.Tasks;
 using XLabs.Ioc;
@@ -11,7 +10,7 @@ namespace BodyReportMobile.Core.ViewModels
 {
     public class DataSyncViewModel : BaseViewModel
     {
-        private SQLiteConnection _dbContext;
+        private ApplicationDbContext _dbContext;
         private double _maxSynchronizeCount = 6;
         private double _synchronizeCount = 1;
 
@@ -20,7 +19,7 @@ namespace BodyReportMobile.Core.ViewModels
             _allowCancelViewModel = false;
             ShowDelayInMs = 0;
 			DisableBackButton = true;
-            _dbContext = Resolver.Resolve<ISQLite>().GetConnection();
+            DbContext = Resolver.Resolve<ISQLite>().GetConnection();
         }
 
         protected override void InitTranslation()
@@ -28,6 +27,7 @@ namespace BodyReportMobile.Core.ViewModels
             base.InitTranslation();
 
             TitleLabel = Translation.Get(TRS.SYNCHRONIZATION);
+            ProgressionLabel = Translation.Get(TRS.PROGRESSION);
         }
 
         protected override async Task ShowAsync()
@@ -39,12 +39,12 @@ namespace BodyReportMobile.Core.ViewModels
                 AppTools.Instance.Init();
 
                 //Migrate table
-                BodyReportMobile.Core.Crud.Module.Crud.MigrateTable(_dbContext);
+                BodyReportMobile.Core.Crud.Module.Crud.MigrateTable(DbContext);
 
                 LanguageViewModel.ReloadApplicationLanguage();
                 InitTranslation(); //Reload for language
 
-                SynchronizationProgress = 0;
+                PrimaryProgress = 0;
                 await SynchronizeDataAsync();
             }
             catch (Exception except)
@@ -75,7 +75,16 @@ namespace BodyReportMobile.Core.ViewModels
 
                 await ManageUserConnectionAsync();
 
-                await SynchronizeWebDataAsync();
+                Task.Run(async () =>
+                {
+                    //BodyReportMobile.Core.Crud.Module.Crud.TestRework(DbContext); // for test
+                    await SynchronizeWebDataAsync();
+                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                    {
+                        CloseViewModel();
+                    });                    
+                }).Start();
+                
             }
             catch (Exception except)
             {
@@ -84,8 +93,7 @@ namespace BodyReportMobile.Core.ViewModels
             finally
             {
                 ActionIsInProgress = false;
-            }
-            CloseViewModel();
+            }            
         }
 
         private async Task ManageUserConnectionAsync()
@@ -111,9 +119,16 @@ namespace BodyReportMobile.Core.ViewModels
         private void SynchronizeProgress(double maxCount, double currentCount)
         {
             maxCount = Math.Max(maxCount, currentCount);
-            SynchronizationProgress = currentCount == 0 ? 0 : Math.Min(1, currentCount / maxCount);
+            PrimaryProgress = currentCount == 0 ? 0 : Math.Min(1, currentCount / maxCount);
         }
+        
 
+        private async Task SynchronizeBodyBuildingDatas()
+        {
+            await DataSync.SynchronizeMusclesAsync(DbContext);
+            await DataSync.SynchronizeMuscularGroupAsync(DbContext);
+            await DataSync.SynchronizeBodyExercisesAsync(DbContext);
+        }
         
 
         private async Task SynchronizeWebDataAsync()
@@ -121,49 +136,37 @@ namespace BodyReportMobile.Core.ViewModels
             try
             {
                 //Synchronise Web data to local database
-                var userImageTask = DataSync.SynchronizeUserImageAsync();
-                var countriesTask = DataSync.SynchronizeCountriesAsync();
-                var musclesTask = DataSync.SynchronizeMusclesAsync(_dbContext);
-                var muscularGroupTask = DataSync.SynchronizeMuscularGroupAsync(_dbContext);
-                var bodyExercisesTask = DataSync.SynchronizeBodyExercisesAsync(_dbContext);
-                var translationsTask = DataSync.SynchronizeTranslationsAsync(_dbContext);
-                var trainingWeeksTask = DataSync.SynchronizeTrainingWeeksAsync(_dbContext);
+                SynchronizationLabel = Translation.Get(TRS.TRANSLATIONS);
+                await DataSync.SynchronizeTranslationsAsync(DbContext);
+                SynchronizeProgress(_maxSynchronizeCount, _synchronizeCount);
+                _synchronizeCount++;
 
-                //Wait end of end of synchronisation
-                SynchronizationLabel = Translation.Get(TRS.USER);
-                SynchronizeProgress(_maxSynchronizeCount, _synchronizeCount);
-                _synchronizeCount++;
-                await userImageTask;
-                
                 SynchronizationLabel = Translation.Get(TRS.COUNTRY);
+                await DataSync.SynchronizeCountriesAsync();
                 SynchronizeProgress(_maxSynchronizeCount, _synchronizeCount);
                 _synchronizeCount++;
-                await countriesTask;
-                
-                SynchronizationLabel = Translation.Get(TRS.MUSCLES);
+
+                SynchronizationLabel = Translation.Get(TRS.USER);
+                await DataSync.SynchronizeUserImageAsync();
                 SynchronizeProgress(_maxSynchronizeCount, _synchronizeCount);
                 _synchronizeCount++;
-                await musclesTask;
-                
-                SynchronizationLabel = Translation.Get(TRS.MUSCULAR_GROUP);
+
+                SynchronizationLabel = Translation.Get(TRS.COUNTRY);
+                await DataSync.SynchronizeCountriesAsync();
                 SynchronizeProgress(_maxSynchronizeCount, _synchronizeCount);
                 _synchronizeCount++;
-                await muscularGroupTask;
 
                 SynchronizationLabel = Translation.Get(TRS.BODY_EXERCISES);
+                await SynchronizeBodyBuildingDatas();
                 SynchronizeProgress(_maxSynchronizeCount, _synchronizeCount);
                 _synchronizeCount++;
-                await bodyExercisesTask;
 
-                SynchronizationLabel = Translation.Get(TRS.TRANSLATIONS);
+                SynchronizationLabel = Translation.Get(TRS.TRAINING_JOURNAL);
+
+                IProgress<double> progress = new Progress<double>(value => { SecondaryProgress = value; });
+                await DataSync.SynchronizeTrainingWeeksAsync(DbContext, progress);
                 SynchronizeProgress(_maxSynchronizeCount, _synchronizeCount);
                 _synchronizeCount++;
-                await translationsTask;
-                
-                SynchronizationLabel = Translation.Get(TRS.TRAINING_WEEK);
-                SynchronizeProgress(_maxSynchronizeCount, _synchronizeCount);
-                _synchronizeCount++;
-                await trainingWeeksTask;
             }
             catch (Exception except)
             {
@@ -187,19 +190,49 @@ namespace BodyReportMobile.Core.ViewModels
             }
         }
 
-        private double _synchronizationProgress = 0;
-        public double SynchronizationProgress
+        private double _primaryProgress = 0;
+        public double PrimaryProgress
         {
             get
             {
-                return _synchronizationProgress;
+                return _primaryProgress;
             }
             set
             {
-                _synchronizationProgress = value;
+                _primaryProgress = value;
                 OnPropertyChanged();
             }
         }
+
+        private double _secondaryProgress = 0;
+        public double SecondaryProgress
+        {
+            get
+            {
+                return _secondaryProgress;
+            }
+            set
+            {
+                _secondaryProgress = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _progressionLabel = "";
+        public string ProgressionLabel
+        {
+            get
+            {
+                return _progressionLabel;
+            }
+            set
+            {
+                _progressionLabel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ApplicationDbContext DbContext { get => _dbContext; set => _dbContext = value; }
 
         #endregion
 

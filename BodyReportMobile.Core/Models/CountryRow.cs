@@ -1,9 +1,4 @@
-﻿using SQLite.Net.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace BodyReportMobile.Core.Models
 {
@@ -12,7 +7,6 @@ namespace BodyReportMobile.Core.Models
         /// <summary>
         /// Id (Key)
         /// </summary>
-        [PrimaryKey, Column("Id")]
         public int Id
         {
             get;
@@ -22,7 +16,6 @@ namespace BodyReportMobile.Core.Models
         /// <summary>
         /// Name
         /// </summary>
-        [MaxLength(400)]
         public string Name
         {
             get;
@@ -32,7 +25,6 @@ namespace BodyReportMobile.Core.Models
         /// <summary>
         /// Short name
         /// </summary>
-        [MaxLength(10)]
         public string ShortName
         {
             get;

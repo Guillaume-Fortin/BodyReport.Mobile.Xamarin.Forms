@@ -3,15 +3,15 @@ using BodyReportMobile.Core.Crud.Module;
 using System.Collections.Generic;
 using BodyReport.Message;
 using BodyReportMobile.Core.Crud.Transformer;
-using SQLite.Net;
 using BodyReportMobile.Core.Framework;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Manager
 {
 	public class MuscleManager : BodyReportManager
     {
 		MuscleModule _module;
-		public MuscleManager(SQLiteConnection dbContext) : base(dbContext)
+		public MuscleManager(ApplicationDbContext dbContext) : base(dbContext)
 		{
 			_module = new MuscleModule(DbContext);
 		}

@@ -1,7 +1,7 @@
 ﻿using System;
-using SQLite.Net;
 using System.IO;
 using BodyReportMobile.Core.Framework;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReport.Droid
 {
@@ -11,14 +11,14 @@ namespace BodyReport.Droid
 		{
 		}
 
-		public SQLiteConnection GetConnection()
+		public ApplicationDbContext GetConnection()
 		{
-			var sqliteFilename = "bodyreport.db3";
+			var sqliteFilename = "bodyreport.db";
 
             string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal); // Documents folder
             var path = Path.Combine(documentsPath, sqliteFilename);
             // Create the connection
-            var conn = new SQLiteConnection(new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid(), path);
+            var conn = new ApplicationDbContext(path);
             // Return the database connection
             return conn;
         }

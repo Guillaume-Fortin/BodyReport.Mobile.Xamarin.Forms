@@ -1,12 +1,10 @@
 ﻿using BodyReportMobile.Core.Crud.Transformer;
 using BodyReportMobile.Core.Models;
 using BodyReport.Message;
-using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Crud.Module
 {
@@ -16,7 +14,7 @@ namespace BodyReportMobile.Core.Crud.Module
 		/// Constructor
 		/// </summary>
 		/// <param name="dbContext">database context</param>
-		public BodyExerciseModule(SQLiteConnection dbContext) : base(dbContext)
+		public BodyExerciseModule(ApplicationDbContext dbContext) : base(dbContext)
 		{
         }
 
@@ -35,7 +33,8 @@ namespace BodyReportMobile.Core.Crud.Module
 
             var bodyExerciseRow = new BodyExerciseRow();
             BodyExerciseTransformer.ToRow(bodyExercise, bodyExerciseRow);
-            _dbContext.Insert(bodyExerciseRow);
+            _dbContext.BodyExercise.Add(bodyExerciseRow);
+            _dbContext.SaveChanges();
             return BodyExerciseTransformer.ToBean(bodyExerciseRow);
         }
 
@@ -49,7 +48,7 @@ namespace BodyReportMobile.Core.Crud.Module
             if (key == null || key.Id == 0)
                 return null;
 
-            var bodyExerciseRow = _dbContext.Table<BodyExerciseRow>().Where(m => m.Id == key.Id).FirstOrDefault();
+            var bodyExerciseRow = _dbContext.BodyExercise.Where(m => m.Id == key.Id).FirstOrDefault();
             if (bodyExerciseRow != null)
             {
                 return BodyExerciseTransformer.ToBean(bodyExerciseRow);
@@ -64,14 +63,15 @@ namespace BodyReportMobile.Core.Crud.Module
         public List<BodyExercise> Find(BodyExerciseCriteria bodyExerciseCriteria = null)
         {
             List<BodyExercise> resultList = null;
-            TableQuery<BodyExerciseRow> muscularGroupRowList = _dbContext.Table<BodyExerciseRow>();
+            IQueryable<BodyExerciseRow> muscularGroupRowList = _dbContext.BodyExercise;
             CriteriaTransformer.CompleteQuery(ref muscularGroupRowList, bodyExerciseCriteria);
 
-            if (muscularGroupRowList != null && muscularGroupRowList.Count() > 0)
+            if (muscularGroupRowList != null)
             {
-                resultList = new List<BodyExercise>();
                 foreach (var muscularGroupRow in muscularGroupRowList)
                 {
+                    if (resultList == null)
+                        resultList = new List<BodyExercise>();
                     resultList.Add(BodyExerciseTransformer.ToBean(muscularGroupRow));
                 }
             }
@@ -88,7 +88,7 @@ namespace BodyReportMobile.Core.Crud.Module
             if (bodyExercise == null || bodyExercise.Id == 0)
                 return null;
 
-            var bodyExerciseRow = _dbContext.Table<BodyExerciseRow>().Where(m => m.Id == bodyExercise.Id).FirstOrDefault();
+            var bodyExerciseRow = _dbContext.BodyExercise.Where(m => m.Id == bodyExercise.Id).FirstOrDefault();
             if (bodyExerciseRow == null)
             { // No data in database
                 return Create(bodyExercise);
@@ -96,8 +96,7 @@ namespace BodyReportMobile.Core.Crud.Module
             else
             { //Modify Data in database
                 BodyExerciseTransformer.ToRow(bodyExercise, bodyExerciseRow);
-                _dbContext.Delete(bodyExerciseRow); //Update don't work... need delete and insert
-                _dbContext.Insert(bodyExerciseRow);
+                _dbContext.SaveChanges();
                 return BodyExerciseTransformer.ToBean(bodyExerciseRow);
             }
         }
@@ -111,10 +110,11 @@ namespace BodyReportMobile.Core.Crud.Module
             if (key == null || key.Id == 0)
                 return;
 
-            var bodyExerciseRow = _dbContext.Table<BodyExerciseRow>().Where(m => m.Id == key.Id).FirstOrDefault();
+            var bodyExerciseRow = _dbContext.BodyExercise.Where(m => m.Id == key.Id).FirstOrDefault();
             if (bodyExerciseRow != null)
             {
-                _dbContext.Delete(bodyExerciseRow);
+                _dbContext.BodyExercise.Remove(bodyExerciseRow);
+                _dbContext.SaveChanges();
             }
         }
     }

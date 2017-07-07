@@ -1,11 +1,11 @@
 ﻿using System;
-using SQLite.Net;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Framework
 {
 	public interface ISQLite
 	{
-		SQLiteConnection GetConnection();
+        ApplicationDbContext GetConnection();
 	}
 }
 

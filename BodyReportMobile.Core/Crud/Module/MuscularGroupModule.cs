@@ -1,12 +1,10 @@
 ﻿using BodyReportMobile.Core.Crud.Transformer;
 using BodyReportMobile.Core.Models;
 using BodyReport.Message;
-using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Crud.Module
 {
@@ -16,7 +14,7 @@ namespace BodyReportMobile.Core.Crud.Module
 		/// Constructor
 		/// </summary>
 		/// <param name="dbContext">database context</param>
-		public MuscularGroupModule(SQLiteConnection dbContext) : base(dbContext)
+		public MuscularGroupModule(ApplicationDbContext dbContext) : base(dbContext)
 		{
         }
         
@@ -32,7 +30,8 @@ namespace BodyReportMobile.Core.Crud.Module
             
             var muscularGroupRow = new MuscularGroupRow();
             MuscularGroupTransformer.ToRow(muscularGroup, muscularGroupRow);
-            _dbContext.Insert(muscularGroupRow);
+            _dbContext.MuscularGroup.Add(muscularGroupRow);
+            _dbContext.SaveChanges();
             return MuscularGroupTransformer.ToBean(muscularGroupRow);
         }
 
@@ -46,7 +45,7 @@ namespace BodyReportMobile.Core.Crud.Module
             if (key == null || key.Id == 0)
                 return null;
 
-            var muscularGroupRow = _dbContext.Table<MuscularGroupRow>().Where(m => m.Id == key.Id).FirstOrDefault();
+            var muscularGroupRow = _dbContext.MuscularGroup.Where(m => m.Id == key.Id).FirstOrDefault();
             if (muscularGroupRow != null)
             {
                 return MuscularGroupTransformer.ToBean(muscularGroupRow);
@@ -61,14 +60,15 @@ namespace BodyReportMobile.Core.Crud.Module
         public List<MuscularGroup> Find(MuscularGroupCriteria muscularGroupCriteria = null)
         {
             List<MuscularGroup> resultList = null;
-            TableQuery<MuscularGroupRow> muscularGroupRowList = _dbContext.Table<MuscularGroupRow>();
+            IQueryable<MuscularGroupRow> muscularGroupRowList = _dbContext.MuscularGroup;
             CriteriaTransformer.CompleteQuery(ref muscularGroupRowList, muscularGroupCriteria);
 
-            if (muscularGroupRowList != null && muscularGroupRowList.Count() > 0)
+            if (muscularGroupRowList != null)
             {
-                resultList = new List<MuscularGroup>();
                 foreach (var muscularGroupRow in muscularGroupRowList)
                 {
+                    if (resultList == null)
+                        resultList = new List<MuscularGroup>();
                     resultList.Add(MuscularGroupTransformer.ToBean(muscularGroupRow));
                 }
             }
@@ -85,7 +85,7 @@ namespace BodyReportMobile.Core.Crud.Module
             if (muscularGroup == null || muscularGroup.Id == 0)
                 return null;
 
-            var muscularGroupRow = _dbContext.Table<MuscularGroupRow>().Where(m => m.Id == muscularGroup.Id).FirstOrDefault();
+            var muscularGroupRow = _dbContext.MuscularGroup.Where(m => m.Id == muscularGroup.Id).FirstOrDefault();
             if (muscularGroupRow == null)
             { // No data in database
                 return Create(muscularGroup);
@@ -93,8 +93,7 @@ namespace BodyReportMobile.Core.Crud.Module
             else
             { //Modify Data in database
                 MuscularGroupTransformer.ToRow(muscularGroup, muscularGroupRow);
-                _dbContext.Delete(muscularGroupRow); //Update don't work... need delete and insert
-                _dbContext.Insert(muscularGroupRow);
+                _dbContext.SaveChanges();
                 return MuscularGroupTransformer.ToBean(muscularGroupRow);
             }
         }
@@ -108,10 +107,11 @@ namespace BodyReportMobile.Core.Crud.Module
             if (key == null || key.Id == 0)
                 return;
 
-            var muscularGroupRow = _dbContext.Table<MuscularGroupRow>().Where(m => m.Id == key.Id).FirstOrDefault();
+            var muscularGroupRow = _dbContext.MuscularGroup.Where(m => m.Id == key.Id).FirstOrDefault();
             if (muscularGroupRow != null)
             {
-                _dbContext.Delete(muscularGroupRow);
+                _dbContext.MuscularGroup.Remove(muscularGroupRow);
+                _dbContext.SaveChanges();
             }
         }
     }

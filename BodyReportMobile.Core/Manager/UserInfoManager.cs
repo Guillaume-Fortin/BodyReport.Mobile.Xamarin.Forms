@@ -1,11 +1,8 @@
 ﻿using BodyReportMobile.Core.Crud.Module;
 using BodyReport.Message;
-using SQLite.Net;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Manager
 {
@@ -13,7 +10,7 @@ namespace BodyReportMobile.Core.Manager
     {
         UserInfoModule _userInfoModule = null;
 
-        public UserInfoManager(SQLiteConnection dbContext) : base(dbContext)
+        public UserInfoManager(ApplicationDbContext dbContext) : base(dbContext)
         {
             _userInfoModule = new UserInfoModule(DbContext);
         }

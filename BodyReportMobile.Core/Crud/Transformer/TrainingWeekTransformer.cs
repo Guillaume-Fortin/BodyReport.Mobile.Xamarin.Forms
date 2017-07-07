@@ -21,7 +21,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
             row.UserHeight = bean.UserHeight;
             row.UserWeight = bean.UserWeight;
             row.Unit = (int)bean.Unit;
-            row.ModificationDate = bean.ModificationDate;
+            row.ModificationDate = DbUtils.DbDateToUtc(bean.ModificationDate);
         }
 
         internal static TrainingWeek ToBean(TrainingWeekRow row)
@@ -36,7 +36,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
             bean.UserHeight = row.UserHeight;
             bean.UserWeight = row.UserWeight;
             bean.Unit = Utils.IntToEnum<TUnitType>(row.Unit);
-            bean.ModificationDate = row.ModificationDate;
+            bean.ModificationDate = DbUtils.DbDateToUtc(row.ModificationDate);
             return bean;
         }
     }

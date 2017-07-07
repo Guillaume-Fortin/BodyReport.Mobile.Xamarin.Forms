@@ -1,5 +1,5 @@
 ﻿using System;
-using SQLite.Net;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Manager
 {
@@ -8,18 +8,18 @@ namespace BodyReportMobile.Core.Manager
 		/// <summary>
 		/// DataBase context with transaction
 		/// </summary>
-		private SQLiteConnection _dbContext = null;
+		private ApplicationDbContext _dbContext = null;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="dbContext">db context</param>
-		public BodyReportManager(SQLiteConnection dbContext)
+		public BodyReportManager(ApplicationDbContext dbContext)
 		{
 			_dbContext = dbContext;
 		}
 
-        public SQLiteConnection DbContext
+        public ApplicationDbContext DbContext
         {
             get
             {

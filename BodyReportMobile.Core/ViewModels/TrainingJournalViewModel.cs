@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Linq;
 using System.Threading.Tasks;
-using SQLite.Net;
 using BodyReport.Framework;
 using XLabs.Ioc;
 using BodyReportMobile.Core.Framework;
@@ -25,7 +24,7 @@ namespace BodyReportMobile.Core.ViewModels
 		public ObservableCollection<GenericGroupModelCollection<BindingTrainingWeek>> GroupedTrainingWeeks { get; set; } = new ObservableCollection<GenericGroupModelCollection<BindingTrainingWeek>>();
 
         IUserDialogs _userDialog;
-        private SQLiteConnection _dbContext;
+        private ApplicationDbContext _dbContext;
 		private TrainingWeekService _trainingWeekService;
 
 		private string _createLabel = string.Empty;
@@ -122,7 +121,7 @@ namespace BodyReportMobile.Core.ViewModels
 		private async Task CreateNewTrainingWeekActionAsync()
 		{
             try
-            {
+            {                
                 var userInfo = UserData.Instance.UserInfo;
                 if (userInfo == null)
                     userInfo = new UserInfo();
@@ -227,7 +226,7 @@ namespace BodyReportMobile.Core.ViewModels
                                 trainingWeek = null; // force reload local data
                         }
                     }
-                    catch
+                    catch(Exception except)
                     {
                         // Unable to retreive local data
                         ILogger.Instance.Info("Unable to retreive TrainingWeek on server");

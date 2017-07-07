@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BodyReport.Framework;
 
 namespace BodyReportMobile.Core.Crud.Transformer
 {
@@ -21,10 +22,11 @@ namespace BodyReportMobile.Core.Crud.Transformer
             row.TrainingDayId = bean.TrainingDayId;
             row.BeginHour = bean.BeginHour;
             row.EndHour = bean.EndHour;
-            row.ModificationDate = bean.ModificationDate;
+            row.ModificationDate = DbUtils.DbDateToUtc(bean.ModificationDate);
+            row.Unit = (int)bean.Unit;
         }
 
-        internal static TrainingDay ToBean(TrainingDayRow row)
+        internal static TrainingDay ToBean(TrainingDayRow row, TUnitType userUnit)
         {
             if (row == null)
                 return null;
@@ -37,7 +39,8 @@ namespace BodyReportMobile.Core.Crud.Transformer
             bean.TrainingDayId = row.TrainingDayId;
             bean.BeginHour = row.BeginHour;
             bean.EndHour = row.EndHour;
-            bean.ModificationDate = row.ModificationDate;
+            bean.ModificationDate = DbUtils.DbDateToUtc(row.ModificationDate);
+            bean.Unit = Utils.IntToEnum<TUnitType>(row.Unit ?? (int)userUnit);
             return bean;
         }
     }

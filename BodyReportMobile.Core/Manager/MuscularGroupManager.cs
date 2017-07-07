@@ -2,19 +2,16 @@
 using BodyReportMobile.Core.Crud.Transformer;
 using BodyReportMobile.Core.Framework;
 using BodyReport.Message;
-using SQLite.Net;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Manager
 {
     public class MuscularGroupManager : BodyReportManager
     {
         MuscularGroupModule _module;
-        public MuscularGroupManager(SQLiteConnection dbContext) : base(dbContext)
+        public MuscularGroupManager(ApplicationDbContext dbContext) : base(dbContext)
 		{
             _module = new MuscularGroupModule(DbContext);
         }

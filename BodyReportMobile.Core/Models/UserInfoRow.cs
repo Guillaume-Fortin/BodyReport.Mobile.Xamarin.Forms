@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SQLite.Net.Attributes;
 
 namespace BodyReportMobile.Core.Models
 {
-	[Table("UserInfo")]
     public class UserInfoRow
     {
         /// <summary>
         /// UserId (Key)
         /// </summary>
-		[PrimaryKey, Column("UserId")]
-		[MaxLength(450)]
         public string UserId
         {
             get;
@@ -59,7 +52,6 @@ namespace BodyReportMobile.Core.Models
         /// <summary>
         /// PostalCode
         /// </summary>
-		[MaxLength(80)]
         public string ZipCode
         {
             get;
@@ -78,7 +70,6 @@ namespace BodyReportMobile.Core.Models
         /// <summary>
         /// Olson timezone name
         /// </summary>
-        [MaxLength(100)]
         public string TimeZoneName
         {
             get;

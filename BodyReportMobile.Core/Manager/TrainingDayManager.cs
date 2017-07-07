@@ -1,25 +1,28 @@
 ﻿using System;
-using SQLite.Net;
 using BodyReport.Message;
 using System.Collections.Generic;
 using BodyReportMobile.Core.Crud.Module;
 using BodyReportMobile.Core.ServiceLayers;
+using BodyReportMobile.Core.Data;
+using BodyReport.Framework;
 
 namespace BodyReportMobile.Core.Manager
 {
 	public class TrainingDayManager : BodyReportManager
     {
 		TrainingDayModule _trainingDayModule = null;
+        UserInfoService _userInfosService = null;
 
-		public TrainingDayManager(SQLiteConnection dbContext) : base(dbContext)
+        public TrainingDayManager(ApplicationDbContext dbContext) : base(dbContext)
 		{
 			_trainingDayModule = new TrainingDayModule(DbContext);
-		}
+            _userInfosService = new UserInfoService(DbContext);
+        }
 
 		internal TrainingDay CreateTrainingDay(TrainingDay trainingDay)
 		{
 			TrainingDay trainingDayResult = null;
-			trainingDayResult = _trainingDayModule.Create(trainingDay);
+			trainingDayResult = _trainingDayModule.Create(trainingDay, AppUtils.GetUserUnit(_userInfosService, trainingDay.UserId));
 
 			if (trainingDay.TrainingExercises != null)
 			{
@@ -53,7 +56,7 @@ namespace BodyReportMobile.Core.Manager
 
 		internal TrainingDay GetTrainingDay(TrainingDayKey key, TrainingDayScenario scenario)
 		{
-			var trainingDay = _trainingDayModule.Get(key);
+			var trainingDay = _trainingDayModule.Get(key, AppUtils.GetUserUnit(_userInfosService, key.UserId));
 
 			if (scenario != null && scenario.ManageExercise && trainingDay != null)
 			{
@@ -63,9 +66,9 @@ namespace BodyReportMobile.Core.Manager
 			return trainingDay;
 		}
 
-		internal List<TrainingDay> FindTrainingDay(TrainingDayCriteria trainingDayCriteria, TrainingDayScenario trainingDayScenario)
+		internal List<TrainingDay> FindTrainingDay(TUnitType userUnit, TrainingDayCriteria trainingDayCriteria, TrainingDayScenario trainingDayScenario)
 		{
-			var trainingDays = _trainingDayModule.Find(trainingDayCriteria);
+			var trainingDays = _trainingDayModule.Find(userUnit, trainingDayCriteria);
 
 			if (trainingDayScenario != null && trainingDayScenario.ManageExercise && trainingDays != null)
 			{
@@ -82,12 +85,12 @@ namespace BodyReportMobile.Core.Manager
 		{
 			TrainingDay trainingDayResult = null;
 
-			trainingDayResult = _trainingDayModule.Update(trainingDay);
-
+			trainingDayResult = _trainingDayModule.Update(trainingDay, AppUtils.GetUserUnit(_userInfosService, trainingDay.UserId));
+            
             if (trainingDayScenario != null && trainingDayScenario.ManageExercise)
             {
                 var trainingExerciseService = new TrainingExerciseService(DbContext);
-
+                
                 var trainingExerciseCriteria = new TrainingExerciseCriteria()
                 {
                     UserId = new StringCriteria() { Equal = trainingDay.UserId },

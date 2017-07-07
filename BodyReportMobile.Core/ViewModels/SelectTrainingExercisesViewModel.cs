@@ -4,7 +4,6 @@ using BodyReportMobile.Core.Message.Binding;
 using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Core.ServiceLayers;
 using BodyReport.Message;
-using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XLabs.Ioc;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -24,7 +24,7 @@ namespace BodyReportMobile.Core.ViewModels
 
     public class SelectTrainingExercisesViewModel : BaseViewModel
     {
-        private SQLiteConnection _dbContext;
+        private ApplicationDbContext _dbContext;
         private IUserDialogs _userDialog;
 
         public List<BindingBodyExercise> BindingBodyExercises { get; set; } = new List<BindingBodyExercise>();

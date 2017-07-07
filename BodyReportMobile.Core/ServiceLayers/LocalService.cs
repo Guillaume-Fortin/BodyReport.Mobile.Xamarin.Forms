@@ -1,7 +1,7 @@
-﻿using BodyReportMobile.Core.Framework;
+﻿using BodyReportMobile.Core.Data;
+using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.Framework.Caching;
 using BodyReportMobile.Core.Manager;
-using SQLite.Net;
 
 namespace BodyReportMobile.Core.ServiceLayers
 {
@@ -10,44 +10,47 @@ namespace BodyReportMobile.Core.ServiceLayers
         /// <summary>
 		/// DataBase context with transaction
 		/// </summary>
-		protected SQLiteConnection _dbContext = null;
+		protected ApplicationDbContext _dbContext = null;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="dbContext">db context</param>
-        public LocalService(SQLiteConnection dbContext)
+        public LocalService(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
         #region Manage database transaction
 
-        private bool _isParentTransaction = false;
+        private bool _isParentTransaction = true;
         protected void BeginTransaction()
         {
-            if (!_isParentTransaction && !_dbContext.IsInTransaction)
+            _isParentTransaction = _dbContext.Database.CurrentTransaction == null;
+            if (_isParentTransaction)
             {
-                _dbContext.BeginTransaction();
-                _isParentTransaction = true;
+                _dbContext.Database.BeginTransaction();
             }
         }
 
         protected void CommitTransaction()
         {
-            if (_isParentTransaction && _dbContext.IsInTransaction)
-                _dbContext.Commit();
+            if (_isParentTransaction && _dbContext.Database.CurrentTransaction != null)
+                _dbContext.Database.CurrentTransaction.Commit();
         }
 
         protected void RollbackTransaction()
         {
-            if (_isParentTransaction && _dbContext.IsInTransaction)
-                _dbContext.Rollback();
+            if (_isParentTransaction && _dbContext.Database.CurrentTransaction != null)
+                _dbContext.Database.CurrentTransaction.Rollback();
         }
 
         protected void EndTransaction()
         {
-            //nothing
+            if (_isParentTransaction && _dbContext.Database.CurrentTransaction != null)
+            {
+                _dbContext.Database.CurrentTransaction.Dispose();
+            }
         }
 
         #endregion

@@ -2,12 +2,9 @@
 using BodyReportMobile.Core.Framework;
 using BodyReportMobile.Core.ServiceLayers;
 using BodyReportMobile.Core.WebServices;
-using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using XLabs.Ioc;
 
@@ -49,9 +46,11 @@ namespace BodyReportMobile.Core.Data
                 var countryList = await CountryWebService.FindCountriesAsync();
                 if (countryList != null)
                 {
-                    var dbContext = Resolver.Resolve<ISQLite>().GetConnection();
-                    var countryService = new CountryService(dbContext);
-                    countryService.UpdateCountryList(countryList);
+                    using (var dbContext = Resolver.Resolve<ISQLite>().GetConnection())
+                    {
+                        var countryService = new CountryService(dbContext);
+                        countryService.UpdateCountryList(countryList);
+                    }                    
                 }
             }
             catch (Exception except)
@@ -60,7 +59,7 @@ namespace BodyReportMobile.Core.Data
             }
         }
 
-        public static async Task SynchronizeMusclesAsync(SQLiteConnection dbContext)
+        public static async Task SynchronizeMusclesAsync(ApplicationDbContext dbContext)
         {
             try
             {
@@ -78,7 +77,7 @@ namespace BodyReportMobile.Core.Data
             }
         }
 
-        public static async Task SynchronizeMuscularGroupAsync(SQLiteConnection dbContext)
+        public static async Task SynchronizeMuscularGroupAsync(ApplicationDbContext dbContext)
         {
             try
             {
@@ -96,7 +95,7 @@ namespace BodyReportMobile.Core.Data
             }
         }
 
-        public static async Task SynchronizeBodyExercisesAsync(SQLiteConnection dbContext)
+        public static async Task SynchronizeBodyExercisesAsync(ApplicationDbContext dbContext)
         {
             try
             {
@@ -133,7 +132,7 @@ namespace BodyReportMobile.Core.Data
             }
         }
 
-        public static async Task SynchronizeTranslationsAsync(SQLiteConnection dbContext)
+        public static async Task SynchronizeTranslationsAsync(ApplicationDbContext dbContext)
         {
             try
             {
@@ -151,7 +150,7 @@ namespace BodyReportMobile.Core.Data
             }
         }
 
-        public static async Task<bool> SynchronizeTrainingWeeksAsync(SQLiteConnection dbContext)
+        public static async Task<bool> SynchronizeTrainingWeeksAsync(ApplicationDbContext dbContext, IProgress<double> progress = null)
         {
             bool result = false;
             try
@@ -233,19 +232,30 @@ namespace BodyReportMobile.Core.Data
                 };
                 if (synchronizeTrainingWeekList.Count > 0)
                 {
+                    TrainingWeek trainingWeek;
                     criteriaList.Clear();
-                    foreach (var trainingWeek in synchronizeTrainingWeekList)
+                    for (int i=0; i < synchronizeTrainingWeekList.Count; i++)
                     {
+                        trainingWeek = synchronizeTrainingWeekList[i];
+                        
                         criteria = new TrainingWeekCriteria();
                         criteria.UserId = new StringCriteria() { Equal = trainingWeek.UserId };
                         criteria.Year = new IntegerCriteria() { Equal = trainingWeek.Year };
                         criteria.WeekOfYear = new IntegerCriteria() { Equal = trainingWeek.WeekOfYear };
                         criteriaList.Add(criteria);
-                    }
-                    onlineTrainingWeekList = await TrainingWeekWebService.FindTrainingWeeksAsync(criteriaList, trainingWeekScenario);
-                    if (onlineTrainingWeekList != null && onlineTrainingWeekList.Count > 0)
-                    {
-                        trainingWeekService.UpdateTrainingWeekList(onlineTrainingWeekList, trainingWeekScenario);
+                        if (criteriaList.Count == 2 || i == (synchronizeTrainingWeekList.Count-1))
+                        {
+                            onlineTrainingWeekList = await TrainingWeekWebService.FindTrainingWeeksAsync(criteriaList, trainingWeekScenario);
+                            if (onlineTrainingWeekList != null && onlineTrainingWeekList.Count > 0)
+                            {
+                               trainingWeekService.UpdateTrainingWeekList(onlineTrainingWeekList, trainingWeekScenario);
+                            }
+                            if (progress != null)
+                            {
+                                progress.Report(((double)i) / synchronizeTrainingWeekList.Count);
+                            }
+                            criteriaList.Clear();
+                        }
                     }
                 }
                 result = true;

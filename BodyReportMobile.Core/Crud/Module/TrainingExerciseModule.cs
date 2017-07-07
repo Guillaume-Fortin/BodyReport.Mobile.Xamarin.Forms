@@ -1,9 +1,10 @@
 ﻿using System;
-using SQLite.Net;
 using BodyReport.Message;
 using BodyReportMobile.Core.Crud.Transformer;
 using System.Collections.Generic;
 using BodyReportMobile.Core.Models;
+using BodyReportMobile.Core.Data;
+using System.Linq;
 
 namespace BodyReportMobile.Core.Crud.Module
 {
@@ -13,7 +14,7 @@ namespace BodyReportMobile.Core.Crud.Module
 		/// Constructor
 		/// </summary>
 		/// <param name="dbContext">database context</param>
-		public TrainingExerciseModule(SQLiteConnection dbContext) : base(dbContext)
+		public TrainingExerciseModule(ApplicationDbContext dbContext) : base(dbContext)
 		{
 		}
 
@@ -31,8 +32,9 @@ namespace BodyReportMobile.Core.Crud.Module
 
 			var row = new TrainingExerciseRow();
 			TrainingExerciseTransformer.ToRow(trainingJournalDayExercise, row);
-			_dbContext.Insert(row);
-			return GetBean(row);
+			_dbContext.TrainingExercise.Add(row);
+            _dbContext.SaveChanges();
+            return GetBean(row);
 		}
 
         private TrainingExercise GetBean(TrainingExerciseRow row)
@@ -67,7 +69,7 @@ namespace BodyReportMobile.Core.Crud.Module
 				key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.Id == 0)
 				return null;
 
-			var rowQuery = _dbContext.Table<TrainingExerciseRow>().Where(t => t.UserId == key.UserId && t.Year == key.Year &&
+			var rowQuery = _dbContext.TrainingExercise.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
 				t.WeekOfYear == key.WeekOfYear && t.DayOfWeek == key.DayOfWeek &&
 				t.TrainingDayId == key.TrainingDayId && t.Id == key.Id);
 			var row = rowQuery.FirstOrDefault();
@@ -85,16 +87,17 @@ namespace BodyReportMobile.Core.Crud.Module
 		public List<TrainingExercise> Find(TrainingExerciseCriteria trainingExerciseCriteria = null)
 		{
 			List<TrainingExercise> resultList = null;
-			TableQuery<TrainingExerciseRow> rowList = _dbContext.Table<TrainingExerciseRow>();
+            IQueryable<TrainingExerciseRow> rowList = _dbContext.TrainingExercise;
 			CriteriaTransformer.CompleteQuery(ref rowList, trainingExerciseCriteria);
 			rowList = rowList.OrderBy(t => t.Id);
 
-			if (rowList != null && rowList.Count() > 0)
+			if (rowList != null)
 			{
-				resultList = new List<TrainingExercise>();
 				foreach (var row in rowList)
 				{
-					resultList.Add(GetBean(row));
+                    if (resultList == null)
+                        resultList = new List<TrainingExercise>();
+                    resultList.Add(GetBean(row));
 				}
 			}
 			return resultList;
@@ -112,7 +115,7 @@ namespace BodyReportMobile.Core.Crud.Module
 				trainingJournalDayExercise.DayOfWeek < 0 || trainingJournalDayExercise.DayOfWeek > 6 || trainingJournalDayExercise.TrainingDayId == 0 || trainingJournalDayExercise.Id == 0)
 				return null;
 
-			var row = _dbContext.Table<TrainingExerciseRow>().Where(t => t.UserId == trainingJournalDayExercise.UserId &&
+			var row = _dbContext.TrainingExercise.Where(t => t.UserId == trainingJournalDayExercise.UserId &&
 				t.Year == trainingJournalDayExercise.Year &&
 				t.WeekOfYear == trainingJournalDayExercise.WeekOfYear &&
 				t.DayOfWeek == trainingJournalDayExercise.DayOfWeek &&
@@ -125,8 +128,7 @@ namespace BodyReportMobile.Core.Crud.Module
 			else
 			{ //Modify Data in database
 				TrainingExerciseTransformer.ToRow(trainingJournalDayExercise, row);
-                _dbContext.Delete(row); //Update don't work... need delete and insert
-                _dbContext.Insert(row);
+                _dbContext.SaveChanges();
                 return GetBean(row);
 			}
 		}
@@ -140,13 +142,14 @@ namespace BodyReportMobile.Core.Crud.Module
 			if (key == null || string.IsNullOrWhiteSpace(key.UserId) || key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.Id == 0)
 				return;
 
-			var row = _dbContext.Table<TrainingExerciseRow>().Where(t => t.UserId == key.UserId && t.Year == key.Year &&
+			var row = _dbContext.TrainingExercise.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
 				t.WeekOfYear == key.WeekOfYear && t.DayOfWeek == key.DayOfWeek &&
 				t.TrainingDayId == key.TrainingDayId && t.Id == key.Id).FirstOrDefault();
 			if (row != null)
 			{
-				_dbContext.Delete(row);
-			}
+				_dbContext.TrainingExercise.Remove(row);
+                _dbContext.SaveChanges();
+            }
 		}
 	}
 }

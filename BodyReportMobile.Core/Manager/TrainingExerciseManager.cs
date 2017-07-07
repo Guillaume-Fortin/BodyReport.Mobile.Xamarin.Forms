@@ -1,9 +1,9 @@
 ﻿using System;
-using SQLite.Net;
 using BodyReport.Message;
 using System.Collections.Generic;
 using BodyReportMobile.Core.Crud.Module;
 using BodyReport.Framework;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Manager
 {
@@ -12,7 +12,7 @@ namespace BodyReportMobile.Core.Manager
 		TrainingExerciseModule _trainingExerciseModule = null;
 		TrainingExerciseSetManager _trainingExerciseSetManager = null;
 
-		public TrainingExerciseManager(SQLiteConnection dbContext) : base(dbContext)
+		public TrainingExerciseManager(ApplicationDbContext dbContext) : base(dbContext)
 		{
 			_trainingExerciseModule = new TrainingExerciseModule(DbContext);
 			_trainingExerciseSetManager = new TrainingExerciseSetManager(DbContext);
@@ -31,8 +31,7 @@ namespace BodyReportMobile.Core.Manager
 					result.TrainingExerciseSets.Add(trainingExerciseSet);
 				}
 			}
-
-			return result;
+            return result;
 		}
 
 		public TrainingExercise UpdateTrainingExercise(TrainingExercise trainingExercise, bool manageDeleteLinkItem)
@@ -67,8 +66,7 @@ namespace BodyReportMobile.Core.Manager
 					result.TrainingExerciseSets.Add(_trainingExerciseSetManager.UpdateTrainingExerciseSet(set));
 				}
 			}
-
-			return result;
+            return result;
 		}
 
 		private void CompleteTrainingExerciseWithSet(TrainingExercise trainingExercise)

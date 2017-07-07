@@ -2,10 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using SQLite.Net;
 using BodyReportMobile.Core.Crud.Transformer;
 using BodyReportMobile.Core.Models;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Crud.Module
 {
@@ -15,7 +14,7 @@ namespace BodyReportMobile.Core.Crud.Module
         /// Constructor
         /// </summary>
         /// <param name="dbContext">database context</param>
-		public UserInfoModule(SQLiteConnection dbContext) : base(dbContext)
+		public UserInfoModule(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
 
@@ -31,7 +30,8 @@ namespace BodyReportMobile.Core.Crud.Module
             
             var row = new UserInfoRow();
             UserInfoTransformer.ToRow(userInfo, row);
-			_dbContext.Insert(row);
+			_dbContext.UserInfo.Add(row);
+            _dbContext.SaveChanges();
             return UserInfoTransformer.ToBean(row);
         }
 
@@ -45,7 +45,7 @@ namespace BodyReportMobile.Core.Crud.Module
             if (key == null || string.IsNullOrWhiteSpace(key.UserId))
                 return null;
 
-			var row = _dbContext.Table<UserInfoRow>().Where(m => m.UserId == key.UserId).FirstOrDefault();
+			var row = _dbContext.UserInfo.Where(m => m.UserId == key.UserId).FirstOrDefault();
             if (row != null)
             {
                 return UserInfoTransformer.ToBean(row);
@@ -60,14 +60,15 @@ namespace BodyReportMobile.Core.Crud.Module
         public List<UserInfo> Find(UserInfoCriteria userInfoCriteria = null)
         {
             List<UserInfo> resultList = null;
-			TableQuery<UserInfoRow> rowList = _dbContext.Table<UserInfoRow>();
+			IQueryable<UserInfoRow> rowList = _dbContext.UserInfo;
             CriteriaTransformer.CompleteQuery(ref rowList, userInfoCriteria);
 
-            if (rowList != null && rowList.Count() > 0)
+            if (rowList != null)
             {
-                resultList = new List<UserInfo>();
                 foreach (var userInfoRow in rowList)
                 {
+                    if (resultList == null)
+                        resultList = new List<UserInfo>();
                     resultList.Add(UserInfoTransformer.ToBean(userInfoRow));
                 }
             }
@@ -84,7 +85,7 @@ namespace BodyReportMobile.Core.Crud.Module
             if (userInfo == null || string.IsNullOrWhiteSpace(userInfo.UserId))
                 return null;
 
-			var row = _dbContext.Table<UserInfoRow>().Where(m => m.UserId == userInfo.UserId).FirstOrDefault();
+			var row = _dbContext.UserInfo.Where(m => m.UserId == userInfo.UserId).FirstOrDefault();
             if (row == null)
             { // No data in database
                 return Create(userInfo);
@@ -92,8 +93,7 @@ namespace BodyReportMobile.Core.Crud.Module
             else
             { //Modify Data in database
                 UserInfoTransformer.ToRow(userInfo, row);
-                _dbContext.Delete(row); //Update don't work... need delete and insert
-                _dbContext.Insert(row);
+                _dbContext.SaveChanges();
                 return UserInfoTransformer.ToBean(row);
             }
         }
@@ -107,10 +107,11 @@ namespace BodyReportMobile.Core.Crud.Module
             if (key == null || string.IsNullOrWhiteSpace(key.UserId))
                 return;
 
-			var row = _dbContext.Table<UserInfoRow>().Where(m => m.UserId == key.UserId).FirstOrDefault();
+			var row = _dbContext.UserInfo.Where(m => m.UserId == key.UserId).FirstOrDefault();
             if (row != null)
             {
-				_dbContext.Delete(row);
+				_dbContext.UserInfo.Remove(row);
+                _dbContext.SaveChanges();
             }
         }
     }

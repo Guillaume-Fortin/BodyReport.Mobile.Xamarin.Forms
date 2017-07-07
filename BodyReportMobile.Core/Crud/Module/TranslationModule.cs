@@ -2,11 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using BodyReportMobile.Core;
 using BodyReportMobile.Core.Crud.Transformer;
-using SQLite.Net;
 using BodyReportMobile.Core.Models;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Crud.Module
 {
@@ -19,7 +17,7 @@ namespace BodyReportMobile.Core.Crud.Module
         /// Constructor
         /// </summary>
         /// <param name="dbContext">database context</param>
-		public TranslationModule(SQLiteConnection dbContext) : base(dbContext)
+		public TranslationModule(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
 
@@ -35,8 +33,8 @@ namespace BodyReportMobile.Core.Crud.Module
             
             var row = new TranslationRow();
             TranslationTransformer.ToRow(translation, row);
-			_dbContext.Insert(row);
-
+			_dbContext.Translation.Add(row);
+            _dbContext.SaveChanges();
             return TranslationTransformer.ToBean(row);
         }
 
@@ -50,7 +48,7 @@ namespace BodyReportMobile.Core.Crud.Module
             if (key == null || key.CultureId < 0 || string.IsNullOrWhiteSpace(key.Key))
                 return null;
 
-			var row = _dbContext.Table<TranslationRow>().Where(m => m.CultureId == key.CultureId && m.Key == key.Key).FirstOrDefault();
+			var row = _dbContext.Translation.Where(m => m.CultureId == key.CultureId && m.Key == key.Key).FirstOrDefault();
             if (row != null)
             {
                 return TranslationTransformer.ToBean(row);
@@ -65,14 +63,15 @@ namespace BodyReportMobile.Core.Crud.Module
         public List<TranslationVal> Find(TranslationValCriteria translationValCriteria = null)
         {
             List<TranslationVal> resultList = null;
-			var rowList = _dbContext.Table<TranslationRow> ();
+			IQueryable<TranslationRow> rowList = _dbContext.Translation;
             CriteriaTransformer.CompleteQuery(ref rowList, translationValCriteria);
 
-            if (rowList != null && rowList.Count() > 0)
+            if (rowList != null)
             {
-                resultList = new List<TranslationVal>();
                 foreach (var row in rowList)
                 {
+                    if (resultList == null)
+                        resultList = new List<TranslationVal>();
                     resultList.Add(TranslationTransformer.ToBean(row));
                 }
             }
@@ -89,7 +88,7 @@ namespace BodyReportMobile.Core.Crud.Module
             if (translation == null || translation.CultureId < 0 || string.IsNullOrWhiteSpace(translation.Key))
                 return null;
 
-			var row = _dbContext.Table<TranslationRow>().Where(m => m.CultureId == translation.CultureId && m.Key == translation.Key).FirstOrDefault();
+			var row = _dbContext.Translation.Where(m => m.CultureId == translation.CultureId && m.Key == translation.Key).FirstOrDefault();
             if (row == null)
             { // No data in database
                 return Create(translation);
@@ -97,8 +96,7 @@ namespace BodyReportMobile.Core.Crud.Module
             else
             { //Modify Data in database
                 TranslationTransformer.ToRow(translation, row);
-                _dbContext.Delete(row); //Update don't work... need delete and insert
-                _dbContext.Insert(row);
+                _dbContext.SaveChanges();
                 return TranslationTransformer.ToBean(row);
             }
         }
@@ -112,10 +110,11 @@ namespace BodyReportMobile.Core.Crud.Module
             if (key == null || key.CultureId < 0 || string.IsNullOrWhiteSpace(key.Key))
                 return;
 
-			var row = _dbContext.Table<TranslationRow>().Where(m => m.CultureId == key.CultureId && m.Key == key.Key).FirstOrDefault();
+			var row = _dbContext.Translation.Where(m => m.CultureId == key.CultureId && m.Key == key.Key).FirstOrDefault();
             if (row != null)
             {
-				_dbContext.Delete(row);
+				_dbContext.Translation.Remove(row);
+                _dbContext.SaveChanges();
             }
         }
     }

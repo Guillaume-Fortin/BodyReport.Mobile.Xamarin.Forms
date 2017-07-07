@@ -1,8 +1,8 @@
 ﻿using System;
 using BodyReport.Message;
 using BodyReportMobile.Core.Crud.Module;
-using SQLite.Net;
 using System.Collections.Generic;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Manager
 {
@@ -10,7 +10,7 @@ namespace BodyReportMobile.Core.Manager
     {
 		TrainingExerciseSetModule _trainingExerciseSetModule = null;
 
-		public TrainingExerciseSetManager(SQLiteConnection dbContext) : base(dbContext)
+		public TrainingExerciseSetManager(ApplicationDbContext dbContext) : base(dbContext)
 		{
 			_trainingExerciseSetModule = new TrainingExerciseSetModule(DbContext);
 		}
@@ -19,8 +19,8 @@ namespace BodyReportMobile.Core.Manager
 		{
 			return _trainingExerciseSetModule.Create(trainingExerciseSet);
 		}
-
-		public TrainingExerciseSet UpdateTrainingExerciseSet(TrainingExerciseSet trainingExerciseSet)
+        
+        public TrainingExerciseSet UpdateTrainingExerciseSet(TrainingExerciseSet trainingExerciseSet)
 		{
 			return _trainingExerciseSetModule.Update(trainingExerciseSet);
 		}
@@ -35,7 +35,12 @@ namespace BodyReportMobile.Core.Manager
 			return _trainingExerciseSetModule.Find(trainingExerciseSetCriteria);
 		}
 
-		public void DeleteTrainingExerciseSet(TrainingExerciseSetKey key)
+        public List<TrainingExerciseSet> FindTrainingExerciseSet(CriteriaList<TrainingExerciseSetCriteria> trainingExerciseSetCriteriaList)
+        {
+            return _trainingExerciseSetModule.Find(trainingExerciseSetCriteriaList);
+        }
+
+        public void DeleteTrainingExerciseSet(TrainingExerciseSetKey key)
 		{
 			_trainingExerciseSetModule.Delete(key);
 		}

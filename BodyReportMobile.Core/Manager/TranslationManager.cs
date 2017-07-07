@@ -2,7 +2,7 @@
 using BodyReportMobile.Core.Crud.Module;
 using BodyReport.Message;
 using System.Collections.Generic;
-using SQLite.Net;
+using BodyReportMobile.Core.Data;
 
 namespace BodyReportMobile.Core.Manager
 {
@@ -10,7 +10,7 @@ namespace BodyReportMobile.Core.Manager
     {
 		TranslationModule _module = null;
 
-		public TranslationManager(SQLiteConnection dbContext) : base(dbContext)
+		public TranslationManager(ApplicationDbContext dbContext) : base(dbContext)
 		{
 			_module = new TranslationModule(DbContext);
 		}

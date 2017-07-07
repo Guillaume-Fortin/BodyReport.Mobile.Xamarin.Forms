@@ -7,7 +7,6 @@ using BodyReportMobile.Core.ServiceLayers;
 using BodyReportMobile.Core.ViewModels.Generic;
 using BodyReportMobile.Core.WebServices;
 using BodyReport.Message;
-using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +18,7 @@ namespace BodyReportMobile.Core.ViewModels
 {
     public class EditUserProfileViewModel : BaseViewModel
     {
-        private readonly SQLiteConnection _dbContext;
+        private readonly ApplicationDbContext _dbContext;
         private readonly UserInfoService _userInfoService;
         
         private string _userId;
@@ -86,7 +85,7 @@ namespace BodyReportMobile.Core.ViewModels
             bool result = false;
             try
             {
-                var countryService = new CountryService(_dbContext);
+                var countryService = new CountryService(DbContext);
                 _countries = countryService.FindCountries();
                 if (_countries == null || _countries.Count == 0)
                 {
@@ -250,6 +249,7 @@ namespace BodyReportMobile.Core.ViewModels
             if(userInfo != null && userInfo.UserId == UserData.Instance.UserInfo.UserId)
             {
                 _userInfoService.UpdateUserInfo(userInfo);
+                UserData.Instance.UserInfo = userInfo;
             }
             return userInfo != null;
         }
@@ -477,6 +477,8 @@ namespace BodyReportMobile.Core.ViewModels
                 return _changeCountryCommand;
             }
         }
+
+        public ApplicationDbContext DbContext => _dbContext;
 
         #endregion
     }

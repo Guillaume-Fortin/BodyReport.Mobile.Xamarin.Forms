@@ -1,9 +1,10 @@
 ﻿using System;
-using SQLite.Net;
 using BodyReport.Message;
 using BodyReportMobile.Core.Crud.Transformer;
 using System.Collections.Generic;
 using BodyReportMobile.Core.Models;
+using BodyReportMobile.Core.Data;
+using System.Linq;
 
 namespace BodyReportMobile.Core.Crud.Module
 {
@@ -13,7 +14,7 @@ namespace BodyReportMobile.Core.Crud.Module
 		/// Constructor
 		/// </summary>
 		/// <param name="dbContext">database context</param>
-		public TrainingExerciseSetModule(SQLiteConnection dbContext) : base(dbContext)
+		public TrainingExerciseSetModule(ApplicationDbContext dbContext) : base(dbContext)
 		{
 		}
 
@@ -32,8 +33,9 @@ namespace BodyReportMobile.Core.Crud.Module
 
 			var row = new TrainingExerciseSetRow();
 			TrainingExerciseSetTransformer.ToRow(trainingExerciseSet, row);
-			_dbContext.Insert(row);
-			return TrainingExerciseSetTransformer.ToBean(row);
+			_dbContext.TrainingExerciseSet.Add(row);
+            _dbContext.SaveChanges();
+            return TrainingExerciseSetTransformer.ToBean(row);
 		}
 
 		/// <summary>
@@ -47,7 +49,7 @@ namespace BodyReportMobile.Core.Crud.Module
 				key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.TrainingExerciseId == 0 || key.Id == 0)
 				return null;
 
-			var row = _dbContext.Table<TrainingExerciseSetRow>().Where(t => t.UserId == key.UserId && t.Year == key.Year &&
+			var row = _dbContext.TrainingExerciseSet.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
 				t.WeekOfYear == key.WeekOfYear && t.DayOfWeek == key.DayOfWeek &&
 				t.TrainingDayId == key.TrainingDayId && 
 				t.TrainingExerciseId == key.TrainingExerciseId && t.Id == key.Id).FirstOrDefault();
@@ -65,27 +67,51 @@ namespace BodyReportMobile.Core.Crud.Module
 		public List<TrainingExerciseSet> Find(TrainingExerciseSetCriteria trainingExerciseSetCriteria = null)
 		{
 			List<TrainingExerciseSet> resultList = null;
-			TableQuery<TrainingExerciseSetRow> rowList = _dbContext.Table<TrainingExerciseSetRow>();
+            IQueryable<TrainingExerciseSetRow> rowList = _dbContext.TrainingExerciseSet;
 			CriteriaTransformer.CompleteQuery(ref rowList, trainingExerciseSetCriteria);
 			rowList = rowList.OrderBy(t => t.TrainingExerciseId);
 
-			if (rowList != null && rowList.Count() > 0)
+			if (rowList != null)
 			{
-				resultList = new List<TrainingExerciseSet>();
 				foreach (var row in rowList)
 				{
-					resultList.Add(TrainingExerciseSetTransformer.ToBean(row));
+                    if (resultList == null)
+                        resultList = new List<TrainingExerciseSet>();
+                    resultList.Add(TrainingExerciseSetTransformer.ToBean(row));
 				}
 			}
 			return resultList;
 		}
 
-		/// <summary>
-		/// Update data in database
+        /// <summary>
+		/// Find datas
 		/// </summary>
-		/// <param name="trainingExerciseSet">data</param>
-		/// <returns>updated data</returns>
-		public TrainingExerciseSet Update(TrainingExerciseSet trainingExerciseSet)
+		/// <returns></returns>
+		public List<TrainingExerciseSet> Find(CriteriaList<TrainingExerciseSetCriteria> trainingExerciseSetCriteriaList = null)
+        {
+            List<TrainingExerciseSet> resultList = null;
+            IQueryable<TrainingExerciseSetRow> rowList = _dbContext.TrainingExerciseSet;
+            CriteriaTransformer.CompleteQuery(ref rowList, trainingExerciseSetCriteriaList);
+            rowList = rowList.OrderBy(t => t.TrainingExerciseId);
+
+            if (rowList != null)
+            {
+                foreach (var row in rowList)
+                {
+                    if (resultList == null)
+                        resultList = new List<TrainingExerciseSet>();
+                    resultList.Add(TrainingExerciseSetTransformer.ToBean(row));
+                }
+            }
+            return resultList;
+        }
+
+        /// <summary>
+        /// Update data in database
+        /// </summary>
+        /// <param name="trainingExerciseSet">data</param>
+        /// <returns>updated data</returns>
+        public TrainingExerciseSet Update(TrainingExerciseSet trainingExerciseSet)
 		{
 			if (trainingExerciseSet == null || string.IsNullOrWhiteSpace(trainingExerciseSet.UserId) ||
 				trainingExerciseSet.Year == 0 || trainingExerciseSet.WeekOfYear == 0 ||
@@ -93,7 +119,7 @@ namespace BodyReportMobile.Core.Crud.Module
 				trainingExerciseSet.TrainingExerciseId == 0 || trainingExerciseSet.Id == 0)
 				return null;
 
-			var row = _dbContext.Table<TrainingExerciseSetRow>().Where(t => t.UserId == trainingExerciseSet.UserId &&
+			var row = _dbContext.TrainingExerciseSet.Where(t => t.UserId == trainingExerciseSet.UserId &&
 				t.Year == trainingExerciseSet.Year &&
 				t.WeekOfYear == trainingExerciseSet.WeekOfYear &&
 				t.DayOfWeek == trainingExerciseSet.DayOfWeek &&
@@ -107,8 +133,7 @@ namespace BodyReportMobile.Core.Crud.Module
 			else
 			{ //Modify Data in database
 				TrainingExerciseSetTransformer.ToRow(trainingExerciseSet, row);
-                _dbContext.Delete(row); //Update don't work... need delete and insert
-                _dbContext.Insert(row);
+                _dbContext.SaveChanges();
                 return TrainingExerciseSetTransformer.ToBean(row);
 			}
 		}
@@ -123,14 +148,15 @@ namespace BodyReportMobile.Core.Crud.Module
 				key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.TrainingExerciseId == 0 || key.Id == 0)
 				return;
 
-			var row = _dbContext.Table<TrainingExerciseSetRow>().Where(t => t.UserId == key.UserId && t.Year == key.Year &&
+			var row = _dbContext.TrainingExerciseSet.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
 				t.WeekOfYear == key.WeekOfYear && t.DayOfWeek == key.DayOfWeek &&
 				t.TrainingDayId == key.TrainingDayId && t.TrainingExerciseId == key.TrainingExerciseId &&
 				t.Id == key.Id).FirstOrDefault();
 			if (row != null)
 			{
-				_dbContext.Delete(row);
-			}
+				_dbContext.TrainingExerciseSet.Remove(row);
+                _dbContext.SaveChanges();
+            }
 		}
 	}
 }

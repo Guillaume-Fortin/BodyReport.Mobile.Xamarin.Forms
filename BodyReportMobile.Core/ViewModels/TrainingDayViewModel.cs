@@ -6,7 +6,6 @@ using BodyReportMobile.Core.Message.Binding;
 using BodyReportMobile.Core.WebServices;
 using BodyReportMobile.Core.ServiceLayers;
 using BodyReport.Message;
-using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -30,7 +29,7 @@ namespace BodyReportMobile.Core.ViewModels
 
     public class TrainingDayViewModel : BaseViewModel
     {
-        private SQLiteConnection _dbContext;
+        private ApplicationDbContext _dbContext;
         private TrainingDayService _trainingDayService;
         private IUserDialogs _userDialog;
 
@@ -149,10 +148,7 @@ namespace BodyReportMobile.Core.ViewModels
             if (trainingDay == null)
                 return null;
             
-            string weightUnit = "kg";
-
-            if (UserData.Instance.UserInfo.Unit == (int)TUnitType.Imperial)
-                weightUnit = Translation.Get(TRS.POUND);
+            string weightUnit = trainingDay.Unit == TUnitType.Imperial ? Translation.Get(TRS.POUND) : "kg";
 
             StringBuilder setRepSb = new StringBuilder();
             StringBuilder setRepWeightSb = new StringBuilder();
@@ -352,9 +348,9 @@ namespace BodyReportMobile.Core.ViewModels
                         bool writeSuccess = await fileManager.WriteBinaryFileAsync(pdfPath, memoryStream);
                         if(writeSuccess)
                         {
-							if (Device.OS == TargetPlatform.Android)
+							if (Device.RuntimePlatform == Device.Android)
 								Resolver.Resolve<IAndroidAPI> ().OpenPdf (pdfPath);
-							else if (Device.OS == TargetPlatform.iOS)
+							else if (Device.RuntimePlatform == Device.iOS)
 							{
 								await WebViewViewModel.ShowAsync (pdfPath, this);
 							}
@@ -380,7 +376,8 @@ namespace BodyReportMobile.Core.ViewModels
                         WeekOfYear = WeekOfYear,
                         DayOfWeek = DayOfWeek,
                         TrainingDayId = 0,
-                        UserId = UserId
+                        UserId = UserId,
+                        Unit = UserData.Instance.UserInfo.Unit
                     };
                     if (await CreateTrainingDayViewModel.ShowAsync(newTrainingDay, TEditMode.Create, this))
                     {

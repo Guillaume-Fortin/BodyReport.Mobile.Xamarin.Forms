@@ -62,7 +62,7 @@ namespace BodyReportMobile.Core.Manager
                     result = true;
                 }
             }
-            catch
+            catch(Exception except)
             {
 
             }

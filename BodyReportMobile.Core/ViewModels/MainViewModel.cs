@@ -2,7 +2,6 @@
 using System.Windows.Input;
 using System.Threading.Tasks;
 using BodyReport.Message;
-using SQLite.Net;
 using XLabs.Ioc;
 using BodyReportMobile.Core.WebServices;
 using BodyReportMobile.Core.Framework;
@@ -87,7 +86,7 @@ namespace BodyReportMobile.Core.ViewModels
             base.InitTranslation();
 
 			TitleLabel = "BodyReport";
-			if(Device.OS == TargetPlatform.Android)
+            if(Device.RuntimePlatform == Device.Android)
 				MenuLabel = Translation.Get (TRS.MENU);
             TrainingJournalLabel = Translation.Get (TRS.TRAINING_JOURNAL);
 
