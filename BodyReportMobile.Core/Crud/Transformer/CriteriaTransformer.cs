@@ -2,56 +2,49 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Linq.Expressions;
-using SQLite.Net;
 using BodyReport.Framework;
 
 namespace BodyReportMobile.Core.Crud.Transformer
 {
     public static class CriteriaTransformer
     {
-        //take on http://stackoverflow.com/questions/7754018/how-to-build-case-insensitive-strong-typed-linq-query-in-c
-        private static MethodInfo miToLower = typeof(String).GetRuntimeMethod("ToLower", new Type[] { });
-        private static MethodInfo miStartsWith = typeof(String).GetRuntimeMethod("StartsWith", new Type[] { typeof(String) });
-        private static MethodInfo miContains = typeof(String).GetRuntimeMethod("Contains", new Type[] { typeof(String) });
-        private static MethodInfo miEndsWith = typeof(String).GetRuntimeMethod("EndsWith", new Type[] { typeof(String) });
-        
-        static CriteriaTransformer()
+        public static void CompleteQuery<TEntity, TCriteriaField>(ref IQueryable<TEntity> source, CriteriaList<TCriteriaField> criteriaFieldList) where TEntity : class
+                                                                                                                                                  where TCriteriaField : CriteriaField
         {
-        }
-
-        public static void CompleteQuery<TEntity, T>(ref IQueryable<TEntity> source, CriteriaList<T> criteriaFieldList) where TEntity : class
-                                                                                                                         where T : CriteriaField
-        {
-            if (criteriaFieldList == null)
+            if (source == null || criteriaFieldList == null)
                 return;
 
-            Expression<Func<TEntity, bool>> queryExpression, globalQueryExpression;
-            globalQueryExpression = null;
-            foreach (T criteriaField in criteriaFieldList)
+            Expression<Func<TEntity, bool>> globalQueryExpression = null, queryExpression;
+
+            foreach (var criteriaField in criteriaFieldList)
             {
-                if (criteriaField != null)
+                queryExpression = null;
+                CompleteQueryInternal(ref queryExpression, criteriaField);
+                if (queryExpression != null)
                 {
-                    queryExpression = null;
-                    CompleteQueryInternal(ref queryExpression, criteriaField);
-                    if (queryExpression != null)
-                    {
-                        if (globalQueryExpression == null)
-                            globalQueryExpression = queryExpression;
-                        else
-                            globalQueryExpression = globalQueryExpression.OrElse(queryExpression);
-                    }
+                    if (globalQueryExpression == null)
+                        globalQueryExpression = queryExpression;
+                    else
+                        globalQueryExpression = globalQueryExpression.OrElse(queryExpression);
                 }
             }
+
             if (globalQueryExpression != null)
                 source = source.Where(globalQueryExpression);
+
+            foreach (var criteriaField in criteriaFieldList)
+            {
+                if (criteriaField != null && criteriaField.FieldSortList != null && criteriaField.FieldSortList.Count > 0)
+                {
+                    ApplySort(ref source, criteriaField);
+                    break;
+                }
+            }
         }
 
-        public static void CompleteQuery<TEntity>(ref TableQuery<TEntity> source, CriteriaField criteriaField) where TEntity : class
+        public static void CompleteQuery<TEntity>(ref IQueryable<TEntity> source, CriteriaField criteriaField) where TEntity : class
         {
             if (source == null || criteriaField == null)
                 return;
@@ -59,17 +52,25 @@ namespace BodyReportMobile.Core.Crud.Transformer
             Expression<Func<TEntity, bool>> queryExpression = null;
             CompleteQueryInternal(ref queryExpression, criteriaField);
             if (queryExpression != null)
+            {
+                Expression<Func<TEntity, bool>> queryExpression2 = null;
+                CompleteQueryInternal(ref queryExpression2, criteriaField);
+                queryExpression = queryExpression.Or(queryExpression2);
+            }
+            if (queryExpression != null)
                 source = source.Where(queryExpression);
+
+            ApplySort(ref source, criteriaField);
         }
 
         private static void CompleteQueryInternal<TEntity>(ref Expression<Func<TEntity, bool>> queryExpression, CriteriaField criteriaField) where TEntity : class
         {
-            var criteriaFieldProperties = criteriaField.GetType().GetRuntimeProperties();
+            var criteriaFieldProperties = criteriaField.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
             object value;
             string fieldName;
             var type = typeof(TEntity);
-            var properties = type.GetRuntimeProperties();
+            var properties = type.GetProperties();
             if (properties != null && criteriaFieldProperties != null)
             {
                 foreach (var criteriaFieldProperty in criteriaFieldProperties)
@@ -87,7 +88,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
         private static void CompleteQueryWithCriteria<TEntity>(ref Expression<Func<TEntity, bool>> queryExpression, string fieldName, object criteria) where TEntity : class
         {
             var entityType = typeof(TEntity);
-            var entityProperty = entityType.GetRuntimeProperty(fieldName);
+            var entityProperty = entityType.GetProperty(fieldName, BindingFlags.Instance | BindingFlags.Public);
 
             if (entityProperty != null)
             {
@@ -141,7 +142,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
 
         private static Expression AddEqualExpression<T>(ParameterExpression entityParameter, PropertyInfo entityProperty, T value)
         {
-            if (!(value is string))
+            if (typeof(T) != typeof(string))
             {
                 return Expression.Equal(
                         Expression.Property(entityParameter, entityProperty),
@@ -153,16 +154,17 @@ namespace BodyReportMobile.Core.Crud.Transformer
 
         private static Expression AddEqualStringExpression(ParameterExpression entityParameter, PropertyInfo entityProperty, string value, bool ignoreCase)
         {
-            MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
-
-            if (value == null)
+            if (ignoreCase)
             {
-                return Expression.Equal(m, Expression.Constant(null));
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                Expression toLower = Expression.Call(expressionProperty, "ToLower", null, null);
+                return Expression.Equal(toLower, Expression.Constant(value != null ? value.ToLowerInvariant() : null));
             }
             else
             {
-                var toLower = Expression.Call(m, miToLower);
-                return Expression.Equal(toLower, Expression.Constant((value as string).ToLower()));
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                return Expression.Equal(Expression.Property(entityParameter, entityProperty),
+                                        Expression.Constant(value));
             }
         }
 
@@ -172,59 +174,75 @@ namespace BodyReportMobile.Core.Crud.Transformer
             {
                 return Expression.NotEqual(
                         Expression.Property(entityParameter, entityProperty),
-                        Expression.Constant(value)
-                       );
+                        Expression.Constant(value));
             }
             return null;
         }
 
         private static Expression AddNotEqualStringExpression(ParameterExpression entityParameter, PropertyInfo entityProperty, string value, bool ignoreCase)
         {
-            MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
-            if (value == null)
+            if (ignoreCase)
             {
-                return Expression.NotEqual(m, Expression.Constant(null));
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                Expression toLower = Expression.Call(expressionProperty, "ToLower", null, null);
+                return Expression.NotEqual(toLower, Expression.Constant(value != null ? value.ToLowerInvariant() : null));
             }
             else
             {
-                var toLower = Expression.Call(m, miToLower);
-                return Expression.NotEqual(toLower, Expression.Constant((value as string).ToLower()));
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                return Expression.NotEqual(Expression.Property(entityParameter, entityProperty),
+                                           Expression.Constant(value));
             }
         }
 
         private static Expression AddStartsWithStringExpression(ParameterExpression entityParameter, PropertyInfo entityProperty, string value, bool ignoreCase)
         {
-            if (value == null)
-                return null;
+            if (ignoreCase)
+            {
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                Expression toLower = Expression.Call(expressionProperty, "ToLower", null, null);
+                MethodInfo mi = typeof(string).GetMethod("StartsWith", new Type[] { typeof(string) });
+                return Expression.Call(toLower, mi, Expression.Constant(value != null ? value.ToLowerInvariant() : null));
+            }
             else
             {
-                MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
-                var startWith = Expression.Call(m, miStartsWith);
-                return Expression.Equal(startWith, Expression.Constant((value as string).ToLower()));
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                MethodInfo mi = typeof(string).GetMethod("StartsWith", new Type[] { typeof(string) });
+                return Expression.Call(expressionProperty, mi, Expression.Constant(value));
             }
         }
 
         private static Expression AddEndsWithStringExpression(ParameterExpression entityParameter, PropertyInfo entityProperty, string value, bool ignoreCase)
         {
-            if (value == null)
-                return null;
+            if (ignoreCase)
+            {
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                Expression toLower = Expression.Call(expressionProperty, "ToLower", null, null);
+                MethodInfo mi = typeof(string).GetMethod("EndsWith", new Type[] { typeof(string) });
+                return Expression.Call(toLower, mi, Expression.Constant(value != null ? value.ToLowerInvariant() : null));
+            }
             else
             {
-                MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
-                var endWith = Expression.Call(m, miEndsWith);
-                return Expression.Equal(endWith, Expression.Constant((value as string).ToLower()));
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                MethodInfo mi = typeof(string).GetMethod("EndsWith", new Type[] { typeof(string) });
+                return Expression.Call(expressionProperty, mi, Expression.Constant(value));
             }
         }
 
         private static Expression AddContainsStringExpression(ParameterExpression entityParameter, PropertyInfo entityProperty, string value, bool ignoreCase)
         {
-            if (value == null)
-                return null;
+            if (ignoreCase)
+            {
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                Expression toLower = Expression.Call(expressionProperty, "ToLower", null, null);
+                MethodInfo mi = typeof(string).GetMethod("Contains", new Type[] { typeof(string) });
+                return Expression.Call(toLower, mi, Expression.Constant(value != null ? value.ToLowerInvariant() : null));
+            }
             else
             {
-                MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
-                var contains = Expression.Call(m, miContains);
-                return Expression.Equal(contains, Expression.Constant((value as string).ToLower()));
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                MethodInfo mi = typeof(string).GetMethod("Contains", new Type[] { typeof(string) });
+                return Expression.Call(expressionProperty, mi, Expression.Constant(value));
             }
         }
 
@@ -239,9 +257,9 @@ namespace BodyReportMobile.Core.Crud.Transformer
             }
             if (criteria.EqualList != null)
             {
-                foreach (int value in criteria.EqualList)
+                foreach (int equalValue in criteria.EqualList)
                 {
-                    expressionList.Add(AddEqualExpression(entityParameter, entityProperty, value));
+                    expressionList.Add(AddEqualExpression(entityParameter, entityProperty, equalValue));
                 }
             }
             if (criteria.NotEqual.HasValue)
@@ -250,9 +268,9 @@ namespace BodyReportMobile.Core.Crud.Transformer
             }
             if (criteria.NotEqualList != null)
             {
-                foreach (int value in criteria.NotEqualList)
+                foreach (int equalValue in criteria.NotEqualList)
                 {
-                    expressionList.Add(AddNotEqualExpression(entityParameter, entityProperty, value));
+                    expressionList.Add(AddNotEqualExpression(entityParameter, entityProperty, equalValue));
                 }
             }
         }
@@ -294,7 +312,7 @@ namespace BodyReportMobile.Core.Crud.Transformer
             }
             if (criteria.EndsWithList != null)
             {
-                foreach (string value in criteria.NotEqualList)
+                foreach (string value in criteria.EndsWithList)
                 {
                     if (value != null)
                         expressionList.Add(AddEndsWithStringExpression(entityParameter, entityProperty, value, criteria.IgnoreCase));
@@ -302,12 +320,77 @@ namespace BodyReportMobile.Core.Crud.Transformer
             }
             if (criteria.ContainsList != null)
             {
-                foreach (string value in criteria.NotEqualList)
+                foreach (string value in criteria.ContainsList)
                 {
-                    if(value != null)
+                    if (value != null)
                         expressionList.Add(AddContainsStringExpression(entityParameter, entityProperty, value, criteria.IgnoreCase));
                 }
             }
+        }
+
+        private static PropertyInfo GetPropertyByName(Type type, string name)
+        {
+            var criteriaFieldProperties = /*obj.GetType()*/type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+            foreach (var criteriaFieldProperty in criteriaFieldProperties)
+            {
+                if (criteriaFieldProperty.Name.ToLower() == name.ToLower())
+                {
+
+                    return criteriaFieldProperty;
+                }
+            }
+            return null;
+        }
+
+        private static IOrderedQueryable<T> ApplyOrder<T>(IQueryable<T> source, string property, string methodName)
+        {
+            var type = typeof(T);
+            var arg = Expression.Parameter(type, "x");
+            Expression expr = arg;
+
+            var pi = GetPropertyByName(type, property);
+            if (pi != null)
+            {
+                expr = Expression.Property(expr, pi);
+                type = pi.PropertyType;
+
+                var delegateType = typeof(Func<,>).MakeGenericType(typeof(T), type);
+                var lambda = Expression.Lambda(delegateType, expr, arg);
+
+                var result = typeof(Queryable).GetMethods().Single(
+                        method => method.Name == methodName
+                                && method.IsGenericMethodDefinition
+                                && method.GetGenericArguments().Length == 2
+                                && method.GetParameters().Length == 2)
+                        .MakeGenericMethod(typeof(T), type)
+                        .Invoke(null, new object[] { source, lambda });
+                return (IOrderedQueryable<T>)result;
+            }
+            else
+                return null;
+        }
+
+        private static void ApplySort<TEntity>(ref IQueryable<TEntity> source, CriteriaField criteriaField) where TEntity : class
+        {
+            IOrderedQueryable<TEntity> orderedQueryTmp;
+            IOrderedQueryable<TEntity> orderedQuery = null;
+            if (criteriaField != null && criteriaField.FieldSortList != null && criteriaField.FieldSortList.Count > 0)
+            {
+                foreach (FieldSort fieldSort in criteriaField.FieldSortList)
+                {
+                    orderedQueryTmp = null;
+                    if (fieldSort.Sort == TFieldSort.Asc)
+                        orderedQueryTmp = ApplyOrder(orderedQuery == null ? source : orderedQuery, fieldSort.Name, orderedQuery == null ? "OrderBy" : "ThenBy");
+                    else if (fieldSort.Sort == TFieldSort.Desc)
+                        orderedQueryTmp = ApplyOrder(orderedQuery == null ? source : orderedQuery, fieldSort.Name, orderedQuery == null ? "OrderByDescending" : "ThenByDescending");
+
+                    if (orderedQueryTmp != null)
+                        orderedQuery = orderedQueryTmp;
+                }
+            }
+            if (orderedQuery != null)
+                source = orderedQuery;
         }
     }
 }
