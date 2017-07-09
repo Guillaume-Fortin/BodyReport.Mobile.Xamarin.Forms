@@ -111,5 +111,27 @@ namespace BodyReportMobile.Core.Message.Binding
                 EndTime = newEndTime;
             }
         }
+
+        private TUnitType _unit;
+        public TUnitType Unit
+        {
+            get { return _unit; }
+            set
+            {
+                _unit = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _automaticalUnitConvertion;
+        public bool AutomaticalUnitConvertion
+        {
+            get { return _automaticalUnitConvertion; }
+            set
+            {
+                _automaticalUnitConvertion = value;
+                OnPropertyChanged();
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@ using System.Windows.Input;
 using XLabs.Ioc;
 using BodyReport.Message.Web;
 using Xamarin.Forms;
+using BodyReport.Framework;
 
 namespace BodyReportMobile.Core.ViewModels
 {
@@ -147,8 +148,9 @@ namespace BodyReportMobile.Core.ViewModels
         {
             if (trainingDay == null)
                 return null;
-            
-            string weightUnit = trainingDay.Unit == TUnitType.Imperial ? Translation.Get(TRS.POUND) : "kg";
+
+            TUnitType viewerUnit = UserData.Instance.UserInfo.Unit;
+            string weightUnit = viewerUnit == TUnitType.Imperial ? Translation.Get(TRS.POUND) : "kg";
 
             StringBuilder setRepSb = new StringBuilder();
             StringBuilder setRepWeightSb = new StringBuilder();
@@ -194,7 +196,7 @@ namespace BodyReportMobile.Core.ViewModels
                         foreach (var set in trainingExercise.TrainingExerciseSets)
                         {
                             setRepSb.AppendLine($"{set.NumberOfSets} x {(trainingExercise.ExerciseUnitType == TExerciseUnitType.RepetitionNumber ? set.NumberOfReps.ToString() : FormatExecutionTime(set.ExecutionTime))}");
-                            setRepWeightSb.AppendLine(set.Weight.ToString());
+                            setRepWeightSb.AppendLine(Math.Round(Utils.TransformWeightToUnitSytem(trainingDay.Unit, viewerUnit, set.Weight), 3).ToString());
                         }
                         bindingTrainingExercise.SetReps = setRepSb.ToString();
                         bindingTrainingExercise.SetRepWeights = setRepWeightSb.ToString();

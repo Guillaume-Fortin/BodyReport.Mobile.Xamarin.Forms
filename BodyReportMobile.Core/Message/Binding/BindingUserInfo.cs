@@ -67,11 +67,11 @@ namespace BodyReportMobile.Core.Message.Binding
                 OnPropertyChanged();
             }
         }
-        
+
         /// <summary>
         /// User Height
         /// </summary>
-		private double _height;
+        private double _height;
         public double Height
         {
             get { return _height; }

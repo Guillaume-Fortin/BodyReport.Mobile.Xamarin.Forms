@@ -14,7 +14,7 @@
     <Grid>
       <TableView x:Name="tableView" Intent="Settings" HasUnevenRows="true" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
         <TableRoot>
-          <TableSection Title="{Binding CreateTitle}">
+          <TableSection x:Name="tableSection" Title="{Binding CreateTitle}">
             <localcontrol:TouchViewCell x:Name="YearCell"
                 Title="{Binding YearLabel}" Value="{Binding BindingTrainingDay.Year}" />
             <localcontrol:TouchViewCell x:Name="WeekOfYearCell"
@@ -25,6 +25,13 @@
             <localcontrol:TimeViewCell x:Name="BeginTimeCell" Title="{Binding BindingTrainingDay.BeginTimeLabel}" Time="{Binding BindingTrainingDay.BeginTime, Mode=TwoWay}" />
             <localcontrol:TimeViewCell x:Name="EndTimeCell" Title="{Binding BindingTrainingDay.EndTimeLabel}" Time="{Binding BindingTrainingDay.EndTime, Mode=TwoWay}" />
             
+            <localcontrol:TouchViewCell x:Name="UnitCell" Tapped="OnCellTapped" Height="80"
+                Title="{Binding UnitLabel}"
+                Value="{Binding BindingTrainingDay.Unit, Mode=TwoWay}"
+                Description="{Binding UnitDescriptionLabel}"
+                IsIndicatorVisible="true"/>
+
+            <!--SwitchCell Text="{Binding AutomaticalUnitConvertionLabel}" On="{Binding AutomaticalUnitConvertion, Mode=TwoWay}"/ in cs file-->
           </TableSection>
         </TableRoot>
       </TableView>
