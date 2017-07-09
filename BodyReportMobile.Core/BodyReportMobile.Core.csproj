@@ -57,6 +57,9 @@
     <Compile Include="..\..\BodyReport\src\BodyReport.Message\Web\HttpException.cs">
       <Link>Message\Web\HttpException.cs</Link>
     </Compile>
+    <Compile Include="..\..\BodyReport\src\BodyReport.Message\Web\MultipleParameters\CopyDayParameter.cs">
+      <Link>Message\Web\MultipleParameters\CopyDayParameter.cs</Link>
+    </Compile>
     <Compile Include="..\..\BodyReport\src\BodyReport.Message\Web\MultipleParameters\SwitchDayParameter.cs">
       <Link>Message\Web\MultipleParameters\SwitchDayParameter.cs</Link>
     </Compile>

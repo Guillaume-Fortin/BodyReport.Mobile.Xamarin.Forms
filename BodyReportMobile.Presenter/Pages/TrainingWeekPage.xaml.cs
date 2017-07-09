@@ -70,6 +70,13 @@ namespace BodyReportMobile.Presenter.Pages
                         menuItem.SetBinding(MenuItem.CommandParameterProperty, new Binding(path: "DayOfWeek", source: bindingWeekTrainingDay));
                         touchViewCell.ContextActions.Add(menuItem);
 
+                        menuItem = new MenuItem();
+                        menuItem.SetBinding(MenuItem.TextProperty, new Binding(path: "CopyDayLabel", source: viewModel));
+                        menuItem.BindingContext = bindingWeekTrainingDay;
+                        menuItem.Command = viewModel.CopyTrainingDayCommand;
+                        menuItem.SetBinding(MenuItem.CommandParameterProperty, new Binding(path: "DayOfWeek", source: bindingWeekTrainingDay));
+                        touchViewCell.ContextActions.Add(menuItem);
+
                         DaySection.Add(touchViewCell);
                     }   
                 }
